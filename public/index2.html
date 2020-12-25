@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+
+  <title>首页</title>
+
+
+</head>
+
+<body>
+
+  <div id='app'>
+    <!-- 登录 -->
+    <div>
+      <button id="login">
+        {{ isLogin }}
+      </button>
+      <br><br>
+      <div id="loginForm" v-if="loginFormSeen">
+        <input type="text" v-model="username" placeholder="账号">
+        <br>
+        <input type="text" v-model="password" placeholder="密码">
+        <br>
+        <button id="login" @click="submitLogin">登录</button>
+        <p>
+          测试期间直接点登录，不用输密码
+        </p>
+      </div>
+    </div>
+
+
+    <!-- 好友列表 -->
+    <div v-if='friendsSeen'>
+      <button id="getFriends" @click="getFriends"> 联系人 </button>
+      <ul>
+        <li v-for="friend in friends" @click="chatWithFriend(friend)"> {{ friend.name }} </li>
+      </ul>
+    </div>
+
+    <!-- 聊天窗口 -->
+    <div v-if='chatSeen'
+      style="position: fixed; right: 8px; bottom: 0px; border: 1px solid; width: 400px; max-height: 500px;">
+      <!-- 标题栏 -->
+      <div style="border-bottom: 1px solid;">
+        {{ chatFriend.name }}
+      </div>
+      <!-- 聊天内容 -->
+      <div style="min-height: 440px; max-height: 440px; overflow-y: scroll;">
+          <div v-for="chatContent in chatContents" style="border: 1px solid;">
+            {{ chatContent.text }}
+          </div>
+      </div>
+      <!-- 聊天输入框 -->
+      <div style="height: 34px;">
+        <input v-model="chatText" placeholder="输入消息" style="width: 330px; height: 26px;">
+        <button @click="sendMessage" style="width: 50px;"> 发送 </button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script type="text/javascript">
+    var vm = new Vue({
+      el: "#app",
+      data: {
+        username: '',
+        password: '',
+        isLogin: '未登录',
+        loginFormSeen: true,
+        friends: '',
+        friendsSeen: false,
+        chatSeen: true,
+        chatFriend: '',
+        chatText: '',
+        chatContents: [],
+      },
+      // 打开界面时就检查是否登录
+      created: function () {
+        this.checkLogin();
+      },
+      methods: {
+        checkLogin: function () {
+          console.log('检查是否登录');
+          /* 
+          检查是否登录
+          */
+          return true;
+        },
+        submitLogin: function () {
+          console.log('登录 ' + this.username + ' ' + this.password);
+          /* 
+          1. 请求后端接口进行登录信息提交
+          */
+          if (this.checkLogin()) {
+            this.loginFormSeen = false;
+            this.isLogin = '已登录';
+
+            this.friendsSeen = true;
+          } else {
+            // 登录失败
+          }
+        },
+        getFriends: function () {
+          console.log('获取好友');
+          /* 
+          2. 请求后端接口获取好友
+          */
+          this.friends = [
+            {
+              name: '小磊',
+              id: 1
+            },
+            {
+              name: '小虎',
+              id: 2
+            },
+            {
+              name: '小恒',
+              id: 3
+            }
+          ];
+        },
+        chatWithFriend: function (friend) {
+          console.log('与好友聊天\n名字：' + friend.name + '，id：' + friend.id);
+          this.chatSeen = true;
+          this.chatFriend = friend;
+        },
+        sendMessage: function () {
+          message = {text: this.chatText, date: Date()};
+          console.log('给好友发送信息\n名字：' + this.chatFriend.name + '，id：' + this.chatFriend.id + '\n消息：');
+          console.log(message);
+          
+          /*
+          3. 请求后端接口给好友发送消息
+          */
+          // 如果发送成功
+          sendSuccessed = true;
+          if(sendSuccessed) {
+            this.addMessage(true, message);
+            this.chatText='';
+          }
+        },
+        addMessage: function(isSender, message) {
+          console.log('在聊天内容里添加一条信息\n用户是发送者：' + isSender + '，信息：');
+          console.log(message);
+          if(isSender) {
+            this.chatContents.push({
+              text: message.text,
+              date: message.date
+            });
+          } else {
+            this.chatContents.push({
+              text: message.text,
+              date: message.date
+            });
+          }
+        }
+      }
+    });
+
+
+  </script>
+</body>
+
+</html>
