@@ -14,35 +14,6 @@
             <v-list-item-title> {{ messageItem.content }} </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <!-- <v-list-item>
-          <v-list-item-avatar size="24px">
-            <img src="@/assets/avatar1.jpeg" alt="avatar1" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title> 美女你好 </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-avatar size="24px">
-            <img src="@/assets/avatar1.jpeg" alt="avatar1" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title> 在么？ </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-content class="text-right align-self-start">
-            <v-list-item-title> 你是谁？ </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-avatar size="24px">
-            <img src="@/assets/avatar1.jpeg" alt="avatar1" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title> 我是尼古拉斯·磊 </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item> -->
       </v-list>
 
       <v-text-field

@@ -23,43 +23,6 @@
           <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay>
         </v-list-item>
       </v-hover>
-      <!-- <v-hover v-slot:default="{ hover }">
-        <v-list-item to="/about">
-          <v-list-item-avatar size="36px">
-            <img src="@/assets/avatar1.jpeg" alt="avatar1" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title> 尼古拉斯·磊 </v-list-item-title>
-          </v-list-item-content>
-
-          <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay>
-        </v-list-item>
-      </v-hover>
-
-      <v-hover v-slot:default="{ hover }">
-        <v-list-item to="/home">
-          <v-list-item-avatar size="36px">
-            <img src="@/assets/avatar2.jpeg" alt="avatar1" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title> 莱昂纳多·虎 </v-list-item-title>
-          </v-list-item-content>
-
-          <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay>
-        </v-list-item>
-      </v-hover>
-
-      <v-hover v-slot:default="{ hover }">
-        <v-list-item>
-          <v-list-item-avatar size="36px">
-            <img src="@/assets/avatar3.jpeg" alt="avatar1" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title> 克里斯蒂安·恒 </v-list-item-title>
-          </v-list-item-content>
-          <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay>
-        </v-list-item>
-      </v-hover> -->
     </v-list>
   </v-card>
 </template>
