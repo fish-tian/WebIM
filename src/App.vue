@@ -2,9 +2,6 @@
   <div>
     <span class="bg"></span>
     <v-app>
-      <!-- 导航栏 -->
-      <TheNavigation />
-
       <v-main>
         <router-view :key="$route.path" />
       </v-main>
@@ -13,10 +10,12 @@
 </template>
 
 <script>
+//import TheNavigation from '@/components/TheNavigation';
 
 export default {
   name: "App",
   components: {
+    //TheNavigation
     // Login
   },
 

@@ -1,5 +1,8 @@
 <template>
+
 <v-container>
+  <!-- 导航栏 -->
+      <TheNavigation />
   <v-row>
     <v-col>
       <TheFriendsBox />
@@ -17,10 +20,11 @@
 <script>
 import TheFriendsBox from "@/components/TheFriendsBox.vue"
 import TheChatBox from "@/components/TheChatBox.vue"
-
+import TheNavigation from '@/components/TheNavigation';
 export default {
   name: "Home",
   components: {
+    TheNavigation,
     TheChatBox,
     TheFriendsBox,
   },
