@@ -1,4 +1,5 @@
 <template>
+<v-container>
   <v-row>
     <v-col>
       <TheFriendsBox />
@@ -6,13 +7,11 @@
 
     <v-spacer></v-spacer>
     <v-col>
-      <TheLoginBox />
-    </v-col>
-    <v-col>
       <TheChatBox />
       <router-view :key="$route.path"/>
     </v-col>
   </v-row>
+</v-container>
 </template>
 
 <script>
@@ -23,7 +22,7 @@ export default {
   name: "Home",
   components: {
     TheChatBox,
-    TheFriendsBox
+    TheFriendsBox,
   },
 };
 </script>

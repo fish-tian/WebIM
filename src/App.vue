@@ -6,42 +6,17 @@
       <TheNavigation />
 
       <v-main>
-        <v-container>
-          <v-row>
-            <v-col>
-              <TheFriendsBox />
-            </v-col>
-
-            <v-spacer></v-spacer>
-            <!-- <v-col>
-              <TheLoginBox />
-            </v-col> -->
-            <v-col>
-              <TheChatBox />
-              <router-view :key="$route.path" />
-            </v-col>
-          </v-row>
-          <!-- <Login /> -->
-          <!-- <router-view :key="$route.path"/> -->
-        </v-container>
+        <router-view :key="$route.path" />
       </v-main>
     </v-app>
   </div>
 </template>
 
 <script>
-//import store from "@/store.js";
-import TheNavigation from "@/components/TheNavigation.vue";
-// import Login from "@/views/Login.vue";
-import TheFriendsBox from "@/components/TheFriendsBox.vue";
-import TheChatBox from "@/components/TheChatBox.vue";
 
 export default {
   name: "App",
   components: {
-    TheNavigation,
-    TheChatBox,
-    TheFriendsBox,
     // Login
   },
 
