@@ -9,6 +9,8 @@ npm install
 ```
 npm run serve        // 启动vue
 node .\server\app.js // 启动node
+
+// 访问 http://localhost:8080/#/login 进行登录
 ```
 
 ## 项目结构介绍
