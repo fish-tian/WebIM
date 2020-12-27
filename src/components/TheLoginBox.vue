@@ -116,7 +116,7 @@ export default {
       axios
         .post("/auth/user", user)
         .then((response) => {
-          alert(response);
+          alert(response + "登录成功");
         })
         .catch((err) => {
           alert(err);
@@ -160,7 +160,7 @@ export default {
       axios
         .post("/auth/user/register", user)
         .then((response) => {
-          alert(response);
+          alert(response + "注册成功");
         })
         .catch((err) => {
           alert(err);
