@@ -39,3 +39,5 @@ node .\server\app.js // 启动node
   vue.config.js     vue的配置，目前用来处理跨域请求
   ...
 ```
+
+## 目前进展介绍

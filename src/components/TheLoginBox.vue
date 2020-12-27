@@ -5,9 +5,12 @@
       min-width="400px"
       max-width="400px"
       style="margin: 40px"
+      margin="200"
       v-if="loginSeen"
     >
       <v-card-title>登录</v-card-title>
+      <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
+
       <v-card-text>
         <v-form>
           <v-text-field
@@ -40,6 +43,7 @@
       v-if="!loginSeen"
     >
       <v-card-title>注册</v-card-title>
+      <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
       <v-card-text>
         <v-form>
           <v-text-field
@@ -90,12 +94,24 @@ export default {
       email: "",
       password: "",
       password1: "",
+      alert: false,
+      alertMessage: "",
+      alertType: "",
     };
   },
   methods: {
     // 简单进行隐藏
     changeSeen() {
       this.loginSeen = !this.loginSeen;
+    },
+    showAlert(alertMessage, alertType) {
+      this.alert = true;
+      this.alertMessage = alertMessage;
+      this.alertType = alertType;
+
+      setTimeout(() => {
+        this.alert = false;
+      }, 3000);
     },
     // 登录
     login() {
@@ -104,53 +120,62 @@ export default {
         password: this.password,
       };
 
-      if (this.account === "") {
-        this.$message.error("用户名不能为空！");
+      if (this.username === "") {
+        this.showAlert("用户名不能为空！", "warning");
         return;
       }
       if (this.password === "") {
-        this.$message.error("密码不能为空！");
+        this.showAlert("密码不能为空！", "warning");
         return;
       }
 
       axios
         .post("/auth/user", user)
-        .then((response) => {
-          alert(response + "登录成功");
+        .then((res) => {
+          if (res.data.success) {
+            sessionStorage.setItem("demo-token", res.data.token); // 用sessionStorage把token存下来
+            this.showAlert("登录成功！", "success");
+            this.$router.push("/"); // 进入主页
+          } else {
+            this.showAlert(res.data.info, "error"); // 登录失败，显示提示语
+            sessionStorage.setItem("demo-token", null); // 将token清空
+          }
         })
-        .catch((err) => {
-          alert(err);
+        .catch(() => {
+          this.showAlert("请求错误！", "error");
+          sessionStorage.setItem("demo-token", null); // 将token清空
         });
     },
     // 注册
     register() {
       if (this.username === "") {
-        this.$message.error("用户名不能为空！");
+        this.showAlert("用户名不能为空！", "warning");
         return;
       }
-      if (this.email === "") {
-        this.$message.error("邮箱不能为空！");
+      if (this.password === "") {
+        this.showAlert("密码不能为空！", "warning");
         return;
       }
       let reg = new RegExp(
         "^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$"
       );
       if (!reg.test(this.email)) {
-        this.$message.error("邮箱格式不正确！");
+        this.showAlert("邮箱格式不正确！", "warning");
         return;
       }
-      if (this.password === "") {
-        this.$message.error("密码不能为空！");
+      if (this.email === "") {
+        this.showAlert("邮箱不能为空！", "warning");
         return;
       }
       if (this.password1 === "") {
-        this.$message.error("确认密码不能为空！");
+        this.showAlert("确认密码不能为空！", "warning");
         return;
       }
       if (this.password != this.password1) {
-        this.$message.error("两次密码不一致！");
+        this.showAlert("两次密码不一致！", "warning");
         return;
       }
+
       let user = {
         username: this.username,
         password: this.password,
@@ -159,20 +184,21 @@ export default {
 
       axios
         .post("/auth/user/register", user)
-        .then((response) => {
-          alert(response + "注册成功");
+        .then((res) => {
+          if (res.data.success) {
+            this.showAlert("注册成功", "success");
+            setTimeout(()=>{
+              this.username="";
+              this.password="";
+              this.changeSeen();
+            }, 3000);
+          } else {
+            this.showAlert(res.data.info, "error"); // 注册失败，显示提示语
+          }
         })
-        .catch((err) => {
-          alert(err);
+        .catch(() => {
+          this.showAlert("请求错误！", "error");
         });
-      // let user = {
-      //     username: this.username,
-      //     password: this.password,
-      //     email: this.email
-      // }
-      // axios.post('/api/register', user)
-      // .then((response)=>{alert(response);})
-      // .catch((err)=>{alert(err);});
     },
   },
 };

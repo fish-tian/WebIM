@@ -1,14 +1,4 @@
-// import db from '../config/db.js' // 引入user的表结构
-//var WebIm = require('../config/db.js');
-//var User = WebIm.import('../models/user.js');
-// const userModel = '../schema/user.js'
-// const WebIMDb = db.WebIM; // 引入数据库
-// var User = WebIMDb.require('../schema/user.js');
 var bcrypt = require('bcryptjs');
-// import bcrypt from 'bcryptjs'  // 引入加密
-
-// const User = WebIMDb.import(userModel) // 用sequelize的import方法引入表结构，实例化了User。
-
 var Sequelize = require('sequelize');
 var WebIm = require('../config/db.js');
 var User = require('../models/user.js')(WebIm, Sequelize);

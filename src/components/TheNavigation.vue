@@ -14,6 +14,7 @@
       to="/login"
       target="_blank"
       text
+      @click="logout"
     >
       注销
     </v-btn>
@@ -28,6 +29,13 @@ export default {
         return {
             user: store.user,
         }
+    },
+    methods : {
+      // 注销
+      logout() {
+        sessionStorage.setItem("demo-token", null); // 将token清空
+        this.$router.push("/login");
+      }
     }
 }
 </script>
