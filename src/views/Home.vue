@@ -11,7 +11,7 @@
     <v-spacer></v-spacer>
     <v-col>
       <TheChatBox />
-      <router-view :key="$route.path"/>
+      <!-- <router-view :key="$route.path"/> -->
     </v-col>
   </v-row>
 </v-container>

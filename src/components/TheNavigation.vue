@@ -11,7 +11,6 @@
     </v-avatar>
 
     <v-btn
-      to="/login"
       target="_blank"
       text
       @click="logout"
@@ -34,7 +33,7 @@ export default {
       // 注销
       logout() {
         sessionStorage.setItem("demo-token", null); // 将token清空
-        this.$router.push("/login");
+        this.$router.push({name: 'Login'});
       }
     }
 }

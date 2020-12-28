@@ -134,15 +134,18 @@ export default {
         .then((res) => {
           if (res.data.success) {
             sessionStorage.setItem("demo-token", res.data.token); // 用sessionStorage把token存下来
-            this.showAlert("登录成功！", "success");
-            this.$router.push("/"); // 进入主页
+            this.showAlert("登录成功，正在跳转至主页！", "success");
+            setTimeout(()=>{
+              this.$router.push({name: 'Home'}); // 进入主页
+            }, 3000);
           } else {
             this.showAlert(res.data.info, "error"); // 登录失败，显示提示语
             sessionStorage.setItem("demo-token", null); // 将token清空
           }
         })
-        .catch(() => {
+        .catch((err) => {
           this.showAlert("请求错误！", "error");
+          this.showAlert(err, "error");
           sessionStorage.setItem("demo-token", null); // 将token清空
         });
     },
@@ -186,7 +189,7 @@ export default {
         .post("/api/user/register", user)
         .then((res) => {
           if (res.data.success) {
-            this.showAlert("注册成功", "success");
+            this.showAlert("注册成功，正在跳转至登录！", "success");
             setTimeout(()=>{
               this.username="";
               this.password="";
