@@ -5,7 +5,7 @@ module.exports = {
   // 解决跨域问题
   devServer: {
     proxy: {
-      '^/auth': {
+      '^/api': {
         target: 'http://localhost:3000',
         logLevel: "debug",
         changeOrigin: true

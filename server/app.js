@@ -3,7 +3,7 @@ var Koa = require('koa');
 var bodyParser = require('koa-body-parser');
 
 // 引入路由模块
-var auth = require('./routes/auth');
+var api = require('./routes/api');
 // var users = require('./routes/users');
 
 
@@ -14,6 +14,6 @@ app.use(bodyParser());
 
 // 路由
 // app.use(users.routes(), users.allowedMethods());
-app.use(auth.routes(), auth.allowedMethods());
+app.use(api.routes(), api.allowedMethods());
 
 app.listen(3000);

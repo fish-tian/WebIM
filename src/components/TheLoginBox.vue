@@ -130,7 +130,7 @@ export default {
       }
 
       axios
-        .post("/auth/user", user)
+        .post("/api/user", user)
         .then((res) => {
           if (res.data.success) {
             sessionStorage.setItem("demo-token", res.data.token); // 用sessionStorage把token存下来
@@ -183,7 +183,7 @@ export default {
       };
 
       axios
-        .post("/auth/user/register", user)
+        .post("/api/user/register", user)
         .then((res) => {
           if (res.data.success) {
             this.showAlert("注册成功", "success");
