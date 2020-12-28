@@ -54,3 +54,4 @@ node .\server\app.js // 启动node
 3. 前端会对输入的信息进行检查
 4. 收到响应结果后会有提示
 5. token 目前存储在 sessionStorage
+6. 可以执行登录、注册、注销的功能
