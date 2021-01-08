@@ -8,7 +8,7 @@
 import TheLoginBox from "@/components/TheLoginBox.vue"
 
 export default {
-  name: "Home",
+  name: "Login",
   components: {
     TheLoginBox
   },

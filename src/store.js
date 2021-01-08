@@ -6,23 +6,24 @@ export default {
     userAvatar: "avatar0.jpeg",
     token: "NTS13UEIS87V12S4"
   },
-  friends: [
-    {
-      userId: 2,
-      username: "尼古拉斯·小磊",
-      userAvatar: "avatar1.jpeg"
-    },
-    {
-      userId: 3,
-      username: "莱昂纳多·小虎",
-      userAvatar: "avatar2.jpeg"
-    },
-    {
-      userId: 4,
-      username: "克里斯蒂安·小恒",
-      userAvatar: "avatar3.jpeg"
-    }
-  ],
+  // friends: [
+  //   {
+  //     userId: 2,
+  //     username: "尼古拉斯·小磊",
+  //     userAvatar: "avatar1.jpeg"
+  //   },
+  //   {
+  //     userId: 3,
+  //     username: "莱昂纳多·小虎",
+  //     userAvatar: "avatar2.jpeg"
+  //   },
+  //   {
+  //     userId: 4,
+  //     username: "克里斯蒂安·小恒",
+  //     userAvatar: "avatar3.jpeg"
+  //   }
+  // ],
+  friend: null,
   messages: [
     {
       mId: 4,

@@ -5,12 +5,14 @@ var UserService = require('../services/UserService.js');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 
+// 获取用户信息
 const getUserInfo = async function (ctx) {
   const id = ctx.params.id // 获取url里传过来的参数里的id
   const result = await UserService.getUserById(id) // 通过await “同步”地返回查询结果
   ctx.body = result // 将请求的结果放到response的body里返回
 }
 
+// 通过用户名获取用户信息
 const getUserInfoName = async function (ctx) {
   const data = ctx.request.body
   const name = data.username
@@ -29,6 +31,7 @@ const getUserInfoName = async function (ctx) {
   }
 }
 
+// 登录
 const postUserAuth = async function (ctx) {
   const data = ctx.request.body; // post过来的数据存在request.body里
   console.log(data);
@@ -95,7 +98,7 @@ const postUserAuth = async function (ctx) {
 // }
 
 
-// register
+// 注册
 const register = async function(ctx) {
   const data = ctx.request.body
   const name = data.username
