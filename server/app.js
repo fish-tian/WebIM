@@ -10,6 +10,8 @@ var app = new Koa();
 //>> import os 
 //>> os.urandom(24)
 var session = require('koa-session');
+var RedisStore = require('koa-redis');
+
 app.keys = ['some secret hurr'];
 const CONFIG = {
     key: 'koa.sess',
@@ -18,6 +20,7 @@ const CONFIG = {
     signed: true,
     rolling: false,
     renew: false,
+    store: new RedisStore()
     //secure: true   // 用于https，开发阶段可以注释掉
 };
 app.use(session(CONFIG, app));
