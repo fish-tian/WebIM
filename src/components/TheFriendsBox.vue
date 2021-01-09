@@ -29,11 +29,38 @@
 
 <script>
 import store from "@/store.js";
+import axios from "axios";
+axios.defaults.withCredentials = true;
+
 export default {
   data() {
     return {
-      friends: store.friends,
+      
     };
   },
+  computed: {
+      friends: function() {
+        return store.friends;
+      },
+  },
+  mounted() {
+    // 如果 cookie 中有 session，就请求获取好友列表
+    if(this.$cookie.get('koa.sess')) {
+      console.log("TheFriendsBox get koa.sess------------");
+      axios
+        .get("/api/user/testGetFriends")
+        .then((res) => {
+          if (res.data.success) {
+            store.friends = res.data.friends;
+            console.log(store.friends);
+          } else {
+            store.friends = null;
+          }
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    }
+  }
 };
 </script>

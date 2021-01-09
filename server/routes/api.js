@@ -70,6 +70,7 @@ router.post('/user/register',
 router.get('/user/testGetFriends', async (ctx) => {
     if (ctx.isAuthenticated()) {
         // 调用某个controller
+        
         ctx.body = {
             success: true,
             info: "成功",

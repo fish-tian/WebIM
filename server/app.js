@@ -14,11 +14,11 @@ app.keys = ['some secret hurr'];
 const CONFIG = {
     key: 'koa.sess',
     maxAge: 86400000,   // cookie 的过期时间
-    httpOnly: true,
+    httpOnly: false,    // 只允许服务器访问，设为false
     signed: true,
     rolling: false,
     renew: false,
-    //secure: true   // 用于https，开发阶段先取消
+    //secure: true   // 用于https，开发阶段可以注释掉
 };
 app.use(session(CONFIG, app));
 

@@ -23,7 +23,7 @@ export default {
   //     userAvatar: "avatar3.jpeg"
   //   }
   // ],
-  friend: null,
+  friends: null,
   messages: [
     {
       mId: 4,
