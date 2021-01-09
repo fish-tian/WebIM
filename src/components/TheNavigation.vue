@@ -32,7 +32,8 @@ export default {
     methods : {
       // 注销
       logout() {
-        sessionStorage.setItem("demo-token", null); // 将token清空
+        // this.$cookie.delete('koa.sse');
+        // this.$cookie.delete('koa.sse.sig');
         this.$router.push({name: 'Login'});
       }
     }

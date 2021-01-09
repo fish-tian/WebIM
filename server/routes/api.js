@@ -66,11 +66,29 @@ router.post('/user/register',
     }
 );
 
+//注销
+router.get('/user/logout', async (ctx) => {
+    if (ctx.isAuthenticated()) {
+        // 进行passport注销
+        ctx.logout();
+        ctx.body = {
+            success: true,
+            info: "注销成功",
+        };
+    } else {
+        // 无法认证
+        ctx.body = {
+            success: false,
+            info: "注销失败"
+        };
+    }
+});
+
 // 测试某个接口是否可以访问
 router.get('/user/testGetFriends', async (ctx) => {
     if (ctx.isAuthenticated()) {
         // 调用某个controller
-        
+
         ctx.body = {
             success: true,
             info: "成功",
@@ -98,8 +116,9 @@ router.get('/user/testGetFriends', async (ctx) => {
             success: false,
             info: "失败"
         }
+        ctx.throw(401);
     }
-})
+});
 
 // 将该router暴露出去
 module.exports = router;

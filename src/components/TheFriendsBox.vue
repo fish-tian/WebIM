@@ -35,13 +35,11 @@ axios.defaults.withCredentials = true;
 export default {
   data() {
     return {
-      
+      //localFriends: store.friends,
+      friends: store.friends
     };
   },
   computed: {
-      friends: function() {
-        return store.friends;
-      },
   },
   mounted() {
     // 如果 cookie 中有 session，就请求获取好友列表
@@ -52,7 +50,8 @@ export default {
         .then((res) => {
           if (res.data.success) {
             store.friends = res.data.friends;
-            console.log(store.friends);
+            //this.localFriends = res.data.friends;
+            this.friends = res.data.friends;
           } else {
             store.friends = null;
           }
