@@ -20,7 +20,7 @@ const CONFIG = {
     signed: true,
     rolling: false,
     renew: false,
-    store: new RedisStore()
+    store: new RedisStore() // 用 redis 存储 session
     //secure: true   // 用于https，开发阶段可以注释掉
 };
 app.use(session(CONFIG, app));
