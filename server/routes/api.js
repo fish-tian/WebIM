@@ -10,7 +10,7 @@ router.prefix('/api');
 // 登录
 router.post('/user', async (ctx) => {
     return passport.authenticate('local-signin', (err, user, info, status) => {
-        console.log("p111111111");
+        //console.log("p111111111");
         if (err) {
             return next(err);
         }
@@ -41,7 +41,7 @@ router.post('/user/register',
     // }
     async (ctx) => {
         return passport.authenticate('local-signup', (err, user, info, status) => {
-            console.log("p2222222");
+            //console.log("p2222222");
             if (err) {
                 return next(err);
             }
