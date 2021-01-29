@@ -15,7 +15,7 @@ CREATE TABLE `user` (
 BEGIN;
 delete from user where id >= 0;
 INSERT INTO `user` VALUES (1, 'admin', '$2a$10$x3f0Y2SNAmyAfqhKVAV.7uE7RHs3FDGuSYw.LlZhOFoyK7cjfZ.Q6', '66666@qq.com');
-INSERT INTO `user` VALUES (2, 'qiuheng', '$2a$10$V.i4fbFSVthOqEMDDwn4veByirOtny5TDcr9DatGAmb3GW56XU2ti', '99999@qq.com');
+INSERT INTO `user` VALUES (2, 'qiuheng', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '99999@qq.com');
 INSERT INTO `user` VALUES (3, 'hank', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '22222@qq.com');
 INSERT INTO `user` VALUES (4, 'tsl', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '11111@qq.com');
 COMMIT;

@@ -54,7 +54,10 @@ router.get('/friend/getAllRequests', async (ctx) => {
     if(ctx.isAuthenticated()) {
         const res = await FriendController.getAllRequests(ctx);
         console.log(res);
-        ctx.body = res;
+        ctx.body = {
+            success: true,
+            info: res
+        };
     } else {
         // 无法认证
         ctx.body = {

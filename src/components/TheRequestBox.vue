@@ -2,7 +2,7 @@
   <!-- v-card 里是请求卡片 -->
   <v-card>
     <v-list subheader dense>
-      <v-subheader>请求</v-subheader>
+      <v-subheader> 好友请求 </v-subheader>
       <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
 
       <v-list-item>
@@ -20,12 +20,13 @@
       </v-list-item>
 
       <!-- <v-list-item> 里是单个请求 -->
-      <v-hover
+      <!-- <v-hover
         v-slot:default="{ hover }"
+        
+      > -->
+        <v-list-item 
         v-for="request in requests"
-        :key="request.rid"
-      >
-        <v-list-item>
+        :key="request.rid">
           <v-list-item-avatar size="36px">
             <v-img
               :src="require('@/assets/' + 'avatar1.jpeg')"
@@ -33,12 +34,19 @@
             />
           </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title> {{ request.uid1 }} </v-list-item-title>
+            <v-list-item-title> {{ request.uid1Name }} </v-list-item-title>
           </v-list-item-content>
 
-          <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay>
+            <v-list-item-action>
+          <v-btn color="primary" @click="acceptRequest"> 接受 </v-btn>
+        </v-list-item-action>
+        
+        <v-list-item-action>
+          <v-btn color="error" @click="rejectRequest "> 拒绝 </v-btn>
+        </v-list-item-action>
+          <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
         </v-list-item>
-      </v-hover>
+      <!-- </v-hover> -->
     </v-list>
   </v-card>
 </template>
@@ -69,6 +77,7 @@ export default {
             store.requests = res.data.info;
             //this.localFriends = res.data.friends;
             this.requests = res.data.info;
+            console.log("this.requests--------");
             console.log(this.requests);
           } else {
             store.requests = null;
@@ -109,6 +118,14 @@ export default {
           console.log(err);
         });
     },
+    // 接受请求
+    acceptRequest() {
+        // this.showAlert("接受请求！", "success");
+    },
+    // 拒绝请求
+    rejectRequest() {
+        // this.showAlert("拒绝请求！", "success");
+    }
   },
 };
 </script>

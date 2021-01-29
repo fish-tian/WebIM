@@ -126,7 +126,7 @@ const addFriend = async function (ctx) {
 // 获取所有未处理好友请求
 const getAllRequests = async function (ctx) {
     const user = ctx.state.user;
-    const requests = Request.findAll({
+    const requests = await Request.findAll({
         raw: true,
         where:{
             [Op.and]: [
@@ -135,7 +135,18 @@ const getAllRequests = async function (ctx) {
             ],
         }
     });
-    return requests;
+
+    let res = requests;
+    for(let i = 0; i < requests.length; i++) {
+        const userTemp = await User.findOne({
+            raw: true,
+            where: {
+                id: requests[i].uid1
+            }
+        });
+        res[i].uid1Name = userTemp.user_name;
+    }
+    return res;
 }
 
 module.exports = {
