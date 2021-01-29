@@ -1,7 +1,10 @@
 <template>
   <v-app-bar app color="transparent" dark>
     <v-img src="@/assets/logo.png" max-height="36px" max-width="36px"></v-img>
-    <v-btn text> 联系人 </v-btn>
+    <!-- <v-btn text :to="{ name: 'Friend' }"> 联系人 </v-btn>
+    <v-btn text :to="{ name: 'Request' }"> 请求 </v-btn> -->
+    <v-btn text :to="{ name: 'Home' }"> 联系人 </v-btn>
+    <v-btn text :to="{ name: 'Request' }"> 请求 </v-btn>
     <!-- <v-btn text> 会话 </v-btn> -->
 
     <v-spacer></v-spacer>

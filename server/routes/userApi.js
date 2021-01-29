@@ -35,10 +35,6 @@ router.post('/user', async (ctx) => {
 
 // 注册
 router.post('/user/register',
-    // passport.authenticate('local-signup', {
-    //     successRedirect: '/',
-    //     failureRedirect: '/login'
-    // }
     async (ctx) => {
         return passport.authenticate('local-signup', (err, user, info, status) => {
             //console.log("p2222222");
@@ -60,7 +56,7 @@ router.post('/user/register',
                     info: "注册成功"
                 }
 
-                return ctx.login(user);;
+                return ctx.login(user);
             }
         })(ctx);
     }

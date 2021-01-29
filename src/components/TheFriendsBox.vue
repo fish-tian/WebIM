@@ -3,21 +3,22 @@
   <v-card>
     <v-list subheader dense>
       <v-subheader>联系人</v-subheader>
+      
       <!-- <v-list-item> 里是单个联系人 -->
       <v-hover
         v-slot:default="{ hover }"
         v-for="friend in friends"
-        :key="friend.userId"
+        :key="friend.id"
       >
-        <v-list-item :to="{ name: 'Chat', params: { id: friend.userId } }">
+        <v-list-item :to="{ name: 'Chat', params: { id: friend.id } }">
           <v-list-item-avatar size="36px">
             <v-img
-              :src="require('@/assets/' + friend.userAvatar)"
+              :src="require('@/assets/' + 'avatar1.jpeg')"
               alt="avatar1"
             />
           </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title> {{ friend.username }} </v-list-item-title>
+            <v-list-item-title> {{ friend.user_name }} </v-list-item-title>
           </v-list-item-content>
 
           <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay>
@@ -46,12 +47,13 @@ export default {
     if(this.$cookies.get('koa.sess')) {
       console.log("TheFriendsBox get koa.sess------------");
       axios
-        .get("/api/user/testGetFriends")
+        .get("/api/friend/getAll")
         .then((res) => {
           if (res.data.success) {
-            store.friends = res.data.friends;
+            store.friends = res.data.info;
             //this.localFriends = res.data.friends;
-            this.friends = res.data.friends;
+            this.friends = res.data.info;
+            console.log(this.friends);
           } else {
             store.friends = null;
           }

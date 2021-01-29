@@ -73,7 +73,7 @@ passport.use('local-signup', new LocalStrategy(
 
 // 登录
 passport.use('local-signin', new LocalStrategy((username, password, done) => {
-    console.log('passport local-signin-----------------');
+    //console.log('passport local-signin-----------------');
     var isValidPassword = function (userpass, psword) {
         return bcrypt.compareSync(psword, userpass);
     };

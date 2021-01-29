@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 //import Login from '../views/Login.vue'
+// import Friend from '../components/TheFriendsBox'
 
 Vue.use(VueRouter)
 
@@ -14,7 +15,21 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    components: {
+      "default": Home,
+      "friend": () => import(/* webpackChunkName: "friend" */ '../components/TheFriendsBox.vue'),
+      //"request": () => import(/* webpackChunkName: "login" */ '../components/TheRequestBox.vue')
+      // "friend": () => import(/* webpackChunkName: "friend" */ '../components/TheFriendsBox.vue'),
+      // "request": () => import(/* webpackChunkName: "login" */ '../components/TheRequestBox.vue')
+    }
+  },
+  {
+    path: '/request',
+    name: 'Request',
+    components: {
+      //"default": Home,
+      "request": () => import(/* webpackChunkName: "login" */ '../components/TheRequestBox.vue')
+    }
   },
   {
     path: '/about',

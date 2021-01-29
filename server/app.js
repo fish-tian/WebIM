@@ -26,7 +26,7 @@ const CONFIG = {
 app.use(session(CONFIG, app));
 
 // bodyParser 不加这个无法读取 request body 的 json
-var bodyParser = require('koa-body-parser');
+var bodyParser = require('koa-bodyparser');
 app.use(bodyParser());
 
 // koa-passport
@@ -38,8 +38,10 @@ app.use(passport.session());
 // 路由
 // app.use(users.routes(), users.allowedMethods());
 // 引入路由模块
-var api = require('./routes/api');
-app.use(api.routes(), api.allowedMethods());
+var userApi = require('./routes/userApi');
+var friendApi = require('./routes/friendApi');
+app.use(userApi.routes(), userApi.allowedMethods());
+app.use(friendApi.routes(), friendApi.allowedMethods());
 //var index = require('./routes/index');
 //app.use(index.routes(), index.allowedMethods());
 

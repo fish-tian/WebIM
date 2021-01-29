@@ -6,6 +6,15 @@
   <v-row>
     <v-col>
       <TheFriendsBox />
+      <!-- <router-view/> -->
+      <!-- <router-view name="friend"/> -->
+      <!-- <router-view name="request"/> -->
+    </v-col>
+    <v-col>
+      <TheRequestBox />
+      <!-- <router-view/> -->
+      <!-- <router-view name="friend"/> -->
+      <!-- <router-view name="request"/> -->
     </v-col>
 
     <v-spacer></v-spacer>
@@ -18,15 +27,17 @@
 </template>
 
 <script>
-import TheFriendsBox from "@/components/TheFriendsBox.vue"
-import TheChatBox from "@/components/TheChatBox.vue"
-import TheNavigation from '@/components/TheNavigation';
+import TheFriendsBox from "@/components/TheFriendsBox"
+import TheChatBox from "@/components/TheChatBox"
+import TheNavigation from '@/components/TheNavigation'
+import TheRequestBox from "@/components/TheRequestBox"
 export default {
   name: "Home",
   components: {
     TheNavigation,
     TheChatBox,
     TheFriendsBox,
+    TheRequestBox
   },
 };
 </script>
