@@ -31,6 +31,7 @@ router.get('/friend/getAll', async (ctx) => {
     }
 });
 
+// 添加好友
 router.post('/friend/addFriend', async (ctx) => {
     if(ctx.isAuthenticated()) {
         console.log("ctx.request.body");
@@ -47,6 +48,22 @@ router.post('/friend/addFriend', async (ctx) => {
         ctx.throw(401);
     }
 });
+
+// 获取所有未处理好友请求
+router.get('/friend/getAllRequests', async (ctx) => {
+    if(ctx.isAuthenticated()) {
+        const res = await FriendController.getAllRequests(ctx);
+        console.log(res);
+        ctx.body = res;
+    } else {
+        // 无法认证
+        ctx.body = {
+            success: false,
+            info: "获取好友请求失败"
+        };
+        ctx.throw(401);
+    }
+})
 
 // 将该router暴露出去
 module.exports = router;

@@ -45,7 +45,6 @@ export default {
   mounted() {
     // 如果 cookie 中有 session，就请求获取好友列表
     if(this.$cookies.get('koa.sess')) {
-      console.log("TheFriendsBox get koa.sess------------");
       axios
         .get("/api/friend/getAll")
         .then((res) => {

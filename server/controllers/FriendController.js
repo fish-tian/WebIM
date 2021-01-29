@@ -124,12 +124,22 @@ const addFriend = async function (ctx) {
 }
 
 // 获取所有未处理好友请求
-const getAllRequest = async function (ctx) {
+const getAllRequests = async function (ctx) {
     const user = ctx.state.user;
-    
+    const requests = Request.findAll({
+        raw: true,
+        where:{
+            [Op.and]: [
+                { uid2: user.id }, 
+                { state: 0 },
+            ],
+        }
+    });
+    return requests;
 }
 
 module.exports = {
     getAllFriends,
     addFriend,
+    getAllRequests,
 }

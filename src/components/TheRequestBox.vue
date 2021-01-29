@@ -18,18 +18,40 @@
           <v-btn color="primary" @click="addFriend"> 添加好友 </v-btn>
         </v-list-item-action>
       </v-list-item>
+
+      <!-- <v-list-item> 里是单个请求 -->
+      <v-hover
+        v-slot:default="{ hover }"
+        v-for="request in requests"
+        :key="request.rid"
+      >
+        <v-list-item>
+          <v-list-item-avatar size="36px">
+            <v-img
+              :src="require('@/assets/' + 'avatar1.jpeg')"
+              alt="avatar1"
+            />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title> {{ request.uid1 }} </v-list-item-title>
+          </v-list-item-content>
+
+          <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay>
+        </v-list-item>
+      </v-hover>
     </v-list>
   </v-card>
 </template>
 
 <script>
-// import store from "@/store.js";
+import store from "@/store.js";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
 export default {
   data() {
     return {
+      requests: "",
       alert: false,
       alertMessage: "",
       alertType: "",
@@ -37,8 +59,28 @@ export default {
     };
   },
   computed: {},
-  mounted() {},
+  mounted() {
+    // 如果 cookie 中有 session，就请求获取所有好友请求
+    if (this.$cookies.get("koa.sess")) {
+      axios
+        .get("/api/friend/getAllRequests")
+        .then((res) => {
+          if (res.data.success) {
+            store.requests = res.data.info;
+            //this.localFriends = res.data.friends;
+            this.requests = res.data.info;
+            console.log(this.requests);
+          } else {
+            store.requests = null;
+          }
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    }
+  },
   methods: {
+    //显示提示
     showAlert(alertMessage, alertType) {
       this.alert = true;
       this.alertMessage = alertMessage;
@@ -48,9 +90,9 @@ export default {
         this.alert = false;
       }, 3000);
     },
-    // 简单进行隐藏
+    // 添加好友
     addFriend() {
-      let data = {friendName: this.friendName};
+      let data = { friendName: this.friendName };
       axios
         .post("/api/friend/addFriend", data)
         .then((res) => {

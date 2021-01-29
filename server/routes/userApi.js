@@ -17,7 +17,7 @@ router.post('/user', async (ctx) => {
         if (!user) {
             return ctx.body = {
                 success: false,
-                info: "登录失败"
+                info: "用户名或密码错误"
             };
         } else {
             /* Note that when using a custom callback,

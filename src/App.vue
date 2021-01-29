@@ -3,9 +3,9 @@
     <span class="bg"></span>
     <v-app>
       <v-main>
-        <Home/>
+        <!-- <Home/> -->
         <!-- 在主页和login页面切换 -->
-        <!-- <router-view :key="$route.path" /> -->
+        <router-view :key="$route.path" />
       </v-main>
     </v-app>
   </div>
@@ -13,13 +13,13 @@
 
 <script>
 //import TheNavigation from '@/components/TheNavigation';
-import Home from './views/Home'
+//import Home from './views/Home'
 export default {
   name: "App",
   components: {
     //TheNavigation
     // Login
-    Home
+    //Home
   },
 
   data: () => ({
