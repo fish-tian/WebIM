@@ -123,9 +123,10 @@ const addFriend = async function (ctx) {
     }
 }
 
-// 获取好友请求
+// 获取所有未处理好友请求
 const getAllRequest = async function (ctx) {
     const user = ctx.state.user;
+    
 }
 
 module.exports = {
