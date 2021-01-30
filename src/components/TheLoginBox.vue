@@ -137,7 +137,7 @@ export default {
             this.showAlert("登录成功，正在跳转至主页！", "success");
             setTimeout(() => {
               this.$router.push({ name: "Home" }); // 进入主页
-            }, 3000);
+            }, 1000);
           } else {
             this.showAlert(res.data.info, "error"); // 登录失败，显示提示语
           }
