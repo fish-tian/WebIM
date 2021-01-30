@@ -38,11 +38,11 @@
           </v-list-item-content>
 
             <v-list-item-action>
-          <v-btn color="primary" @click="acceptRequest"> 接受 </v-btn>
+          <v-btn color="primary" @click="acceptRequest(request.rid,request.uid1,request.uid2)"> 接受 </v-btn>
         </v-list-item-action>
         
         <v-list-item-action>
-          <v-btn color="error" @click="rejectRequest "> 拒绝 </v-btn>
+          <v-btn color="error" @click="rejectRequest(request.rid) "> 拒绝 </v-btn>
         </v-list-item-action>
           <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
         </v-list-item>
@@ -64,6 +64,9 @@ export default {
       alertMessage: "",
       alertType: "",
       friendName: "",
+      rid: "",
+      uid1:"",
+      uid2:""
     };
   },
   computed: {},
@@ -107,6 +110,7 @@ export default {
         .then((res) => {
           if (res.data.success) {
             this.showAlert("好友请求发送成功！", "success");
+            location.reload();
           } else {
             this.showAlert(res.data.info, "error"); // 注销失败，显示提示语
             // console.log(res.data.info);
@@ -119,12 +123,46 @@ export default {
         });
     },
     // 接受请求
-    acceptRequest() {
-        // this.showAlert("接受请求！", "success");
+    acceptRequest(rid,uid1,uid2) {
+      
+      let data = { rid ,uid1,uid2};
+      axios
+        .post("/api/friend/passRequest", data)
+        .then((res) => {
+          if (res.data.success) {
+            this.showAlert("同意好友请求！", "success");
+            location.reload();
+
+          } else {
+            this.showAlert(res.data.info, "error"); // 注销失败，显示提示语
+            // console.log(res.data.info);
+          }
+        })
+        .catch((err) => {
+          this.showAlert("请求错误！", "error");
+          //this.showAlert(err, "error");
+          console.log(err);
+        });
     },
     // 拒绝请求
-    rejectRequest() {
-        // this.showAlert("拒绝请求！", "success");
+    rejectRequest(rid) {
+       let data = { rid: rid };
+      axios
+        .post("/api/friend/rejectRequest", data)
+        .then((res) => {
+          if (res.data.success) {
+            this.showAlert("拒绝好友请求！", "sucess");
+            location.reload();
+          } else {
+            this.showAlert(res.data.info, "error"); 
+            // console.log(res.data.info);
+          }
+        })
+        .catch((err) => {
+          this.showAlert("请求错误！", "error");
+          //this.showAlert(err, "error");
+          console.log(err);
+        });
     }
   },
 };

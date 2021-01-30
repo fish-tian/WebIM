@@ -5,6 +5,21 @@ var WebIm = require('../config/db.js');
 var Friend = require('../models/friend.js')(WebIm, Sequelize);
 var User = require('../models/user.js')(WebIm, Sequelize);
 var Request = require('../models/request.js')(WebIm, Sequelize);
+//删除要用到fid，所以需要好友列表
+const getAllFriendsList = async function (ctx) {
+    //console.log(ctx.state.user);
+    let user = ctx.state.user;
+    let rawFriends = await Friend.findAll({
+        raw: true,  // 使sequlize只返回数据
+        where: {
+            [Op.or]: [{ uid1: user.id }, { uid2: user.id }],
+        }
+    });
+     console.log("rawFriends1-------------------");
+     console.log(rawFriends);
+     return rawFriends;
+
+}
 
 const getAllFriends = async function (ctx) {
     //console.log(ctx.state.user);
@@ -15,8 +30,7 @@ const getAllFriends = async function (ctx) {
             [Op.or]: [{ uid1: user.id }, { uid2: user.id }],
         }
     });
-    // console.log("rawFriends-------------------");
-    // console.log(rawFriends);
+     
 
     // 使用foreach会有错误，不知道为什么
     // rawFriends.forEach(async (rawFriend, index, array) => {
@@ -83,14 +97,16 @@ const addFriend = async function (ctx) {
             [Op.and]: [{ uid1: user.id }, { uid2: friend.id }],
         }
     });
+    let isFriend2 = await Friend.findOne({
+        where:{
+            [Op.and]: [{ uid1: friend.id }, { uid2: user.id }],
+        }
+    });
+    console.log("py?"+isFriend)
+    console.log(user.id+" ")
     // 两人不是好友
-    if(isFriend === null) {
-        // 先不写
-        // 对方已经还有一条好友请求没处理
-        // const isRequested = await Request.findOne({
-
-        // });
-
+    if(isFriend === null&& isFriend2===null) {
+       
         // 创建一条未处理的好友请求
         const res = await Request.create({
             uid1: user.id,
@@ -122,6 +138,62 @@ const addFriend = async function (ctx) {
         }
     }
 }
+//pass
+const passRequest = async function (ctx) {
+    let rid=ctx.request.body.rid//这句很重要
+    let uid1=ctx.request.body.uid1
+    let uid2=ctx.request.body.uid2
+   
+   const result = await Request.update(
+     {
+       'state':1
+     },
+     {
+       'where': { 'rid': rid}
+     }
+   )
+   console.log(uid1+uid2)
+   const result2 = await Friend.create({
+    uid1: uid1,
+    uid2: uid2,
+    date: Sequelize.literal('CURRENT_TIMESTAMP'),
+    
+})
+   console.log("sucess"+result2)
+   //return result===1
+   return result2 // 返回一个数组，更新成功的条目为1否则为0。由于只更新一个条目，所以只返回一个元素
+ }
+ //reject
+const rejectRequest = async function (ctx) {
+    let rid=ctx.request.body.rid//这句很重要
+   
+   const result = await Request.update(
+     {
+       'state':2//2代表拒绝
+     },
+     {
+       'where': { 'rid': rid}
+     }
+   )
+   console.log(result)
+   //return result===1
+   return result[0]=== 1 // 返回一个数组，更新成功的条目为1否则为0。由于只更新一个条目，所以只返回一个元素
+ }
+ //删除好友
+ const delFriend = async function (ctx) {
+    let fid=ctx.request.body.fid//这句很重要
+   console.log(fid)
+   const result = await Friend.destroy({
+    where: {
+        fid
+      }
+    }
+   
+   )
+   console.log("成功删除")
+   //return result===1
+   return result[0]=== 1 // 返回一个数组，更新成功的条目为1否则为0。由于只更新一个条目，所以只返回一个元素
+ }
 
 // 获取所有未处理好友请求
 const getAllRequests = async function (ctx) {
@@ -153,4 +225,8 @@ module.exports = {
     getAllFriends,
     addFriend,
     getAllRequests,
+    passRequest,
+    rejectRequest,
+    delFriend,
+    getAllFriendsList
 }
