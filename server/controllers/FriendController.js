@@ -104,8 +104,16 @@ const addFriend = async function (ctx) {
     });
     console.log("py?"+isFriend)
     console.log(user.id+" ")
-    // 两人不是好友
-    if(isFriend === null&& isFriend2===null) {
+
+    // 检查请求是否重复, 此处不需要检查两次, 因为好友请求是单向的(所以好友请求存储也不应该优化为uid从小到大排序后存储).
+    let requestDup = await Request.findOne({
+        where: {
+            [Op.and]: [{uid1: user.id}, {uid2: friend.id}],
+        }
+    });
+
+    // 两人不是好友并且这个好友请求未重复
+    if(isFriend === null && isFriend2 === null && requestDup === null) {
        
         // 创建一条未处理的好友请求
         const res = await Request.create({
@@ -130,11 +138,19 @@ const addFriend = async function (ctx) {
             }
         }
     }
-    // 两人是好友
+    // 两人是好友 或者 好友请求重复(此时仍然返回true, 但不向数据库插入数据了防止好友请求列表出现多个相同好友请求)
     else {
-        return {
-            success: false,
-            info: "你们已经是好友了！"
+        if (requestDup) {
+            return {
+                success: true,
+                info: "好友请求发送成功！"
+            }
+        }
+        else {
+            return {
+                success: false,
+                info: "你们已经是好友了！"
+            }
         }
     }
 }
