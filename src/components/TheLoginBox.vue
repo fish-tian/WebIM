@@ -25,6 +25,7 @@
             prepend-icon="mdi-lock-outline"
             key="password"
             v-model="password"
+            @keyup.enter="login"
           ></v-text-field>
         </v-form>
       </v-card-text>
@@ -71,6 +72,7 @@
             prepend-icon="mdi-lock-outline"
             key="password1"
             v-model="password1"
+            @keyup.enter="register"
           ></v-text-field>
         </v-form>
       </v-card-text>
