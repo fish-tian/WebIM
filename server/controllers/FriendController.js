@@ -108,7 +108,7 @@ const addFriend = async function (ctx) {
     // 检查请求是否重复, 此处不需要检查两次, 因为好友请求是单向的(所以好友请求存储也不应该优化为uid从小到大排序后存储).
     let requestDup = await Request.findOne({
         where: {
-            [Op.and]: [{uid1: user.id}, {uid2: friend.id}],
+            [Op.and]: [{uid1: user.id}, {uid2: friend.id}, {state: 0}],
         }
     });
 
