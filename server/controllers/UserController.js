@@ -51,7 +51,7 @@ const postUserAuth = async function (ctx) {
       const token = jwt.sign(userToken, secret) // 签发token
       ctx.body = {
         success: true,
-        token: token // 返回token
+        token: token // 
       }
     }
   } else {
