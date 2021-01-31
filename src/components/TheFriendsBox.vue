@@ -35,7 +35,7 @@
         <v-list-item-action>
           <v-btn icon @click="delFriend(friend.fid)">
             <v-icon color="red" >mdi-close-circle</v-icon>
-            {{friend.fid}}
+            
           </v-btn>
         </v-list-item-action>
         <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
