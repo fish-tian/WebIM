@@ -24,28 +24,30 @@
         v-slot:default="{ hover }"
         
       > -->
-        <v-list-item 
-        v-for="request in requests"
-        :key="request.rid">
-          <v-list-item-avatar size="36px">
-            <v-img
-              :src="require('@/assets/' + 'avatar1.jpeg')"
-              alt="avatar1"
-            />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title> {{ request.uid1Name }} </v-list-item-title>
-          </v-list-item-content>
+      <v-list-item v-for="request in storeState.requests" :key="request.rid">
+        <v-list-item-avatar size="36px">
+          <v-img :src="require('@/assets/' + 'avatar1.jpeg')" alt="avatar1" />
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title> {{ request.uid1Name }} </v-list-item-title>
+        </v-list-item-content>
 
-            <v-list-item-action>
-          <v-btn color="primary" @click="acceptRequest(request.rid,request.uid1,request.uid2)"> 接受 </v-btn>
-        </v-list-item-action>
-        
         <v-list-item-action>
-          <v-btn color="error" @click="rejectRequest(request.rid) "> 拒绝 </v-btn>
+          <v-btn
+            icon
+            @click="acceptRequest(request.rid, request.uid1, request.uid2)"
+          >
+            <v-icon color="green">mdi-checkbox-marked-circle</v-icon>
+          </v-btn>
         </v-list-item-action>
-          <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
-        </v-list-item>
+
+        <v-list-item-action>
+          <v-btn icon @click="rejectRequest(request.rid)">
+            <v-icon color="red">mdi-close-circle</v-icon>
+          </v-btn>
+        </v-list-item-action>
+        <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
+      </v-list-item>
       <!-- </v-hover> -->
     </v-list>
   </v-card>
@@ -59,37 +61,19 @@ axios.defaults.withCredentials = true;
 export default {
   data() {
     return {
-      requests: "",
+      storeState: store.state,
       alert: false,
       alertMessage: "",
       alertType: "",
       friendName: "",
       rid: "",
-      uid1:"",
-      uid2:""
+      uid1: "",
+      uid2: "",
     };
   },
   computed: {},
   mounted() {
-    // 如果 cookie 中有 session，就请求获取所有好友请求
-    if (this.$cookies.get("koa.sess")) {
-      axios
-        .get("/api/friend/getAllRequests")
-        .then((res) => {
-          if (res.data.success) {
-            store.requests = res.data.info;
-            //this.localFriends = res.data.friends;
-            this.requests = res.data.info;
-            console.log("this.requests--------");
-            console.log(this.requests);
-          } else {
-            store.requests = null;
-          }
-        })
-        .catch((err) => {
-          alert(err);
-        });
-    }
+    this.getAllRequests();
   },
   methods: {
     //显示提示
@@ -102,6 +86,27 @@ export default {
         this.alert = false;
       }, 3000);
     },
+    // 获取所有请求
+    getAllRequests() {
+      // 如果 cookie 中有 session，就请求获取所有好友请求
+      if (this.$cookies.get("koa.sess")) {
+        axios
+          .get("/api/friend/getAllRequests")
+          .then((res) => {
+            if (res.data.success) {
+              store.setRequests(res.data.info);
+              //this.requests = res.data.info;
+              //console.log("this.requests--------");
+              //console.log(this.requests);
+            } else {
+              store.setRequests(null);
+            }
+          })
+          .catch((err) => {
+            alert(err);
+          });
+      }
+    },
     // 添加好友
     addFriend() {
       let data = { friendName: this.friendName };
@@ -110,7 +115,8 @@ export default {
         .then((res) => {
           if (res.data.success) {
             this.showAlert("好友请求发送成功！", "success");
-            location.reload();
+            //location.reload();
+            this.getAllRequests();
           } else {
             this.showAlert(res.data.info, "error"); // 注销失败，显示提示语
             // console.log(res.data.info);
@@ -123,16 +129,15 @@ export default {
         });
     },
     // 接受请求
-    acceptRequest(rid,uid1,uid2) {
-      
-      let data = { rid ,uid1,uid2};
+    acceptRequest(rid, uid1, uid2) {
+      let data = { rid, uid1, uid2 };
       axios
         .post("/api/friend/passRequest", data)
         .then((res) => {
           if (res.data.success) {
             this.showAlert("同意好友请求！", "success");
-            location.reload();
-
+            //location.reload();
+            this.getAllRequests();
           } else {
             this.showAlert(res.data.info, "error"); // 注销失败，显示提示语
             // console.log(res.data.info);
@@ -146,15 +151,16 @@ export default {
     },
     // 拒绝请求
     rejectRequest(rid) {
-       let data = { rid: rid };
+      let data = { rid: rid };
       axios
         .post("/api/friend/rejectRequest", data)
         .then((res) => {
           if (res.data.success) {
             this.showAlert("拒绝好友请求！", "sucess");
-            location.reload();
+            //location.reload();
+            this.getAllRequests();
           } else {
-            this.showAlert(res.data.info, "error"); 
+            this.showAlert(res.data.info, "error");
             // console.log(res.data.info);
           }
         })
@@ -163,7 +169,7 @@ export default {
           //this.showAlert(err, "error");
           console.log(err);
         });
-    }
+    },
   },
 };
 </script>

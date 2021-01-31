@@ -10,7 +10,7 @@
     <v-spacer></v-spacer>
 
     <v-avatar size="36">
-      <v-img :src="require('@/assets/' + user.userAvatar)" alt="userAvatar"> </v-img>
+      <v-img :src="require('@/assets/' + 'avatar0.jpeg')" alt="userAvatar"> </v-img>
     </v-avatar>
 
     <v-btn
