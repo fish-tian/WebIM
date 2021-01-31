@@ -97,6 +97,14 @@ const addFriend = async function (ctx) {
         }
     }
 
+    // 自己添加自己
+    if (user.id === friend.id) {
+        return {
+            success: false,
+            info: "你不能添加自己为好友!"
+        }
+    }
+
     // 检查是否两者已经是好友
     let isFriend = await Friend.findOne({
         where:{
