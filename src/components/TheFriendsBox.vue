@@ -4,6 +4,7 @@
     <v-list subheader dense>
       <v-subheader>联系人</v-subheader>
       <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
+       
 
       <!-- <v-hover
         v-slot:default="{ hover }"
@@ -32,23 +33,21 @@
           </v-btn>
         </v-list-item-action>
         <v-list-item-action>
-          <v-btn icon>
-            <v-icon color="red">mdi-close-circle</v-icon>
+          <v-btn icon @click="delFriend(friend.fid)">
+            <v-icon color="red" >mdi-close-circle</v-icon>
+            {{friend.fid}}
           </v-btn>
         </v-list-item-action>
         <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
       </v-list-item>
       <!-- </v-hover> -->
-      <v-list-item v-for="list in lists" :key="list.fid">
-        <v-list-item-action>
-          <v-btn color="warning" @click="delFriend(list.fid)">
-            删除好友{{ list.fid }}
-          </v-btn>
-        </v-list-item-action>
-      </v-list-item>
+      
     </v-list>
   </v-card>
+  
 </template>
+
+
 
 <script>
 import store from "@/store.js";
