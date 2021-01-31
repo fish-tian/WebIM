@@ -6,20 +6,20 @@ var Friend = require('../models/friend.js')(WebIm, Sequelize);
 var User = require('../models/user.js')(WebIm, Sequelize);
 var Request = require('../models/request.js')(WebIm, Sequelize);
 //删除要用到fid，所以需要好友列表
-const getAllFriendsList = async function (ctx) {
-    //console.log(ctx.state.user);
-    let user = ctx.state.user;
-    let rawFriends = await Friend.findAll({
-        raw: true,  // 使sequlize只返回数据
-        where: {
-            [Op.or]: [{ uid1: user.id }, { uid2: user.id }],
-        }
-    });
-     console.log("rawFriends1-------------------");
-     console.log(rawFriends);
-     return rawFriends;
+// const getAllFriendsList = async function (ctx) {
+//     //console.log(ctx.state.user);
+//     let user = ctx.state.user;
+//     let rawFriends = await Friend.findAll({
+//         raw: true,  // 使sequlize只返回数据
+//         where: {
+//             [Op.or]: [{ uid1: user.id }, { uid2: user.id }],
+//         }
+//     });
+//      console.log("rawFriends1-------------------");
+//      console.log(rawFriends);
+//      return rawFriends;
 
-}
+// }
 
 const getAllFriends = async function (ctx) {
     //console.log(ctx.state.user);
@@ -60,14 +60,20 @@ const getAllFriends = async function (ctx) {
         let friendId = (rawFriend.uid1 == user.id) ? rawFriend.uid2 : rawFriend.uid1;
         //console.log("friendId------------------");
         //console.log(friendId);
-        let friend = await User.findOne({
+        var friend = await User.findOne({
             raw: true,
             where: {
                 id: friendId
             }
         });
-        //console.log("friends-------------------");
+       let fid="fid"
+       let fid1=rawFriends[i].fid
+       friend[fid]=fid1
+        console.log("friends-------------------");
+        console.log(friend)
+        console.log(rawFriend.fid)
         friends.push(friend);
+       
     }
     
     return friends;
@@ -245,5 +251,5 @@ module.exports = {
     passRequest,
     rejectRequest,
     delFriend,
-    getAllFriendsList
+    
 }

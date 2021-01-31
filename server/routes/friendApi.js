@@ -15,15 +15,14 @@ router.get('/friend/getAll', async (ctx) => {
     if (ctx.isAuthenticated()) {
         // 版本1
         const res = await FriendController.getAllFriends(ctx)
-        const lists= await FriendController.getAllFriendsList(ctx)
+       // const lists= await FriendController.getAllFriendsList(ctx)
         console.log("getAllFriend---------------");
         console.log(res);
-        console.log("getAllFriendList---------------");
-        console.log(lists);
+        
         ctx.body = {
             success: true,
             info: res,
-            lists:lists
+            
         };
     } else {
         // 无法认证
