@@ -213,6 +213,7 @@ const rejectRequest = async function (ctx) {
 
 // 获取所有未处理好友请求
 const getAllRequests = async function (ctx) {
+    // passport 提供支持，获取当前用户
     const user = ctx.state.user;
     const requests = await Request.findAll({
         raw: true,
