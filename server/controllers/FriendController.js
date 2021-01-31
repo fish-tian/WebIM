@@ -119,15 +119,26 @@ const addFriend = async function (ctx) {
     });
 
     // 两人不是好友并且这个好友请求未重复
-    if(isFriend === null && isFriend2 === null && requestDup === null) {
+    if(isFriend === null && isFriend2 === null) {
        
         // 创建一条未处理的好友请求
-        const res = await Request.create({
+        let res = null;
+        const requestInfo = {
             uid1: user.id,
             uid2: friend.id,
             date: Sequelize.literal('CURRENT_TIMESTAMP'),
             state: 0
-        });
+        }
+        if (requestDup === null) {
+            res = await Request.create(requestInfo);
+        } else {
+            res = await Request.update(requestInfo, {
+                where: {
+                    rid: requestDup.rid
+                }
+            });
+        }
+        
         
         // 创建请求成功
         if(res !== null) {
@@ -144,19 +155,11 @@ const addFriend = async function (ctx) {
             }
         }
     }
-    // 两人是好友 或者 好友请求重复(此时仍然返回true, 但不向数据库插入数据了防止好友请求列表出现多个相同好友请求)
+    // 两人是好友
     else {
-        if (requestDup) {
-            return {
-                success: true,
-                info: "好友请求发送成功！"
-            }
-        }
-        else {
-            return {
-                success: false,
-                info: "你们已经是好友了！"
-            }
+        return {
+            success: false,
+            info: "你们已经是好友了！"
         }
     }
 }
