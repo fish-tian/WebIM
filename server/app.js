@@ -45,4 +45,19 @@ app.use(friendApi.routes(), friendApi.allowedMethods());
 //var index = require('./routes/index');
 //app.use(index.routes(), index.allowedMethods());
 
+// 配置websocket
+var fs = require('fs');
+var server = require('http').createServer(app.callback());
+var io = require('socket.io')(server);
+// socket连接
+io.on('connection', (socket) => {
+    socket.on('chat message', (msg) => {
+        console.log('message: '+msg);
+        io.emit('chat message', msg);
+    });
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+});
+
 app.listen(3000);
