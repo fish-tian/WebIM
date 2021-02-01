@@ -19,7 +19,7 @@
 
     <v-spacer></v-spacer>
     <v-col>
-      <TheChatBox />
+      <!-- <TheChatBox /> -->
       <!-- <router-view :key="$route.path"/> -->
     </v-col>
   </v-row>
@@ -28,14 +28,15 @@
 
 <script>
 import TheFriendsBox from "@/components/TheFriendsBox"
-import TheChatBox from "@/components/TheChatBox"
+// import TheChatBox from "@/components/TheChatBox"
 import TheNavigation from '@/components/TheNavigation'
 import TheRequestBox from "@/components/TheRequestBox"
+
 export default {
   name: "Home",
   components: {
     TheNavigation,
-    TheChatBox,
+    // TheChatBox,
     TheFriendsBox,
     TheRequestBox
   },

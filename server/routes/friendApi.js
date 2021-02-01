@@ -6,6 +6,7 @@ var Op = Sequelize.Op;
 var WebIm = require('../config/db.js');
 var Friend = require('../models/friend.js')(WebIm, Sequelize);
 var User = require('../models/user.js')(WebIm, Sequelize);
+//var WebSocketController = require('../controllers/WebSocketController');
 
 // 此路由的前缀
 router.prefix('/api');
@@ -13,16 +14,17 @@ router.prefix('/api');
 // 获取所有好友
 router.get('/friend/getAll', async (ctx) => {
     if (ctx.isAuthenticated()) {
+        //WebSocketController
         // 版本1
         const res = await FriendController.getAllFriends(ctx)
-       // const lists= await FriendController.getAllFriendsList(ctx)
+        // const lists= await FriendController.getAllFriendsList(ctx)
         console.log("getAllFriend---------------");
         console.log(res);
-        
+
         ctx.body = {
             success: true,
             info: res,
-            
+
         };
     } else {
         // 无法认证
@@ -33,10 +35,9 @@ router.get('/friend/getAll', async (ctx) => {
         ctx.throw(401);
     }
 });
-
 // 添加好友
 router.post('/friend/addFriend', async (ctx) => {
-    if(ctx.isAuthenticated()) {
+    if (ctx.isAuthenticated()) {
         console.log("ctx.request.body");
         console.log(ctx.request.body);
         const res = await FriendController.addFriend(ctx);
@@ -51,11 +52,9 @@ router.post('/friend/addFriend', async (ctx) => {
         ctx.throw(401);
     }
 });
-
 // 获取所有未处理好友请求
 router.get('/friend/getAllRequests', async (ctx) => {
-    if(ctx.isAuthenticated()) {
-
+    if (ctx.isAuthenticated()) {
         const res = await FriendController.getAllRequests(ctx);
         console.log(res);
         ctx.body = {
@@ -73,18 +72,13 @@ router.get('/friend/getAllRequests', async (ctx) => {
 })
 // 同意好友请求
 router.post('/friend/passRequest', async (ctx) => {
-    
-
-    if(ctx.isAuthenticated()) {
+    if (ctx.isAuthenticated()) {
         console.log(ctx.request.body);
-        
-        
         const res = await FriendController.passRequest(ctx);
-        console.log("res"+res);
+        console.log("res" + res);
         ctx.body = {
             success: true,
             info: res,
-            
         };
     } else {
         // 无法认证
@@ -97,18 +91,13 @@ router.post('/friend/passRequest', async (ctx) => {
 })
 // 拒绝好友请求
 router.post('/friend/rejectRequest', async (ctx) => {
-    
-
-    if(ctx.isAuthenticated()) {
+    if (ctx.isAuthenticated()) {
         console.log(ctx.request.body);
-        
-        
         const res = await FriendController.rejectRequest(ctx);
         console.log(res);
         ctx.body = {
             success: true,
             info: res,
-            
         };
     } else {
         // 无法认证
@@ -118,20 +107,16 @@ router.post('/friend/rejectRequest', async (ctx) => {
         };
         ctx.throw(401);
     }
-}),
+})
 // 删除好友
 router.post('/friend/delFriend', async (ctx) => {
-    
-
-    if(ctx.isAuthenticated()) {
+    if (ctx.isAuthenticated()) {
         console.log(ctx.request.body);
-        
         const res = await FriendController.delFriend(ctx);
         console.log(res);
         ctx.body = {
             success: true,
             info: res,
-            
         };
     } else {
         // 无法认证
@@ -143,5 +128,5 @@ router.post('/friend/delFriend', async (ctx) => {
     }
 })
 
-// 将该router暴露出去
+// // 将该router暴露出去
 module.exports = router;

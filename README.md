@@ -7,6 +7,8 @@ npm install
 
 ## 项目开发：编译和热部署
 ```
+在根目录下复制.env.example，粘贴为.env，修改其中数据库的账号和密码
+
 npm run serve        // 启动vue
 node .\server\app.js // 启动node
 
