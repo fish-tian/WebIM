@@ -34,7 +34,7 @@ const getUserInfoName = async function (ctx) {
 // 登录
 const postUserAuth = async function (ctx) {
   const data = ctx.request.body; // post过来的数据存在request.body里
-  console.log(data);
+  //console.log(data);
   const userInfo = await UserService.getUserByName(data.username)
   if (userInfo != null) { // 如果查无此用户会返回null
     if (!bcrypt.compareSync(data.password, userInfo.password)) {

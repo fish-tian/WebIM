@@ -15,6 +15,10 @@
 //import TheNavigation from '@/components/TheNavigation';
 //import Home from './views/Home'
 import store from "@/store.js";
+import axios from "axios";
+// 解决跨域
+axios.defaults.withCredentials = true;
+
 export default {
   name: "App",
   components: {
@@ -27,30 +31,51 @@ export default {
       storeState: store.state,
     };
   },
-  created: {
-
-  },
   sockets: {
     connect() {
       // Fired when the socket connects.
-      
+      console.log("socket id: " + this.$socket.id);
+      store.setSocketId(this.$socket.id);
+      this.keepAlive();
     },
-
     disconnect() {
       
     },
-
-    // Fired when the server sends something on the "messageChannel" channel.
-    messageChannel(data) {
-      console.log(data);
-      this.socketMessage = data;
+    newRequest(data) {
+      console.log("-- newrequest: \n" + data);
+      store.setRequests(data);
     },
+    newFriend(data) {
+      console.log("-- newfriend: \n" + data);
+      store.setFriends(data);
+    }
+    // Fired when the server sends something on the "messageChannel" channel.
+    // messageChannel(data) {
+    //   console.log(data);
+    //   this.socketMessage = data;
+    // },
   },
   methods: {
-    pingServer() {
-      // Send the "pingServer" event to the server.
-      console.log('ping!!!!!!!!!!!');
-      this.$socket.emit('pingServer', 'PING!')
+    // 用于在刷新页面或者重新打开页面时更新用户的socket.id
+    keepAlive() {
+      let data = { socketId: this.$socket.id };
+      axios
+        .post("/api/user/keepAlive", data)
+        .then((res) => {
+          console.log(res);
+          // if (res.data.success) {
+          //   //this.showAlert("成功删除好友！", "success");
+          //   //this.getAllFriends();
+          // } else {
+          //   //this.showAlert(res.data.info, "error");
+          //   // console.log(res.data.info);
+          // }
+        })
+        .catch((err) => {
+          this.showAlert("请求错误！", "error");
+          //this.showAlert(err, "error");
+          console.log(err);
+        });
     }
   },
 };

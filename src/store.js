@@ -6,7 +6,8 @@ export default {
     },
     friends: [],
     messages: [],
-    requests: []
+    requests: [],
+    socketId: "",
   },
   setUsername(username) {
     this.state.user.username = username;
@@ -20,6 +21,9 @@ export default {
   setRequests(requests) {
     this.state.requests = requests;
   },
+  setSocketId(socketId) {
+    this.state.socketId = socketId;
+  }
   // user: {
   //   userId: 1,
   //   username: "伊丽莎白·小红",

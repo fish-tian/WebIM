@@ -136,8 +136,8 @@ export default {
         .then((res) => {
           if (res.data.success) {
             this.showAlert("同意好友请求！", "success");
-            //location.reload();
             this.getAllRequests();
+            this.getAllFriends();
           } else {
             this.showAlert(res.data.info, "error"); // 注销失败，显示提示语
             // console.log(res.data.info);
@@ -169,6 +169,27 @@ export default {
           //this.showAlert(err, "error");
           console.log(err);
         });
+    },
+    getAllFriends() {
+      // 如果 cookie 中有 session，就请求获取好友列表
+      if (this.$cookies.get("koa.sess")) {
+        axios
+          .get("/api/friend/getAll")
+          .then((res) => {
+            if (res.data.success) {
+              store.setFriends(res.data.info);
+              //this.friends = res.data.info;
+              this.lists = res.data.lists;
+              //console.log(this.friends);
+              //console.log(this.lists);
+            } else {
+              store.setFriends(null);
+            }
+          })
+          .catch((err) => {
+            alert(err);
+          });
+      }
     },
   },
 };

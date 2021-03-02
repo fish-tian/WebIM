@@ -18,8 +18,8 @@ router.get('/friend/getAll', async (ctx) => {
         // 版本1
         const res = await FriendController.getAllFriends(ctx)
         // const lists= await FriendController.getAllFriendsList(ctx)
-        console.log("getAllFriend---------------");
-        console.log(res);
+        //console.log("getAllFriend---------------");
+        //console.log(res);
 
         ctx.body = {
             success: true,
@@ -38,10 +38,10 @@ router.get('/friend/getAll', async (ctx) => {
 // 添加好友
 router.post('/friend/addFriend', async (ctx) => {
     if (ctx.isAuthenticated()) {
-        console.log("ctx.request.body");
-        console.log(ctx.request.body);
+        // console.log("ctx.request.body");
+        // console.log(ctx.request.body);
         const res = await FriendController.addFriend(ctx);
-        console.log(res);
+        // console.log(res);
         ctx.body = res;
     } else {
         // 无法认证
@@ -56,7 +56,7 @@ router.post('/friend/addFriend', async (ctx) => {
 router.get('/friend/getAllRequests', async (ctx) => {
     if (ctx.isAuthenticated()) {
         const res = await FriendController.getAllRequests(ctx);
-        console.log(res);
+        //console.log(res);
         ctx.body = {
             success: true,
             info: res
@@ -73,9 +73,9 @@ router.get('/friend/getAllRequests', async (ctx) => {
 // 同意好友请求
 router.post('/friend/passRequest', async (ctx) => {
     if (ctx.isAuthenticated()) {
-        console.log(ctx.request.body);
+        //console.log(ctx.request.body);
         const res = await FriendController.passRequest(ctx);
-        console.log("res" + res);
+        //console.log("res" + res);
         ctx.body = {
             success: true,
             info: res,
@@ -92,9 +92,9 @@ router.post('/friend/passRequest', async (ctx) => {
 // 拒绝好友请求
 router.post('/friend/rejectRequest', async (ctx) => {
     if (ctx.isAuthenticated()) {
-        console.log(ctx.request.body);
+        //console.log(ctx.request.body);
         const res = await FriendController.rejectRequest(ctx);
-        console.log(res);
+        //console.log(res);
         ctx.body = {
             success: true,
             info: res,
@@ -111,9 +111,9 @@ router.post('/friend/rejectRequest', async (ctx) => {
 // 删除好友
 router.post('/friend/delFriend', async (ctx) => {
     if (ctx.isAuthenticated()) {
-        console.log(ctx.request.body);
+        //console.log(ctx.request.body);
         const res = await FriendController.delFriend(ctx);
-        console.log(res);
+        //console.log(res);
         ctx.body = {
             success: true,
             info: res,

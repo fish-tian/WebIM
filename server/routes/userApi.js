@@ -1,6 +1,7 @@
 const passport = require('koa-passport');
 //var UserController = require('../controllers/UserController.js');
 var router = require('koa-router')();
+const RedisStore = require('koa-redis')();
 // 此路由的前缀
 router.prefix('/api');
 
@@ -24,6 +25,9 @@ router.post('/user', async (ctx) => {
                 it becomes the application's responsibility to 
                 establish a session (by calling req.login()) and send a response.
             */
+            // 更新redis
+            RedisStore.set(user.id, ctx.request.body.socketId);
+            //console.log("user id: " + user.id + " socketId:" + ctx.request.body.socketId);
             ctx.body = {
                 success: true,
                 info: "登录成功"
@@ -51,6 +55,8 @@ router.post('/user/register',
                    it becomes the application's responsibility to 
                    establish a session (by calling req.login()) and send a response.
                 */
+                // 更新redis
+                RedisStore.set(user.id, ctx.request.body.socketId);
                 ctx.body = {
                     success: true,
                     info: "注册成功"
@@ -76,6 +82,25 @@ router.get('/user/logout', async (ctx) => {
         ctx.body = {
             success: false,
             info: "注销失败"
+        };
+    }
+});
+
+// keepAlive // 用于在刷新页面或者重新打开页面时更新用户的socket.id
+router.post('/user/keepAlive', async (ctx) => {
+    if (ctx.isAuthenticated()) {
+        //console.log("ctx.request.body");
+        //console.log(ctx.request.body);
+        // 更新redis
+        RedisStore.set(ctx.state.user.id, ctx.request.body.socketId);
+        ctx.body = {
+            success: true,
+            info: "更新成功"
+        };
+    } else {
+        ctx.body = {
+            success: false,
+            info: "无需更新"
         };
     }
 });

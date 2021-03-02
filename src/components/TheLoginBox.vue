@@ -123,6 +123,7 @@ export default {
       let user = {
         username: this.username,
         password: this.password,
+        socketId: this.storeState.socketId,
       };
 
       if (this.username === "") {
@@ -186,6 +187,7 @@ export default {
         username: this.username,
         password: this.password,
         email: this.email,
+        socketId: this.storeState.socketId,
       };
 
       axios
