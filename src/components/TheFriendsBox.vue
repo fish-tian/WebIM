@@ -52,6 +52,7 @@
 <script>
 import store from "@/store.js";
 import axios from "axios";
+// 解决跨域
 axios.defaults.withCredentials = true;
 
 export default {

@@ -10,11 +10,6 @@ module.exports = {
         logLevel: "debug",
         changeOrigin: true
       },
-      // '^/socket.io': {
-      //   target: 'http://localhost:3001',
-      //   logLevel: "debug",
-      //   changeOrigin: true
-      // },
     }
   },
   // 解决 WebSocket.Server is not a constructor

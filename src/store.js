@@ -1,9 +1,15 @@
 // 使用 store 模式，暂不使用vuex
 export default {
   state: {
+    user: {
+      username: ""
+    },
     friends: [],
     messages: [],
     requests: []
+  },
+  setUsername(username) {
+    this.state.user.username = username;
   },
   setFriends(friends) {
     this.state.friends = friends;

@@ -9,17 +9,12 @@
 
     <v-spacer></v-spacer>
 
-    <v-avatar size="36">
-      <v-img :src="require('@/assets/' + 'avatar0.jpeg')" alt="userAvatar"> </v-img>
+    <v-avatar color="orange" size="36">
+      <!-- <span class="white--text headline">{{storeState.user.username}}</span> -->
+      <v-img :src="require('@/assets/' + 'avatar1.jpeg')" alt="userAvatar"> </v-img>
     </v-avatar>
-
-    <v-btn
-      target="_blank"
-      text
-      @click="logout"
-    >
-      注销
-    </v-btn>
+    {{storeState.user.username}}
+    <v-btn target="_blank" text @click="logout"> 注销 </v-btn>
   </v-app-bar>
 </template>
 
@@ -29,20 +24,21 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 
 export default {
-    data() {
-        return {
-            user: store.user,
-        }
-    },
-    methods : {
-      // 注销
-      logout() {
-        axios
+  data() {
+    return {
+      username: "",
+      storeState: store.state,
+    };
+  },
+  methods: {
+    // 注销
+    logout() {
+      axios
         .get("/api/user/logout")
         .then((res) => {
           if (res.data.success) {
             //this.showAlert("注销成功，正在跳转至登录页！", "success");
-            this.$cookies.remove('koa.sess');  // 移除session
+            this.$cookies.remove("koa.sess"); // 移除session
             setTimeout(() => {
               this.$router.push({ name: "Login" }); // 进入登录页
             }, 10);
@@ -56,7 +52,7 @@ export default {
           //this.showAlert(err, "error");
           console.log(err);
         });
-      }
-    }
-}
+    },
+  },
+};
 </script>

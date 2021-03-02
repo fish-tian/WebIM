@@ -27,6 +27,9 @@ export default {
       storeState: store.state,
     };
   },
+  created: {
+
+  },
   sockets: {
     connect() {
       // Fired when the socket connects.
@@ -61,7 +64,7 @@ export default {
   top: 0;
   left: 0;
   background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url("./assets/background3.jpg") no-repeat center center;
+    url("./assets/background1.jpg") no-repeat center center;
   background-size: cover;
   transform: scale(1.1);
 }
