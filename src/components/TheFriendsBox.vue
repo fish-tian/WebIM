@@ -4,7 +4,6 @@
     <v-list subheader dense>
       <v-subheader>联系人</v-subheader>
       <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
-       
 
       <!-- <v-hover
         v-slot:default="{ hover }"
@@ -17,10 +16,7 @@
         :key="friend.id"
       >
       -->
-      <v-list-item
-        v-for="friend in storeState.friends"
-        :key="friend.id"
-      >
+      <v-list-item v-for="friend in storeState.friends" :key="friend.id">
         <v-list-item-avatar size="36px">
           <v-img :src="require('@/assets/' + 'avatar1.jpeg')" alt="avatar1" />
         </v-list-item-avatar>
@@ -34,17 +30,14 @@
         </v-list-item-action>
         <v-list-item-action>
           <v-btn icon @click="delFriend(friend.fid)">
-            <v-icon color="red" >mdi-close-circle</v-icon>
-            
+            <v-icon color="red">mdi-close-circle</v-icon>
           </v-btn>
         </v-list-item-action>
         <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
       </v-list-item>
       <!-- </v-hover> -->
-      
     </v-list>
   </v-card>
-  
 </template>
 
 

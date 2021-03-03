@@ -2,11 +2,12 @@ const { where } = require('sequelize');
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 var WebIm = require('../config/db.js');
+const single_member = require('../models/single_member.js');
 var Friend = require('../models/friend.js')(WebIm, Sequelize);
 var User = require('../models/user.js')(WebIm, Sequelize);
 var Request = require('../models/request.js')(WebIm, Sequelize);
 var Session = require('../models/session.js')(WebIm, Sequelize);
-var Member = require('../models/member.js')(WebIm, Sequelize);
+var SingleMember = require('../models/single_member.js')(WebIm, Sequelize);
 const io = require('../socket.js').getio();
 const RedisStore = require('koa-redis')();
 
@@ -19,7 +20,6 @@ const getAllFriends = async function (ctx) {
             [Op.or]: [{ uid1: user.id }, { uid2: user.id }],
         }
     });
-
 
     // 使用foreach会有错误，不知道为什么
     // rawFriends.forEach(async (rawFriend, index, array) => {
@@ -47,17 +47,23 @@ const getAllFriends = async function (ctx) {
         let friendId = (rawFriend.uid1 == user.id) ? rawFriend.uid2 : rawFriend.uid1;
         //console.log("friendId------------------");
         //console.log(friendId);
-        var friend = await User.findOne({
+        let friend = await User.findOne({
             raw: true,
             where: {
                 id: friendId
             }
         });
-        let fid = "fid"
-        let fid1 = rawFriends[i].fid
-        friend[fid] = fid1
-        console.log("friends-------------------");
-        console.log(friend)
+        let member = await SingleMember.findOne({
+            where: {
+                uid1: friendId < user.id ? friendId : user.id,
+                uid2: friendId < user.id ? user.id : friendId,
+            }
+        });
+
+        friend.fid = rawFriends[i].fid;
+        friend.sid = member.sid;
+        //console.log("friends-------------------");
+        //console.log(friend);
         //console.log(rawFriend.fid)
         friends.push(friend);
     }
@@ -138,11 +144,11 @@ const addFriend = async function (ctx) {
         if (res !== null) {
             // WebSocket发送请求
             var socketId = await RedisStore.get(friend.id);
-            console.log(socketId);
+            //console.log(socketId);
             var fakeCtx = ctx;
             fakeCtx.state.user.id = friend.id;
             var allRequests = await this.getAllRequests(fakeCtx);
-            console.log(allRequests);
+            //console.log(allRequests);
             io.to(socketId).emit("newRequest", allRequests);
 
             return {
@@ -169,9 +175,16 @@ const addFriend = async function (ctx) {
 
 // 同意好友请求
 const passRequest = async function (ctx) {
-    let rid = ctx.request.body.rid//这句很重要
-    let uid1 = ctx.request.body.uid1
-    let uid2 = ctx.request.body.uid2
+    let rid = ctx.request.body.rid;
+    let uid1 = ctx.request.body.uid1;
+    let uid2 = ctx.request.body.uid2;
+    // 小的id作为uid1
+    if(uid1 > uid2) {
+        let temp  = uid2;
+        uid2 = uid1;
+        uid1 = temp;
+    }
+    
     // 更新好友请求为已处理状态
     const result = await Request.update(
         { 'state': 1 },
@@ -185,26 +198,30 @@ const passRequest = async function (ctx) {
     });
     // 创建一个新会话
     const newSession = await Session.create({ group: 0 });
-    // 在会话成员表中添加两行
-    const newMember1 = await Member.create({
-        sid: newSession.sid,
-        uid: uid1,
-        unread_cnt: 0,
+    // 在单聊成员表中添加一行
+    const result3 = await SingleMember.findOne({
+        where: {
+            [Op.and]: [{ uid1: uid1 }, { uid2: uid2 }],
+        }
     });
-    const newMember2 = await Member.create({
-        sid: newSession.sid,
-        uid: uid2,
-        unread_cnt: 0,
-    });
-
+    if(result3 == null) {
+        //const newSingleMember = 
+        await SingleMember.create({
+            uid1: uid1,
+            uid2: uid2,
+            sid: newSession.sid,
+            unread_cnt: 0,
+        });
+    }
+    
     // WebSocket 通知该好友
     var friendId = uid1 == ctx.state.user.id ? uid2 : uid1;
     var socketId = await RedisStore.get(friendId);
-    console.log(socketId);
+    // console.log(socketId);
     var fakeCtx = ctx;
     fakeCtx.state.user.id = friendId;
     var allFriends = await this.getAllFriends(fakeCtx);
-    console.log("friends:" + allFriends);
+    // console.log("friends:" + allFriends);
     io.to(socketId).emit("newFriend", allFriends);
 
     return result2; // 返回一个数组，更新成功的条目为1否则为0。由于只更新一个条目，所以只返回一个元素
@@ -241,16 +258,16 @@ const delFriend = async function (ctx) {
             fid
         }
     });
-    // 删除会话以及会话成员，// 暂时不实现了，有点难删
-
+    // 删除会话以及会话成员，暂时不实现
+    
     // WebSocket 通知该好友
     var friendId = friend.uid1 == ctx.state.user.id ? friend.uid2 : friend.uid1;
     var socketId = await RedisStore.get(friendId);
-    console.log("friendId:" + friendId + " socketId:" + socketId);
+    //console.log("friendId:" + friendId + " socketId:" + socketId);
     var fakeCtx = ctx;
     fakeCtx.state.user.id = friendId;
     var allFriends = await this.getAllFriends(fakeCtx);
-    console.log(allFriends);
+    //console.log(allFriends);
     io.to(socketId).emit("newFriend", allFriends);
 
     return result[0] === 1 // 返回一个数组，更新成功的条目为1否则为0。由于只更新一个条目，所以只返回一个元素
