@@ -9,7 +9,7 @@ var bcrypt = require('bcryptjs');
 // 序列化
 passport.serializeUser(
     (user, done) => {
-        console.log("-- serializeUser");
+        //console.log("-- serializeUser");
         done(null, user.id)
     }
 );
@@ -17,7 +17,7 @@ passport.serializeUser(
 // 反序列化
 passport.deserializeUser(
     (id, done) => {
-        console.log("-- deserializeUser");
+        //console.log("-- deserializeUser");
         User.findByPk(id).then((user) => {
             if (user) {
                 // 可以不使用 user.get() ，直接 user

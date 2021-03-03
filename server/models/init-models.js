@@ -1,16 +1,28 @@
 var DataTypes = require("sequelize").DataTypes;
-var _request = require("./request");
+var _member = require("./member");
 var _friend = require("./friend");
+var _group = require("./group");
+var _message = require("./message");
+var _request = require("./request");
+var _session = require("./session");
 var _user = require("./user");
 
 function initModels(sequelize) {
-  var request = _request(sequelize, DataTypes);
+  var member = _member(sequelize, DataTypes);
   var friend = _friend(sequelize, DataTypes);
+  var group = _group(sequelize, DataTypes);
+  var message = _message(sequelize, DataTypes);
+  var request = _request(sequelize, DataTypes);
+  var session = _session(sequelize, DataTypes);
   var user = _user(sequelize, DataTypes);
-
+  
   return {
-    request,
+    member,
     friend,
+    group,
+    message,
+    request,
+    session,
     user
   };
 }
