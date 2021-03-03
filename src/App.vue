@@ -49,11 +49,7 @@ export default {
       console.log("-- newfriend: \n" + data);
       store.setFriends(data);
     }
-    // Fired when the server sends something on the "messageChannel" channel.
-    // messageChannel(data) {
-    //   console.log(data);
-    //   this.socketMessage = data;
-    // },
+
   },
   methods: {
     // 用于在刷新页面或者重新打开页面时更新用户的socket.id

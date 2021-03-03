@@ -5,24 +5,10 @@ var WebIm = require('../config/db.js');
 var Friend = require('../models/friend.js')(WebIm, Sequelize);
 var User = require('../models/user.js')(WebIm, Sequelize);
 var Request = require('../models/request.js')(WebIm, Sequelize);
+var Session = require('../models/session.js')(WebIm, Sequelize);
+var Member = require('../models/member.js')(WebIm, Sequelize);
 const io = require('../socket.js').getio();
 const RedisStore = require('koa-redis')();
-
-//删除要用到fid，所以需要好友列表
-// const getAllFriendsList = async function (ctx) {
-//     //console.log(ctx.state.user);
-//     let user = ctx.state.user;
-//     let rawFriends = await Friend.findAll({
-//         raw: true,  // 使sequlize只返回数据
-//         where: {
-//             [Op.or]: [{ uid1: user.id }, { uid2: user.id }],
-//         }
-//     });
-//      console.log("rawFriends1-------------------");
-//      console.log(rawFriends);
-//      return rawFriends;
-
-// }
 
 const getAllFriends = async function (ctx) {
     //console.log(ctx.state.user);
@@ -46,7 +32,6 @@ const getAllFriends = async function (ctx) {
     //         }
     //     });
     //     friends.push(friend);
-
     //     if(index === array.length - 1) {
     //         console.log("friends-------------------");
     //         console.log(friends);
@@ -71,8 +56,8 @@ const getAllFriends = async function (ctx) {
         let fid = "fid"
         let fid1 = rawFriends[i].fid
         friend[fid] = fid1
-        //console.log("friends-------------------");
-        //console.log(friend)
+        console.log("friends-------------------");
+        console.log(friend)
         //console.log(rawFriend.fid)
         friends.push(friend);
     }
@@ -181,25 +166,35 @@ const addFriend = async function (ctx) {
         }
     }
 }
+
 // 同意好友请求
 const passRequest = async function (ctx) {
     let rid = ctx.request.body.rid//这句很重要
     let uid1 = ctx.request.body.uid1
     let uid2 = ctx.request.body.uid2
-
+    // 更新好友请求为已处理状态
     const result = await Request.update(
-        {
-            'state': 1
-        },
-        {
-            'where': { 'rid': rid }
-        }
-    )
-    //console.log(uid1 + uid2)
+        { 'state': 1 },
+        { 'where': { 'rid': rid } }
+    );
+    // 创建好友关系
     const result2 = await Friend.create({
         uid1: uid1,
         uid2: uid2,
-        date: Sequelize.literal('CURRENT_TIMESTAMP'),
+        // date: Sequelize.literal('CURRENT_TIMESTAMP'),
+    });
+    // 创建一个新会话
+    const newSession = await Session.create({ group: 0 });
+    // 在会话成员表中添加两行
+    const newMember1 = await Member.create({
+        sid: newSession.sid,
+        uid: uid1,
+        unread_cnt: 0,
+    });
+    const newMember2 = await Member.create({
+        sid: newSession.sid,
+        uid: uid2,
+        unread_cnt: 0,
     });
 
     // WebSocket 通知该好友
@@ -212,11 +207,10 @@ const passRequest = async function (ctx) {
     console.log("friends:" + allFriends);
     io.to(socketId).emit("newFriend", allFriends);
 
-    //console.log("sucess" + result2)
-    //return result===1
     return result2; // 返回一个数组，更新成功的条目为1否则为0。由于只更新一个条目，所以只返回一个元素
 }
-//reject
+
+// 拒绝好友请求
 const rejectRequest = async function (ctx) {
     let rid = ctx.request.body.rid//这句很重要
 
@@ -230,23 +224,24 @@ const rejectRequest = async function (ctx) {
     )
     //console.log(result)
     //return result===1
-    return result[0] === 1 // 返回一个数组，更新成功的条目为1否则为0。由于只更新一个条目，所以只返回一个元素
+    return result[0] === 1; // 返回一个数组，更新成功的条目为1否则为0。由于只更新一个条目，所以只返回一个元素
 }
+
 //删除好友
 const delFriend = async function (ctx) {
-    let fid = ctx.request.body.fid
-
+    let fid = ctx.request.body.fid;
     const friend = await Friend.findOne({
         where: {
             fid
         }
     });
-
+    // 删除该条好友关系
     const result = await Friend.destroy({
         where: {
             fid
         }
     });
+    // 删除会话以及会话成员，// 暂时不实现了，有点难删
 
     // WebSocket 通知该好友
     var friendId = friend.uid1 == ctx.state.user.id ? friend.uid2 : friend.uid1;
