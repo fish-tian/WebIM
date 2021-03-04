@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%; height: 100%; overflow: hidden;">
     <span class="bg"></span>
     <v-app>
       <v-main>
@@ -58,7 +58,8 @@ export default {
       axios
         .post("/api/user/keepAlive", data)
         .then((res) => {
-          console.log(res);
+          console.log("username: " + res.data.username);
+          store.setUsername(res.data.username);
           // if (res.data.success) {
           //   //this.showAlert("成功删除好友！", "success");
           //   //this.getAllFriends();
@@ -87,6 +88,7 @@ export default {
   background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
     url("./assets/background1.jpg") no-repeat center center;
   background-size: cover;
-  transform: scale(1.1);
+  transform: scale(1);
+  overflow: hidden;
 }
 </style>

@@ -1,8 +1,9 @@
 <template>
   <!-- v-card 里是联系人卡片 -->
-  <v-card>
-    <v-list subheader dense>
-      <v-subheader>联系人</v-subheader>
+  <v-card v-if="storeState.friendsOrRequest===0">
+      <v-card-text>联系人</v-card-text>
+  <v-card max-width="350px" min-width="300px" max-height="800px">
+    <v-list subheader dense >
       <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
 
       <!-- <v-hover
@@ -18,7 +19,10 @@
       -->
       <v-list-item v-for="friend in storeState.friends" :key="friend.id">
         <v-list-item-avatar size="36px">
-          <v-img :src="require('@/assets/' + 'avatar1.jpeg')" alt="avatar1" />
+          <!-- <v-img :src="require('@/assets/' + 'avatar1.jpeg')" alt="avatar1" /> -->
+        <v-avatar color="orange" size="36">
+      <span class="white--text headline">{{ friend.user_name[0] }}</span>
+    </v-avatar>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title> {{ friend.user_name }} </v-list-item-title>
@@ -38,6 +42,7 @@
       <!-- </v-hover> -->
     </v-list>
   </v-card>
+</v-card>
 </template>
 
 

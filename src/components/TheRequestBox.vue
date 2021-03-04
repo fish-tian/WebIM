@@ -1,8 +1,10 @@
 <template>
   <!-- v-card 里是请求卡片 -->
-  <v-card>
+  <!-- <v-card max-width="400px" max-height="800px"> -->
+    <v-card v-if="storeState.friendsOrRequest===1">
+      <v-card-text>好友请求</v-card-text>
+    <v-card max-width="350px" min-width="300px" max-height="800px">
     <v-list subheader dense>
-      <v-subheader> 好友请求 </v-subheader>
       <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
 
       <v-list-item>
@@ -50,6 +52,7 @@
       </v-list-item>
       <!-- </v-hover> -->
     </v-list>
+  </v-card>
   </v-card>
 </template>
 

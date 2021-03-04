@@ -93,9 +93,11 @@ router.post('/user/keepAlive', async (ctx) => {
         //console.log(ctx.request.body);
         // 更新redis
         RedisStore.set(ctx.state.user.id, ctx.request.body.socketId);
+        console.log(ctx.state.user.user_name[0]);
         ctx.body = {
             success: true,
-            info: "更新成功"
+            info: "更新成功",
+            username: ctx.state.user.user_name[0]
         };
     } else {
         ctx.body = {

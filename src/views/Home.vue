@@ -1,28 +1,31 @@
 <template>
 
-<v-container>
+<v-container fluid>
   <!-- 导航栏 -->
       <TheNavigation />
   <v-row>
+    <v-spacer></v-spacer>
     <v-col>
       <TheFriendsBox />
-      <!-- <router-view/> -->
-      <!-- <router-view name="friend"/> -->
-      <!-- <router-view name="request"/> -->
-    </v-col>
-    <v-col>
       <TheRequestBox />
       <!-- <router-view/> -->
       <!-- <router-view name="friend"/> -->
       <!-- <router-view name="request"/> -->
     </v-col>
+    <!-- <v-col> -->
+      
+      <!-- <router-view/> -->
+      <!-- <router-view name="friend"/> -->
+      <!-- <router-view name="request"/> -->
+    <!-- </v-col> -->
 
-    <v-spacer></v-spacer>
     <v-col>
       <TheChatBox />
       <!-- <router-view :key="$route.path"/> -->
     </v-col>
+    <v-spacer></v-spacer>
   </v-row>
+
 </v-container>
 </template>
 

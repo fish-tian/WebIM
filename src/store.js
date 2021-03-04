@@ -5,6 +5,7 @@ export default {
       username: ""
     },
     friends: [],
+    friendsOrRequest: 0,
     messages: [
       {
         mId: 4,
@@ -17,7 +18,7 @@ export default {
         mId: 1,
         userId: 2,
         isSender: 0,
-        content: "美女你好",
+        content: "美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好美女你好",
         timestamp: "1"
       },
       {
@@ -85,6 +86,9 @@ export default {
   },
   setFriends(friends) {
     this.state.friends = friends;
+  },
+  setFriendsOrRequest(data) {
+    this.state.friendsOrRequest = data;
   },
   setMessages(messages) {
     this.state.messages = messages;
