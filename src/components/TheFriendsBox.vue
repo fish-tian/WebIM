@@ -28,7 +28,7 @@
           <v-list-item-title> {{ friend.user_name }} </v-list-item-title>
         </v-list-item-content>
         <v-list-item-action>
-          <v-btn icon>
+          <v-btn icon @click="openChat(friend)">
             <v-icon color="green">mdi-message</v-icon>
           </v-btn>
         </v-list-item-action>
@@ -91,6 +91,30 @@ export default {
             this.getAllFriends();
           } else {
             this.showAlert(res.data.info, "error");
+            // console.log(res.data.info);
+          }
+        })
+        .catch((err) => {
+          this.showAlert("请求错误！", "error");
+          //this.showAlert(err, "error");
+          console.log(err);
+        });
+    },
+    // 点击聊天按钮
+    openChat(friend) {
+      store.setCurrFriendId(friend.id);
+
+      let data = {
+        friend: friend,
+        sid: friend.sid
+      };
+      axios
+        .post('/api/sgMessage/getAll', data)
+        .then((res) => {
+          if (res.data.success) {
+            store.setMessages(res.data.info);
+          } else {
+            // this.showAlert(res.data.info, "error");
             // console.log(res.data.info);
           }
         })

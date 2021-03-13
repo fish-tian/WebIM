@@ -31,6 +31,9 @@ export default {
       storeState: store.state,
     };
   },
+  created() {
+    this.keepAlive();
+  },
   sockets: {
     connect() {
       // Fired when the socket connects.
@@ -48,6 +51,10 @@ export default {
     newFriend(data) {
       console.log("-- newfriend: \n" + data);
       store.setFriends(data);
+    },
+    newMessage(data) {
+      console.log("-- newmessage: \n" + data);
+      store.setMessages(data);
     }
 
   },
@@ -58,8 +65,13 @@ export default {
       axios
         .post("/api/user/keepAlive", data)
         .then((res) => {
-          console.log("username: " + res.data.username);
-          store.setUsername(res.data.username);
+          if (res.data.success) {
+            store.setUsername(res.data.username);
+          } else {
+            console.log("转到login");
+            this.$router.push({ name: "Login" }); // 进入主页
+          }
+          
           // if (res.data.success) {
           //   //this.showAlert("成功删除好友！", "success");
           //   //this.getAllFriends();

@@ -4,7 +4,7 @@
     <!-- <v-btn text :to="{ name: 'Friend' }"> 联系人 </v-btn>
     <v-btn text :to="{ name: 'Request' }"> 请求 </v-btn> -->
     <v-btn text  style="font-size: 18px;" @click="showFriOrReq(0)"> 联系人 </v-btn>
-    <v-btn text  style="font-size: 18px;" @click="showFriOrReq(1)"> 请求 </v-btn>
+    <v-btn text  style="font-size: 18px;" @click="showFriOrReq(1)"> 好友请求 </v-btn>
     <!-- <v-btn text> 会话 </v-btn> -->
 
     <v-spacer></v-spacer>

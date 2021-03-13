@@ -17,11 +17,11 @@
         <!-- <v-card-text> -->
         <!-- <v-card-text class="flex-grow-1 overflow-y-auto">
           <div v-for="message in storeState.messages" :key="message.mId">
-            <div :class="{ 'd-flex flex-row-reverse': message.isSender }">
+            <div :class="{ 'd-flex flex-row-reverse': message.isMe }">
               
 
                     <v-chip
-                      :color="message.isSender ? 'primary' : ''"
+                      :color="message.isMe ? 'primary' : ''"
                       dark
                       style="height: auto; white-space: normal"
                       class="pa-4 mb-2"
@@ -54,24 +54,29 @@
           <v-list-item
             v-for="message in storeState.messages"
             :key="message.mId"
-            :class="{ 'd-flex flex-row-reverse': message.isSender }"
+            :class="{ 'd-flex flex-row-reverse': message.isMe }"
           >
-            <!-- <v-list-item-avatar size="36px" v-if="message.isSender === 0">
+            <!-- <v-list-item-avatar size="36px" v-if="message.isMe === 0">
               <v-img
                 :src="require('@/assets/' + 'avatar1.jpeg')"
                 alt="avatar1"
               />
             </v-list-item-avatar> -->
             <v-chip
-              :color="message.isSender ? 'primary' : ''"
-              style="height: auto; white-space: normal; font-size: 14px; padding: 6px"
+              :color="message.isMe ? 'primary' : ''"
+              style="
+                height: auto;
+                white-space: normal;
+                font-size: 14px;
+                padding: 6px;
+              "
               max-width="50px"
               class=""
             >
-              {{ message.content }}
+              {{ message.message }}
             </v-chip>
             <!-- <v-list-item-content
-            :class="message.isSender ? 'text-right align-self-start' : ''"
+            :class="message.isMe ? 'text-right align-self-start' : ''"
           >
             <v-chip style="height:auto;white-space: normal; font-size: 16px;" max-width="50px" class="">
               {{ message.content }}
@@ -109,6 +114,7 @@
 
 <script>
 import store from "@/store.js";
+import axios from "axios";
 
 export default {
   data() {
@@ -119,22 +125,65 @@ export default {
       message: "",
     };
   },
-  computed: {
-    // friend() {
-    //   return store.friends.find(
-    //     friend => friend.id === this.friendId
-    //   )
-    // },
-    // message() {
-    //   return store.messages.sort(
-    //     (message1, message2) => message1.timestamp - message2.timestamp
-    //   ).filter(
-    //     message => message.id === this.friendId
-    //   )
-    // }
-  },
   methods: {
-    sendMessage() {},
+    // 获取所有消息
+    getMessage() {
+      const theFriend = this.storeState.friends.find((friend) => {
+        return friend.id == this.storeState.currFriendId;
+      });
+
+      let data = {
+        friend: theFriend,
+        sid: theFriend.sid
+      };
+      axios
+        .post("/api/sgMessage/getAll", data)
+        .then((res) => {
+          if (res.data.success) {
+            store.setMessages(res.data.info);
+          } else {
+            // this.showAlert(res.data.info, "error");
+            // console.log(res.data.info);
+          }
+        })
+        .catch((err) => {
+          this.showAlert("请求错误！", "error");
+          //this.showAlert(err, "error");
+          console.log(err);
+        });
+    },
+    // 发送消息
+    sendMessage() {
+      console.log(this.message);
+
+      const theFriend = this.storeState.friends.find((friend) => {
+        return friend.id == this.storeState.currFriendId;
+      });
+      let data = {
+        message: this.message,
+        friend: theFriend,
+        sid: theFriend.sid,
+      };
+
+      this.message = "";
+
+      axios
+        .post("/api/sgMessage/sendMessage", data)
+        .then((res) => {
+          if (res.data.success) {
+            // 发送成功就获取所有消息
+            this.getMessage();
+          } else {
+            // this.showAlert(res.data.info, "error");
+            // console.log(res.data.info);
+          }
+        })
+        .catch((err) => {
+          this.showAlert("请求错误！", "error");
+          //this.showAlert(err, "error");
+          console.log(err);
+        });
+    },
   },
 };
 </script>

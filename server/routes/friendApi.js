@@ -14,12 +14,8 @@ router.prefix('/api');
 // 获取所有好友
 router.get('/friend/getAll', async (ctx) => {
     if (ctx.isAuthenticated()) {
-        //WebSocketController
-        // 版本1
-        const res = await FriendController.getAllFriends(ctx)
-        // const lists= await FriendController.getAllFriendsList(ctx)
-        //console.log("getAllFriend---------------");
-        //console.log(res);
+
+        const res = await FriendController.getAllFriends(ctx);
 
         ctx.body = {
             success: true,
