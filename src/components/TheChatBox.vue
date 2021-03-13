@@ -1,113 +1,73 @@
 <template>
   <div>
-    <v-card>
-      <v-card-text>联系人</v-card-text>
-
-      <!-- v-card 里是对话框卡片 -->
-      <v-card
-        min-width="800px"
-        max-height="380px"
-        class="overflow-y-auto fill-height"
-        outlined
-        tile
-        elevation="3"
-      >
-        <!-- <v-card-title>联系人</v-card-title> -->
-        <!-- v-list 里是对话 -->
-        <!-- <v-card-text> -->
-        <!-- <v-card-text class="flex-grow-1 overflow-y-auto">
-          <div v-for="message in storeState.messages" :key="message.mId">
-            <div :class="{ 'd-flex flex-row-reverse': message.isMe }">
-              
-
-                    <v-chip
-                      :color="message.isMe ? 'primary' : ''"
-                      dark
-                      style="height: auto; white-space: normal"
-                      class="pa-4 mb-2"
-                      v-on="on"
-                    >
-                      {{ message.content }}
-                      <sub class="ml-2" style="font-size: 0.8rem">{{
-                        message.timestamp
-                      }}</sub>
-                    </v-chip>
-
-
-
-            </div>
+    <div class="g-Ue-v0h5Oe" v-if="!storeState.currFriendId">
+      <div class="g-Ue-T-R">
+        <div>
+          <div class="g-Ue-ma">你好！</div>
+          <div class="g-Ue-zr-ma">
+            选择好友进行聊天吧！
           </div>
-        </v-card-text>
-        <v-card-text class="flex-shrink-1">
-          <v-text-field
-            label="type_a_message"
-            type="text"
-            no-details
-            outlined
-            append-outer-icon="send"
-            @keyup.enter="messages.push(messageForm)"
-            @click:append-outer="messages.push(messageForm)"
-            hide-details
-          />
-        </v-card-text> -->
-        <v-list subheader dense>
-          <v-list-item
-            v-for="message in storeState.messages"
-            :key="message.mId"
-            :class="{ 'd-flex flex-row-reverse': message.isMe }"
-          >
-            <!-- <v-list-item-avatar size="36px" v-if="message.isMe === 0">
-              <v-img
-                :src="require('@/assets/' + 'avatar1.jpeg')"
-                alt="avatar1"
-              />
-            </v-list-item-avatar> -->
-            <v-chip
-              :color="message.isMe ? 'primary' : ''"
-              style="
-                height: auto;
-                white-space: normal;
-                font-size: 14px;
-                padding: 6px;
-              "
-              max-width="50px"
-              class=""
-            >
-              {{ message.message }}
-            </v-chip>
-            <!-- <v-list-item-content
-            :class="message.isMe ? 'text-right align-self-start' : ''"
-          >
-            <v-chip style="height:auto;white-space: normal; font-size: 16px;" max-width="50px" class="">
-              {{ message.content }}
-            </v-chip>
-          </v-list-item-content> -->
-          </v-list-item>
-        </v-list>
-        <!-- </v-card-text> -->
-      </v-card>
-      <v-card>
-        <v-text-field
-          placeholder="发送信息"
-          filled
-          dense
-          style="padding: 10px; font-size: 13px"
-          @keypress.enter="sendMessage"
-          v-model="message"
+        </div>
+      </div>
+    </div>
+    <v-card v-if="storeState.currFriendId">
+      <v-card-text>聊天</v-card-text>
+      <div >
+        <!-- v-card 里是对话框卡片 -->
+        <v-card
+          min-width="800px"
+          min-height="380px"
+          max-height="380px"
+          class="overflow-y-auto fill-height"
+          outlined
+          tile
+          elevation="3"
         >
-          <template v-slot:append-outer>
-            <v-btn
-              depressed
-              tile
-              color="primary"
-              class="ma-1"
-              @click="sendMessage"
+          <v-list subheader dense>
+            <v-list-item
+              v-for="message in storeState.messages"
+              :key="message.mId"
+              :class="{ 'd-flex flex-row-reverse': message.isMe }"
             >
-              发送
-            </v-btn>
-          </template>
-        </v-text-field>
-      </v-card>
+              <v-chip
+                :color="message.isMe ? 'primary' : ''"
+                style="
+                  height: auto;
+                  white-space: normal;
+                  font-size: 14px;
+                  padding: 6px;
+                "
+                max-width="50px"
+                class=""
+              >
+                {{ message.message }}
+              </v-chip>
+            </v-list-item>
+          </v-list>
+        </v-card>
+        <v-card>
+          <v-text-field
+            placeholder="发送信息"
+            filled
+            dense
+            style="padding: 10px; font-size: 13px"
+            @keypress.enter="sendMessage"
+            v-model="message"
+          >
+            <template v-slot:append-outer>
+              <v-btn
+                depressed
+                tile
+                color="primary"
+                class="ma-1"
+                @click="sendMessage"
+              >
+                发送
+              </v-btn>
+            </template>
+          </v-text-field>
+        </v-card>
+      </div>
     </v-card>
   </div>
 </template>
@@ -134,7 +94,7 @@ export default {
 
       let data = {
         friend: theFriend,
-        sid: theFriend.sid
+        sid: theFriend.sid,
       };
       axios
         .post("/api/sgMessage/getAll", data)
@@ -191,5 +151,29 @@ export default {
 <style>
 .v-input__append-outer {
   margin: 0 !important;
+}
+.g-Ue-ma {
+  font-weight: 300;
+  font-size: 45px;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.g-Ue-zr-ma {
+  font-size: 24px;
+  font-weight: 300;
+  margin-top: 8px;
+  text-shadow: 0 2px 4px rgb(0 0 0 / 50%);
+}
+.g-Ue-v0h5Oe {
+  color: #fff;
+  display: table;
+  top: 200px;
+  min-width: "800px";
+  min-height: "380px";
+  max-height: "380px";
+}
+.g-Ue-T-R {
+  display: table-row;
 }
 </style>
