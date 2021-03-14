@@ -1,8 +1,10 @@
 <template>
   <!-- v-card 里是请求卡片 -->
-  <v-card>
+  <!-- <v-card max-width="400px" max-height="800px"> -->
+    <v-card v-if="storeState.friendsOrRequest===1">
+      <v-card-text>好友请求</v-card-text>
+    <v-card max-width="350px" min-width="300px" max-height="800px">
     <v-list subheader dense>
-      <v-subheader> 好友请求 </v-subheader>
       <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
 
       <v-list-item>
@@ -50,6 +52,7 @@
       </v-list-item>
       <!-- </v-hover> -->
     </v-list>
+  </v-card>
   </v-card>
 </template>
 
@@ -136,8 +139,8 @@ export default {
         .then((res) => {
           if (res.data.success) {
             this.showAlert("同意好友请求！", "success");
-            //location.reload();
             this.getAllRequests();
+            this.getAllFriends();
           } else {
             this.showAlert(res.data.info, "error"); // 注销失败，显示提示语
             // console.log(res.data.info);
@@ -169,6 +172,27 @@ export default {
           //this.showAlert(err, "error");
           console.log(err);
         });
+    },
+    getAllFriends() {
+      // 如果 cookie 中有 session，就请求获取好友列表
+      if (this.$cookies.get("koa.sess")) {
+        axios
+          .get("/api/friend/getAll")
+          .then((res) => {
+            if (res.data.success) {
+              store.setFriends(res.data.info);
+              //this.friends = res.data.info;
+              this.lists = res.data.lists;
+              //console.log(this.friends);
+              //console.log(this.lists);
+            } else {
+              store.setFriends(null);
+            }
+          })
+          .catch((err) => {
+            alert(err);
+          });
+      }
     },
   },
 };

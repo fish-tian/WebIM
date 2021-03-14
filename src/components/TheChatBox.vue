@@ -1,54 +1,179 @@
 <template>
   <div>
-    <!-- v-card 里是对话框卡片 -->
-    <v-card min-width="450px">
-      <!-- v-list 里是对话 -->
-      <v-list subheader dense>
-        <v-subheader> {{ friend.username }} </v-subheader>
-        <!-- <v-list-item> 里是单个信息 -->
-        <v-list-item v-for="messageItem in message" :key="messageItem.mId">
-          <v-list-item-avatar size="24px" v-if="messageItem.isSender===0">
-            <v-img :src="require('@/assets/' + 'avatar1.jpeg')" alt="avatar1" />
-          </v-list-item-avatar>
-          <v-list-item-content :class="messageItem.isSender ? 'text-right align-self-start' : ''">
-            <v-list-item-title> {{ messageItem.content }} </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-
-      <v-text-field
-        placeholder="发送信息"
-        outlined
-        dense
-        style="padding: 0px 20px; font-size: 13px"
-      ></v-text-field>
+    <div class="g-Ue-v0h5Oe" v-if="!storeState.currFriendId">
+      <div class="g-Ue-T-R">
+        <div>
+          <div class="g-Ue-ma">你好！</div>
+          <div class="g-Ue-zr-ma">
+            选择好友进行聊天吧！
+          </div>
+        </div>
+      </div>
+    </div>
+    <v-card v-if="storeState.currFriendId">
+      <v-card-text>聊天</v-card-text>
+      <div >
+        <!-- v-card 里是对话框卡片 -->
+        <v-card
+          min-width="800px"
+          min-height="380px"
+          max-height="380px"
+          class="overflow-y-auto fill-height"
+          outlined
+          tile
+          elevation="3"
+        >
+          <v-list subheader dense>
+            <v-list-item
+              v-for="message in storeState.messages"
+              :key="message.mId"
+              :class="{ 'd-flex flex-row-reverse': message.isMe }"
+            >
+              <v-chip
+                :color="message.isMe ? 'primary' : ''"
+                style="
+                  height: auto;
+                  white-space: normal;
+                  font-size: 14px;
+                  padding: 6px;
+                "
+                max-width="50px"
+                class=""
+              >
+                {{ message.message }}
+              </v-chip>
+            </v-list-item>
+          </v-list>
+        </v-card>
+        <v-card>
+          <v-text-field
+            placeholder="发送信息"
+            filled
+            dense
+            style="padding: 10px; font-size: 13px"
+            @keypress.enter="sendMessage"
+            v-model="message"
+          >
+            <template v-slot:append-outer>
+              <v-btn
+                depressed
+                tile
+                color="primary"
+                class="ma-1"
+                @click="sendMessage"
+              >
+                发送
+              </v-btn>
+            </template>
+          </v-text-field>
+        </v-card>
+      </div>
     </v-card>
   </div>
 </template>
 
 <script>
 import store from "@/store.js";
+import axios from "axios";
 
 export default {
   data() {
     return {
-      friendId: this.$route.params.id,
-      userId: store.user.id
-    }
+      // friendId: this.$route.params.id,
+      // userId: store.user.id
+      storeState: store.state,
+      message: "",
+    };
   },
-  computed: {
-    friend() {
-      return store.friends.find(
-        friend => friend.id === this.friendId
-      )
+  methods: {
+    // 获取所有消息
+    getMessage() {
+      const theFriend = this.storeState.friends.find((friend) => {
+        return friend.id == this.storeState.currFriendId;
+      });
+
+      let data = {
+        friend: theFriend,
+        sid: theFriend.sid,
+      };
+      axios
+        .post("/api/sgMessage/getAll", data)
+        .then((res) => {
+          if (res.data.success) {
+            store.setMessages(res.data.info);
+          } else {
+            // this.showAlert(res.data.info, "error");
+            // console.log(res.data.info);
+          }
+        })
+        .catch((err) => {
+          this.showAlert("请求错误！", "error");
+          //this.showAlert(err, "error");
+          console.log(err);
+        });
     },
-    message() {
-      return store.messages.sort(
-        (message1, message2) => message1.timestamp - message2.timestamp
-      ).filter(
-        message => message.id === this.friendId
-      )
-    }
-  }
-}
+    // 发送消息
+    sendMessage() {
+      console.log(this.message);
+
+      const theFriend = this.storeState.friends.find((friend) => {
+        return friend.id == this.storeState.currFriendId;
+      });
+      let data = {
+        message: this.message,
+        friend: theFriend,
+        sid: theFriend.sid,
+      };
+
+      this.message = "";
+
+      axios
+        .post("/api/sgMessage/sendMessage", data)
+        .then((res) => {
+          if (res.data.success) {
+            // 发送成功就获取所有消息
+            this.getMessage();
+          } else {
+            // this.showAlert(res.data.info, "error");
+            // console.log(res.data.info);
+          }
+        })
+        .catch((err) => {
+          this.showAlert("请求错误！", "error");
+          //this.showAlert(err, "error");
+          console.log(err);
+        });
+    },
+  },
+};
 </script>
+
+<style>
+.v-input__append-outer {
+  margin: 0 !important;
+}
+.g-Ue-ma {
+  font-weight: 300;
+  font-size: 45px;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.g-Ue-zr-ma {
+  font-size: 24px;
+  font-weight: 300;
+  margin-top: 8px;
+  text-shadow: 0 2px 4px rgb(0 0 0 / 50%);
+}
+.g-Ue-v0h5Oe {
+  color: #fff;
+  display: table;
+  top: 200px;
+  min-width: "800px";
+  min-height: "380px";
+  max-height: "380px";
+}
+.g-Ue-T-R {
+  display: table-row;
+}
+</style>

@@ -1,18 +1,36 @@
 // 使用 store 模式，暂不使用vuex
 export default {
   state: {
+    user: {
+      username: ""
+    },
     friends: [],
+    friendsOrRequest: 0,
     messages: [],
-    requests: []
+    requests: [],
+    socketId: "",
+    currFriendId: undefined,
+  },
+  setUsername(username) {
+    this.state.user.username = username;
   },
   setFriends(friends) {
     this.state.friends = friends;
+  },
+  setFriendsOrRequest(data) {
+    this.state.friendsOrRequest = data;
   },
   setMessages(messages) {
     this.state.messages = messages;
   },
   setRequests(requests) {
     this.state.requests = requests;
+  },
+  setSocketId(socketId) {
+    this.state.socketId = socketId;
+  },
+  setCurrFriendId(id) {
+    this.state.currFriendId = id;
   },
   // user: {
   //   userId: 1,
@@ -42,70 +60,70 @@ export default {
   //   {
   //     mId: 4,
   //     userId: 2,
-  //     isSender: 0,
+  //     isMe: 0,
   //     content: "在么？",
   //     timestamp: "4"
   //   },
   //   {
   //     mId: 1,
   //     userId: 2,
-  //     isSender: 0,
+  //     isMe: 0,
   //     content: "美女你好",
   //     timestamp: "1"
   //   },
   //   {
   //     mId: 2,
   //     userId: 3,
-  //     isSender: 0,
+  //     isMe: 0,
   //     content: "Hello",
   //     timestamp: "3"
   //   },
   //   {
   //     mId: 3,
   //     userId: 4,
-  //     isSender: 0,
+  //     isMe: 0,
   //     content: "很高兴认识你",
   //     timestamp: "5"
   //   },
   //   {
   //     mId: 5,
   //     userId: 2,
-  //     isSender: 1,
+  //     isMe: 1,
   //     content: "你是谁？",
   //     timestamp: "8"
   //   },
   //   {
   //     mId: 6,
   //     userId: 2,
-  //     isSender: 0,
+  //     isMe: 0,
   //     content: "我是尼古拉斯·小磊",
   //     timestamp: "11"
   //   },
   //   {
   //     mId: 8,
   //     userId: 3,
-  //     isSender: 0,
+  //     isMe: 0,
   //     content: "我是莱昂纳多·小虎",
   //     timestamp: "20"
   //   },
   //   {
   //     mId: 9,
   //     userId: 3,
-  //     isSender: 1,
+  //     isMe: 1,
   //     content: "我是伊丽莎白·小红",
   //     timestamp: "22"
   //   },
   //   {
   //     mId: 10,
   //     userId: 4,
-  //     isSender: 1,
+  //     isMe: 1,
   //     content: "我也是",
   //     timestamp: "26"
   //   },
   //   {
   //     mId: 7,
   //     userId: 3,
-  //     isSender: 1,
+  //     isMe: 1,
   //     content: "hi",
   //     timestamp: "12"
   //   }

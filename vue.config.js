@@ -11,5 +11,11 @@ module.exports = {
         changeOrigin: true
       },
     }
+  },
+  // 解决 WebSocket.Server is not a constructor
+  configureWebpack: {
+    resolve: {
+      mainFields: ['main', 'browser']
+    }
   }
 }
