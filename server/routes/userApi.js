@@ -107,41 +107,5 @@ router.post('/user/keepAlive', async (ctx) => {
     }
 });
 
-// 测试某个接口是否可以访问
-router.get('/user/testGetFriends', async (ctx) => {
-    if (ctx.isAuthenticated()) {
-        // 调用某个controller
-
-        ctx.body = {
-            success: true,
-            info: "成功",
-            friends: [
-                {
-                    userId: 2,
-                    username: "尼古拉斯·小磊",
-                    userAvatar: "avatar1.jpeg"
-                },
-                {
-                    userId: 3,
-                    username: "莱昂纳多·小虎",
-                    userAvatar: "avatar2.jpeg"
-                },
-                {
-                    userId: 4,
-                    username: "克里斯蒂安·小恒",
-                    userAvatar: "avatar3.jpeg"
-                }
-            ]
-        }
-    } else {
-        // 无法认证
-        ctx.body = {
-            success: false,
-            info: "失败"
-        }
-        ctx.throw(401);
-    }
-});
-
 // 将该router暴露出去
 module.exports = router;

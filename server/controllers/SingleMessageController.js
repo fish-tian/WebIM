@@ -13,7 +13,7 @@ const io = require('../socket.js').getio();
 const RedisStore = require('koa-redis')();
 
 // 获取 user 与 friend 的所有单聊消息
-const getAllMessages = async function(ctx) {
+const getAllMessages = async function (ctx) {
     const user = ctx.state.user;
     // const friend = ctx.request.body.friend;
     // 前端friend保存了会话ID sid
@@ -27,15 +27,15 @@ const getAllMessages = async function(ctx) {
         }
     });
 
-    for(let message of messages) {
+    for (let message of messages) {
         message.isMe = message.sender_uid == user.id ? true : false;
     }
 
     return messages;
-}
+};
 
 // 发送单聊消息
-const sendMessage = async function(ctx) {
+const sendMessage = async function (ctx) {
     const user = ctx.state.user;
     const friend = ctx.request.body.friend;
     const message = ctx.request.body.message;
@@ -57,14 +57,17 @@ const sendMessage = async function(ctx) {
     // 如果对方在线，WebSocket 即时通知该好友
     const friendId = friend.id;
     const socketId = await RedisStore.get(friendId);
-    //console.log("friendId:" + friendId + " socketId:" + socketId);
-    var fakeCtx = ctx;
-    fakeCtx.state.user.id = friendId;
-    fakeCtx.request.body.sid = sid;
-    var allMessages = await this.getAllMessages(fakeCtx);
-    //console.log(allMessages);
-    io.to(socketId).emit("newMessage", allMessages);
-}
+    if (socketId !== null) {
+        console.log(socketId);
+        //console.log("friendId:" + friendId + " socketId:" + socketId);
+        var fakeCtx = ctx;
+        fakeCtx.state.user.id = friendId;
+        fakeCtx.request.body.sid = sid;
+        var allMessages = await this.getAllMessages(fakeCtx);
+        //console.log(allMessages);
+        io.to(socketId).emit("newMessage", allMessages);
+    }
+};
 
 module.exports = {
     getAllMessages,

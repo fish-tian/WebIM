@@ -1,58 +1,58 @@
 <template>
   <!-- v-card 里是请求卡片 -->
   <!-- <v-card max-width="400px" max-height="800px"> -->
-    <v-card v-if="storeState.friendsOrRequest===1">
-      <v-card-text>好友请求</v-card-text>
-    <v-card max-width="350px" min-width="300px" max-height="800px">
-    <v-list subheader dense>
-      <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
+  <v-card v-if="storeState.friendsOrRequest === 1" max-width="350px" min-width="300px" max-height="800px">
+    <v-card-text>好友请求</v-card-text>
+    <v-card>
+      <v-list subheader dense>
+        <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
 
-      <v-list-item>
-        <v-list-item-content>
-          <v-text-field
-            label="输入对方用户名"
-            placeholder="输入对方用户名"
-            solo
-            v-model="friendName"
-          ></v-text-field>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-btn color="primary" @click="addFriend"> 添加好友 </v-btn>
-        </v-list-item-action>
-      </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-text-field
+              label="输入对方用户名"
+              placeholder="输入对方用户名"
+              solo
+              v-model="friendName"
+            ></v-text-field>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn color="primary" @click="addFriend"> 添加好友 </v-btn>
+          </v-list-item-action>
+        </v-list-item>
 
-      <!-- <v-list-item> 里是单个请求 -->
-      <!-- <v-hover
+        <!-- <v-list-item> 里是单个请求 -->
+        <!-- <v-hover
         v-slot:default="{ hover }"
         
       > -->
-      <v-list-item v-for="request in storeState.requests" :key="request.rid">
-        <v-list-item-avatar size="36px">
-          <v-img :src="require('@/assets/' + 'avatar1.jpeg')" alt="avatar1" />
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title> {{ request.uid1Name }} </v-list-item-title>
-        </v-list-item-content>
+        <v-list-item v-for="request in storeState.requests" :key="request.rid">
+          <v-list-item-avatar size="36px">
+            <v-img :src="require('@/assets/' + 'avatar1.jpeg')" alt="avatar1" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title> {{ request.uid1Name }} </v-list-item-title>
+          </v-list-item-content>
 
-        <v-list-item-action>
-          <v-btn
-            icon
-            @click="acceptRequest(request.rid, request.uid1, request.uid2)"
-          >
-            <v-icon color="green">mdi-checkbox-marked-circle</v-icon>
-          </v-btn>
-        </v-list-item-action>
+          <v-list-item-action>
+            <v-btn
+              icon
+              @click="acceptRequest(request.rid, request.uid1, request.uid2)"
+            >
+              <v-icon color="green">mdi-checkbox-marked-circle</v-icon>
+            </v-btn>
+          </v-list-item-action>
 
-        <v-list-item-action>
-          <v-btn icon @click="rejectRequest(request.rid)">
-            <v-icon color="red">mdi-close-circle</v-icon>
-          </v-btn>
-        </v-list-item-action>
-        <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
-      </v-list-item>
-      <!-- </v-hover> -->
-    </v-list>
-  </v-card>
+          <v-list-item-action>
+            <v-btn icon @click="rejectRequest(request.rid)">
+              <v-icon color="red">mdi-close-circle</v-icon>
+            </v-btn>
+          </v-list-item-action>
+          <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
+        </v-list-item>
+        <!-- </v-hover> -->
+      </v-list>
+    </v-card>
   </v-card>
 </template>
 
