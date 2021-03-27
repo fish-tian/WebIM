@@ -24,6 +24,7 @@
           elevation="3"
         >
           <v-list subheader dense>
+            <v-list-item ></v-list-item>
             <v-list-item
               v-for="message in storeState.messages"
               :key="message.mId"
@@ -82,6 +83,7 @@ export default {
       // friendId: this.$route.params.id,
       // userId: store.user.id
       storeState: store.state,
+      
       message: "",
     };
   },

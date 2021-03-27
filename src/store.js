@@ -2,11 +2,13 @@
 export default {
   state: {
     user: {
-      username: ""
+      username: "",
+      message:"",
     },
     friends: [],
     friendsOrRequest: 0,
     messages: [],
+    lastMsg:"",
     requests: [],
     socketId: "",
     currFriendId: undefined,
@@ -14,7 +16,11 @@ export default {
   setUsername(username) {
     this.state.user.username = username;
   },
+  setMessage(message) {
+    this.state.user.message = message;
+  },
   setFriends(friends) {
+    console.log(friends);
     this.state.friends = friends;
   },
   setFriendsOrRequest(data) {
@@ -22,6 +28,10 @@ export default {
   },
   setMessages(messages) {
     this.state.messages = messages;
+  },
+  setLastMsg(lastMsg) {
+    this.state.lastMsg = lastMsg;
+    //console.log("in+cangk"+this.state.lastMsg);
   },
   setRequests(requests) {
     this.state.requests = requests;

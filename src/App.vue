@@ -57,8 +57,14 @@ export default {
       store.setFriends(data);
     },
     newMessage(data) {
-      console.log("-- newmessage: \n" + data);
+      console.log("-- newmessage: \n" + data[data.length-1]["message"]);
+      console.log("out+ck");
+      store.setLastMsg(data[data.length-1]["message"]);
       store.setMessages(data);
+    },
+    lastMsg(data) {
+      console.log("-- LastMessage: \n" + data);
+      store.setlastMsg(data);
     }
   },
   methods: {
@@ -69,7 +75,9 @@ export default {
         .post("/api/user/keepAlive", data)
         .then((res) => {
           if (res.data.success) {
+          
             store.setUsername(res.data.username);
+           
           } else {
             console.log("转到login");
             this.$router.push({ name: "Login" }); // 进入主页
