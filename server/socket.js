@@ -5,7 +5,7 @@ const init = function (server) {
     io = require('socket.io')(server, {
         // 解决跨域
         cors: {
-            origin: "http://192.168.43.97:8080",    // 如果需要局域网聊天，需要设置为局域网地址
+            origin: "http://localhost:8080",    // 如果需要局域网聊天，需要设置为局域网地址
             methods: ["GET", "POST"],
             credentials: true
         }
