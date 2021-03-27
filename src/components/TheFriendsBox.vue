@@ -90,6 +90,7 @@ export default {
     // 点击聊天按钮
     openChat(friend) {
       store.setCurrFriendId(friend.id);
+      store.setCurrSId(friend.sid);
 
       let data = {
         friend: friend,

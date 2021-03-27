@@ -4,15 +4,13 @@
       <div class="g-Ue-T-R">
         <div>
           <div class="g-Ue-ma">你好！</div>
-          <div class="g-Ue-zr-ma">
-            选择好友进行聊天吧！
-          </div>
+          <div class="g-Ue-zr-ma">选择好友进行聊天吧！</div>
         </div>
       </div>
     </div>
     <v-card v-if="storeState.currFriendId">
       <v-card-text>聊天</v-card-text>
-      <div >
+      <div>
         <!-- v-card 里是对话框卡片 -->
         <v-card
           min-width="800px"
@@ -42,6 +40,28 @@
               >
                 {{ message.message }}
               </v-chip>
+            </v-list-item>
+
+            <v-list-item
+              v-for="unmessage in unfinishedMessages"
+              :key="unmessage.mid"
+              :class="{ 'd-flex flex-row-reverse': 1 }"
+            >
+              <v-chip
+                :color="1 ? 'primary' : ''"
+                style="
+                  height: auto;
+                  white-space: normal;
+                  font-size: 14px;
+                  padding: 6px;
+                "
+                max-width="50px"
+                class=""
+              >
+                {{ unmessage.message }}
+              </v-chip>
+              <v-subheader v-if="!unmessage.fail">发送中</v-subheader>
+              <v-icon v-if="unmessage.fail" color="red" @click="resendMessage(unmessage)">mdi-alert-circle</v-icon>
             </v-list-item>
           </v-list>
         </v-card>
@@ -85,6 +105,16 @@ export default {
       message: "",
     };
   },
+  computed: {
+    unfinishedMessages: function () {
+      //console.log("unfinishedMessages is:\n");
+      //console.log(this.storeState.unfinishedMessages.find(item => item.sid === this.storeState.currSId));
+      let unmessages = this.storeState.unfinishedMessages.find(
+        (item) => item.sid === this.storeState.currSId
+      );
+      return unmessages === undefined ? null : unmessages.messages;
+    },
+  },
   methods: {
     // 获取所有消息
     getMessage() {
@@ -119,28 +149,68 @@ export default {
       const theFriend = this.storeState.friends.find((friend) => {
         return friend.id == this.storeState.currFriendId;
       });
-      let data = {
+      const data = {
         message: this.message,
         friend: theFriend,
         sid: theFriend.sid,
       };
 
       this.message = "";
+      let unmessage = store.addUnfinishedMessage(data.sid, data.message);
+      console.log("unmessage is:\n");
+      console.log(unmessage);
+      axios
+        .post("/api/sgMessage/sendMessage", data)
+        .then((res) => {
+          if (res.data.success) {
+            setTimeout(() => {
+              // 发送成功就在未完成消息中清除掉
+              store.clearUnfinishedMessage(data.sid, unmessage.mid);
+              // 发送成功就获取所有消息
+              this.getMessage();
+            }, 1000);
+          } else {
+            // 将未完成消息设置为失败消息
+            store.resetUnfinishedMessage(data.sid, unmessage.mid);
+          }
+        })
+        .catch((err) => {
+          store.resetUnfinishedMessage(data.sid, unmessage.mid);
+          console.log(err);
+        });
+    },
+    // 点击红叹号，重发消息
+    resendMessage(message) {
+      console.log("mid为" + message.mid);
+
+      const theFriend = this.storeState.friends.find((friend) => {
+        return friend.id == this.storeState.currFriendId;
+      });
+      const data = {
+        message: message.message,
+        friend: theFriend,
+        sid: theFriend.sid,
+      };
+
+      store.resetUnfinishedMessage(data.sid, message.mid);
 
       axios
         .post("/api/sgMessage/sendMessage", data)
         .then((res) => {
           if (res.data.success) {
-            // 发送成功就获取所有消息
-            this.getMessage();
+            setTimeout(() => {
+              // 发送成功就在未完成消息中清除掉
+              store.clearUnfinishedMessage(data.sid, message.mid);
+              // 发送成功就获取所有消息
+              this.getMessage();
+            }, 1000);
           } else {
-            // this.showAlert(res.data.info, "error");
-            // console.log(res.data.info);
+            // 将未完成消息设置为失败消息
+            store.resetUnfinishedMessage(data.sid, message.mid);
           }
         })
         .catch((err) => {
-          this.showAlert("请求错误！", "error");
-          //this.showAlert(err, "error");
+          store.resetUnfinishedMessage(data.sid, message.mid);
           console.log(err);
         });
     },
