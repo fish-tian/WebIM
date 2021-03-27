@@ -41,8 +41,12 @@ export default {
       store.setSocketId(this.$socket.id);
       this.keepAlive();
     },
+    // 出现连接错误，重新连接
+    connect_error() {
+      this.connect();
+    },
     disconnect() {
-      
+      alert("websocket连接出现错误，请刷新页面后重试");
     },
     newRequest(data) {
       console.log("-- newrequest: \n" + data);
@@ -56,7 +60,6 @@ export default {
       console.log("-- newmessage: \n" + data);
       store.setMessages(data);
     }
-
   },
   methods: {
     // 用于在刷新页面或者重新打开页面时更新用户的socket.id

@@ -21,24 +21,6 @@ const getAllFriends = async function (ctx) {
         }
     });
 
-    // 使用foreach会有错误，不知道为什么
-    // rawFriends.forEach(async (rawFriend, index, array) => {
-    //     //console.log(rawFriend);
-    //     let friendId = (rawFriend.uid1 == user.id) ? rawFriend.uid2 : rawFriend.uid1;
-    //     //console.log(friendId);
-    //     let friend = await User.findOne({
-    //         where: {
-    //             id: friendId
-    //         }
-    //     });
-    //     friends.push(friend);
-    //     if(index === array.length - 1) {
-    //         console.log("friends-------------------");
-    //         console.log(friends);
-    //         return friends;
-    //     }
-    // });
-
     let friends = [];
     for (let i = 0; i < rawFriends.length; i++) {
         let rawFriend = rawFriends[i];
@@ -144,12 +126,12 @@ const addFriend = async function (ctx) {
         if (res !== null) {
             // WebSocket发送请求
             var socketId = await RedisStore.get(friend.id);
-            //console.log(socketId);
-            var fakeCtx = ctx;
-            fakeCtx.state.user.id = friend.id;
-            var allRequests = await this.getAllRequests(fakeCtx);
-            //console.log(allRequests);
-            io.to(socketId).emit("newRequest", allRequests);
+            if (socketId !== undefined) {
+                var fakeCtx = ctx;
+                fakeCtx.state.user.id = friend.id;
+                var allRequests = await this.getAllRequests(fakeCtx);
+                io.to(socketId).emit("newRequest", allRequests);
+            }
 
             return {
                 success: true,
@@ -179,12 +161,12 @@ const passRequest = async function (ctx) {
     let uid1 = ctx.request.body.uid1;
     let uid2 = ctx.request.body.uid2;
     // 小的id作为uid1
-    if(uid1 > uid2) {
-        let temp  = uid2;
+    if (uid1 > uid2) {
+        let temp = uid2;
         uid2 = uid1;
         uid1 = temp;
     }
-    
+
     // 更新好友请求为已处理状态
     const result = await Request.update(
         { 'state': 1 },
@@ -204,7 +186,7 @@ const passRequest = async function (ctx) {
             [Op.and]: [{ uid1: uid1 }, { uid2: uid2 }],
         }
     });
-    if(result3 == null) {
+    if (result3 == null) {
         //const newSingleMember = 
         await SingleMember.create({
             uid1: uid1,
@@ -213,7 +195,7 @@ const passRequest = async function (ctx) {
             unread_cnt: 0,
         });
     }
-    
+
     // WebSocket 通知该好友
     var friendId = uid1 == ctx.state.user.id ? uid2 : uid1;
     var socketId = await RedisStore.get(friendId);
@@ -259,7 +241,7 @@ const delFriend = async function (ctx) {
         }
     });
     // 删除会话以及会话成员，暂时不实现
-    
+
     // WebSocket 通知该好友
     var friendId = friend.uid1 == ctx.state.user.id ? friend.uid2 : friend.uid1;
     var socketId = await RedisStore.get(friendId);
