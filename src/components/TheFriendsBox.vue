@@ -59,7 +59,7 @@ export default {
       alert: false,
       alertMessage: "",
       alertType: "",
-      isShow:true,
+      //isShow:true,
     };
   },
   computed: {},
@@ -101,8 +101,10 @@ export default {
     openChat(friend) {
       store.setCurrFriendId(friend.id);
       store.setCurrSId(friend.sid);
-
-      this.isShow=false;
+    },
+    // 获取和某一个好友的聊天消息
+    getAllMessages(friend) {
+      //this.isShow=false;
       let data = {
         friend: friend,
         sid: friend.sid
@@ -135,6 +137,9 @@ export default {
             if (res.data.success) {
               console.log(res.data.info[0].message);
               store.setFriends(res.data.info);
+              for(const friend of res.data.info) {
+                this.getAllMessages(friend);
+              }
              // store.setMessage(res.data.message);
               //this.friends = res.data.info;
               this.lists = res.data.lists;

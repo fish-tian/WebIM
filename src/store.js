@@ -67,7 +67,7 @@ export default {
       mid: ++this.state.unfinishedMessages[index].mid,
       message: message,
       fail: 0    // 0，发送中； 1，发送失败
-    }
+    };
     this.state.unfinishedMessages[index].messages.push(theMessage);
     return theMessage;
   },

@@ -71,7 +71,7 @@
             placeholder="发送信息"
             filled
             dense
-            style="padding: 10px; font-size: 13px"
+            style="padding: 10px 5px 0px 10px; font-size: 13px"
             @keypress.enter="sendMessage"
             v-model="message"
           >
