@@ -113,7 +113,7 @@ export default {
         .post('/api/sgMessage/getAll', data)
         .then((res) => {
           if (res.data.success) {
-            store.setMessages(res.data.info);
+            store.setMessages(friend.sid, res.data.info);
           } else {
             // this.showAlert(res.data.info, "error");
             // console.log(res.data.info);

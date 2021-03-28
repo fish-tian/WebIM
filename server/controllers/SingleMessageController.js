@@ -81,8 +81,9 @@ const sendMessage = async function (ctx) {
         fakeCtx.state.user.id = friendId;
         fakeCtx.request.body.sid = sid;
         var allMessages = await this.getAllMessages(fakeCtx);
-        console.log("allmsg--"+allMessages.length);
-        io.to(socketId).emit("newMessage", allMessages);
+        let data = {sid: sid, messages: allMessages};
+        //console.log("allmsg--"+allMessages.length);
+        io.to(socketId).emit("newMessage", data);
     }
 };
 

@@ -9,7 +9,7 @@
       </div>
     </div>
     <v-card v-if="storeState.currFriendId">
-      <v-card-text>聊天</v-card-text>
+      <v-card-text>{{friendName}}</v-card-text>
       <div>
         <!-- v-card 里是对话框卡片 -->
         <v-card
@@ -24,7 +24,7 @@
           <v-list subheader dense>
             <v-list-item ></v-list-item>
             <v-list-item
-              v-for="message in storeState.messages"
+              v-for="message in messages"
               :key="message.mId"
               :class="{ 'd-flex flex-row-reverse': message.isMe }"
             >
@@ -108,6 +108,13 @@ export default {
     };
   },
   computed: {
+    friendName: function() {
+      return this.storeState.friends.find(item => item.id === this.storeState.currFriendId).user_name;
+    },
+    messages: function() {
+      let allMessages = this.storeState.messages.find((item) => item.sid === this.storeState.currSId);
+      return allMessages === undefined ? null : allMessages.messages;
+    },
     unfinishedMessages: function () {
       //console.log("unfinishedMessages is:\n");
       //console.log(this.storeState.unfinishedMessages.find(item => item.sid === this.storeState.currSId));
@@ -132,7 +139,9 @@ export default {
         .post("/api/sgMessage/getAll", data)
         .then((res) => {
           if (res.data.success) {
-            store.setMessages(res.data.info);
+            console.log("res.data.info:\n");
+            console.log(res.data.info);
+            store.setMessages(theFriend.sid, res.data.info);
           } else {
             // this.showAlert(res.data.info, "error");
             // console.log(res.data.info);

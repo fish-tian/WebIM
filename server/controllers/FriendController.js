@@ -21,18 +21,18 @@ const getAllFriends = async function (ctx) {
             [Op.or]: [{ uid1: user.id }, { uid2: user.id }],
         }
     });
-    
 
-    let friends = []; var lastMess=[];
-    let messReads=[];
-    let sender=[];
+
+    let friends = []; var lastMess = [];
+    let messReads = [];
+    let sender = [];
     for (let i = 0; i < rawFriends.length; i++) {
         let rawFriend = rawFriends[i];
-        
+
         let friendId = (rawFriend.uid1 == user.id) ? rawFriend.uid2 : rawFriend.uid1;
 
-       
-       
+
+
         let friend = await User.findOne({
 
             raw: true,
@@ -47,16 +47,16 @@ const getAllFriends = async function (ctx) {
             }
         });
         //查询最后一条消息以及消息读的状态
-       
-        let lastMessage=await Message.findAll({
-            attributes: ['message','read','sender_uid'],
-            order:[['date', 'DESC']],
-            limit:1,
-            raw:true,
+
+        let lastMessage = await Message.findAll({
+            attributes: ['message', 'read', 'sender_uid'],
+            order: [['date', 'DESC']],
+            limit: 1,
+            raw: true,
             where: {
-               sid:member.sid,
+                sid: member.sid,
             }
-            
+
         });
 
         console.log(lastMessage);
@@ -69,23 +69,24 @@ const getAllFriends = async function (ctx) {
         //         var allRequests = await this.getAllRequests(fakeCtx);
         //         io.to(socketId).emit("lastMeg", allRequests);
         //     }
-        
-        // }
 
-        lastMess.push(lastMessage[0]["message"]);
-        messReads.push(lastMessage[0]["read"]);
-        sender.push(lastMessage[0]["sender_uid"]);
-        friend.selfid= ctx.state.user.id;//拿到本人的ID
+        // }
+        if (lastMessage.length !== 0) {
+            lastMess.push(lastMessage[0]["message"]);
+            messReads.push(lastMessage[0]["read"]);
+            sender.push(lastMessage[0]["sender_uid"]);
+        }
+        friend.selfid = ctx.state.user.id;//拿到本人的ID
         friend.fid = rawFriends[i].fid;
         friend.sid = member.sid;
-        friend.message=lastMess[i];
-        friend.mesRead=messReads[i];
-        friend.send_uid=sender[i];
-        
-       
+        friend.message = lastMess[i];
+        friend.mesRead = messReads[i];
+        friend.send_uid = sender[i];
+
+
         friends.push(friend);
     }
-   
+
     console.log(friends);
 
     return friends;
@@ -327,5 +328,5 @@ module.exports = {
     passRequest,
     rejectRequest,
     delFriend,
-  
+
 }

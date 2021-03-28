@@ -7,8 +7,8 @@ export default {
     },
     friends: [],
     friendsOrRequest: 0,
-    messages: [],
-    unfinishedMessages: [],     // 存储暂未发送成功的消息 [{sid: xxx, messages:[], mid }, {sid: xxx, messages:[], mid }] ，mid为自增唯一标识符
+    messages: [],               // 存储和其他人的聊天消息 [{sid: xxx, messages:[] }, {sid: xxx, messages:[] }]
+    unfinishedMessages: [],     // 存储和他人暂未发送成功的消息 [{sid: xxx, messages:[], mid }, {sid: xxx, messages:[], mid }] ，mid为自增唯一标识符
     lastMsg:"",
     requests: [],
     socketId: "",
@@ -28,8 +28,16 @@ export default {
   setFriendsOrRequest(data) {
     this.state.friendsOrRequest = data;
   },
-  setMessages(messages) {
-    this.state.messages = messages;
+  setMessages(sid, messages) {
+    console.log(messages);
+    let index = this.state.messages.findIndex(item => {
+      return sid === item.sid;
+    });
+    if(index === -1) {
+      this.state.messages.push({sid: sid, messages: []});
+      index = this.state.messages.length - 1;
+    }
+    this.state.messages[index].messages = messages;
   },
   setLastMsg(lastMsg) {
     this.state.lastMsg = lastMsg;
