@@ -7,12 +7,13 @@ var Friend = require('../models/friend.js')(WebIm, Sequelize);
 var User = require('../models/user.js')(WebIm, Sequelize);
 var Request = require('../models/request.js')(WebIm, Sequelize);
 var Session = require('../models/session.js')(WebIm, Sequelize);
+var Message = require('../models/message.js')(WebIm, Sequelize);
 var SingleMember = require('../models/single_member.js')(WebIm, Sequelize);
 const io = require('../socket.js').getio();
 const RedisStore = require('koa-redis')();
 
 const getAllFriends = async function (ctx) {
-    //console.log(ctx.state.user);
+    // console.log(ctx.request.user);
     let user = ctx.state.user;
     let rawFriends = await Friend.findAll({
         raw: true,  // 使sequlize只返回数据
@@ -20,16 +21,20 @@ const getAllFriends = async function (ctx) {
             [Op.or]: [{ uid1: user.id }, { uid2: user.id }],
         }
     });
+    
 
-    let friends = [];
+    let friends = []; var lastMess=[];
+    let messReads=[];
+    let sender=[];
     for (let i = 0; i < rawFriends.length; i++) {
         let rawFriend = rawFriends[i];
-        //console.log("rawFriend------------------");
-        //console.log(rawFriend);
+        
         let friendId = (rawFriend.uid1 == user.id) ? rawFriend.uid2 : rawFriend.uid1;
-        //console.log("friendId------------------");
-        //console.log(friendId);
+
+       
+       
         let friend = await User.findOne({
+
             raw: true,
             where: {
                 id: friendId
@@ -41,14 +46,47 @@ const getAllFriends = async function (ctx) {
                 uid2: friendId < user.id ? user.id : friendId,
             }
         });
+        //查询最后一条消息以及消息读的状态
+       
+        let lastMessage=await Message.findAll({
+            attributes: ['message','read','sender_uid'],
+            order:[['date', 'DESC']],
+            limit:1,
+            raw:true,
+            where: {
+               sid:member.sid,
+            }
+            
+        });
 
+        console.log(lastMessage);
+        // if (lastMessage !== null) {
+        //     // WebSocket发送请求
+        //     var socketId = await RedisStore.get(friend.id);
+        //     if (socketId !== undefined) {
+        //         var fakeCtx = ctx;
+        //         fakeCtx.state.user.id = friend.id;
+        //         var allRequests = await this.getAllRequests(fakeCtx);
+        //         io.to(socketId).emit("lastMeg", allRequests);
+        //     }
+        
+        // }
+
+        lastMess.push(lastMessage[0]["message"]);
+        messReads.push(lastMessage[0]["read"]);
+        sender.push(lastMessage[0]["sender_uid"]);
+        friend.selfid= ctx.state.user.id;//拿到本人的ID
         friend.fid = rawFriends[i].fid;
         friend.sid = member.sid;
-        //console.log("friends-------------------");
-        //console.log(friend);
-        //console.log(rawFriend.fid)
+        friend.message=lastMess[i];
+        friend.mesRead=messReads[i];
+        friend.send_uid=sender[i];
+        
+       
         friends.push(friend);
     }
+   
+    console.log(friends);
 
     return friends;
 }
@@ -289,4 +327,5 @@ module.exports = {
     passRequest,
     rejectRequest,
     delFriend,
+  
 }

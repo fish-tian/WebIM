@@ -13,7 +13,16 @@
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title> {{ friend.user_name }} </v-list-item-title>
+
         </v-list-item-content>
+        
+           <v-tab>
+            {{friend.message}}
+            <!-- 小红点的逻辑是：如果不是自己发的，而且消息没有读。那么显示小红点 -->
+             <v-badge color="red" dot v-if="friend.mesRead===0&&friend.send_uid!==friend.selfid"> </v-badge>
+           </v-tab>
+           
+        
         <v-list-item-action>
           <v-btn icon @click="openChat(friend)">
             <v-icon color="green">mdi-message</v-icon>
@@ -26,7 +35,7 @@
         </v-list-item-action>
         <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
       </v-list-item>
-      <!-- </v-hover> -->
+
     </v-list>
   </v-card>
 </v-card>
@@ -50,6 +59,7 @@ export default {
       alert: false,
       alertMessage: "",
       alertType: "",
+      isShow:true,
     };
   },
   computed: {},
@@ -92,10 +102,13 @@ export default {
       store.setCurrFriendId(friend.id);
       store.setCurrSId(friend.sid);
 
+      this.isShow=false;
       let data = {
         friend: friend,
         sid: friend.sid
       };
+      
+      console.log(data);
       axios
         .post('/api/sgMessage/getAll', data)
         .then((res) => {
@@ -120,7 +133,9 @@ export default {
           .get("/api/friend/getAll")
           .then((res) => {
             if (res.data.success) {
+              console.log(res.data.info[0].message);
               store.setFriends(res.data.info);
+             // store.setMessage(res.data.message);
               //this.friends = res.data.info;
               this.lists = res.data.lists;
               //console.log(this.friends);
