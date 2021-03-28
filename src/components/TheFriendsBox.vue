@@ -78,7 +78,9 @@ export default {
         if(item.messages.length === 0) {
           msgHash[item.sid] = null;
           redDotHash[item.sid] = null;
+          
           isMe[item.sid] = null;
+
         } else {
           msgHash[item.sid] = item.messages[item.messages.length - 1].message;
           redDotHash[item.sid] = item.messages[item.messages.length - 1].read;
