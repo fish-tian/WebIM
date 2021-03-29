@@ -57,9 +57,9 @@ export default {
       store.setFriends(data);
     },
     newMessage(data) {
-      console.log("-- newmessage: \n" + data[data.length-1]["message"]);
+      //console.log("-- newmessage: \n" + data[data.length-1]["message"]);
       console.log("out+ck");
-      store.setLastMsg(data[data.length-1]["message"]);
+      //store.setLastMsg(data[data.length-1]["message"]);
       store.setMessages(data.sid, data.messages);
     },
     lastMsg(data) {

@@ -13,7 +13,8 @@ export default {
     requests: [],
     socketId: "",
     currFriendId: undefined,
-    currSId: undefined
+    currSId: undefined,
+    flag: undefined,
   },
   setUsername(username) {
     this.state.user.username = username;
@@ -54,6 +55,9 @@ export default {
   },
   setCurrSId(id) {
     this.state.currSId = id;
+  },
+  setFlag(id) {
+    this.state.flag = id;
   },
   addUnfinishedMessage(sid, message) {
     let index = this.state.unfinishedMessages.findIndex(item => {

@@ -118,7 +118,7 @@ export default {
       return res;
     },
     flag: function() {
-      return this.storeState.Flag;
+      return this.storeState.flag;
     },
   },
   mounted() {
@@ -156,15 +156,25 @@ export default {
         });
     },
     // 点击聊天按钮
+    //flag=1:不显示小红点,0显示.没点聊天之前是underdine
     openChat(friend) {
-      if (friend.sid !== store.state.currSId) {
-        store.setFlag(0);
-      }
+       console.log(friend.sid+"--"+store.state.currSId+"--"+store.state.flag);
+       if(store.state.currSId===undefined){
+         //点击第一个会话，不显示红点
+         store.setFlag(1);
+       }
+       else if (friend.sid !== store.state.currSId) {
+        //点击不同会话，显示红点
+          store.setFlag(0);
+          console.log("点击之后"+friend.sid+"--"+store.state.currSId+"--"+store.state.flag);
+  
+       }else{
+          store.setFlag(1);
+       }
       store.setCurrFriendId(friend.id);
       store.setCurrSId(friend.sid);
-      store.setFlag(1);
-      console.log(friend.sid + "-----------==");
-      console.log(store.state.flag);
+      //store.setFlag(1);
+     
     },
     // 获取和某一个好友的聊天消息
     getAllMessages(friend) {
