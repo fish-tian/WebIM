@@ -1,48 +1,58 @@
 <template>
   <!-- v-card 里是联系人卡片 -->
-  <v-card v-if="storeState.friendsOrRequest===0" max-width="350px" min-width="300px" max-height="800px">
-      <v-card-text>联系人</v-card-text>
-  <v-card >
-    
-    <v-list subheader dense >
-      <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
-      <v-list-item v-for="friend in storeState.friends" :key="friend.id">
-        <v-list-item-avatar size="36px">
-        <v-avatar color="orange" size="36">
-      <span class="white--text headline">{{ friend.user_name[0] }}</span>
-    </v-avatar>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title> {{ friend.user_name }} </v-list-item-title>
-          
-        </v-list-item-content>
-         
-           <v-tab>
-             {{lastmessage[0][friend.sid]}}
+  <v-card
+    v-if="storeState.friendsOrRequest === 0"
+    max-width="350px"
+    min-width="300px"
+    max-height="800px"
+  >
+    <v-card-text>联系人</v-card-text>
+    <v-card>
+      <v-list subheader dense>
+        <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
+        <v-list-item v-for="friend in storeState.friends" :key="friend.id">
+          <v-list-item-avatar size="36px">
+            <v-avatar color="orange" size="36">
+              <span class="white--text headline">{{
+                friend.user_name[0]
+              }}</span>
+            </v-avatar>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title> {{ friend.user_name }} </v-list-item-title>
+          </v-list-item-content>
+
+          <v-tab>
+            {{ lastmessage[0][friend.sid] }}
             <!-- 小红点的逻辑是：如果不是自己发的，而且消息没有读。那么显示小红点 -->
-             <v-badge color="red" dot v-if="lastmessage[1][friend.sid]===0&&lastmessage[2][friend.sid]===false&&flag!==1"> </v-badge>
-           </v-tab>
-           
-        
-        <v-list-item-action>
-          <v-btn icon @click="openChat(friend)">
-            <v-icon color="green">mdi-message</v-icon>
-          </v-btn>
-        </v-list-item-action>
-        <v-list-item-action>
-          <v-btn icon @click="delFriend(friend.fid)">
-            <v-icon color="red">mdi-close-circle</v-icon>
-          </v-btn>
-        </v-list-item-action>
-        <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
-      </v-list-item>
+            <v-badge
+              color="red"
+              dot
+              v-if="
+                lastmessage[1][friend.sid] === 0 &&
+                  lastmessage[2][friend.sid] === false &&
+                  flag !== 1
+              "
+            >
+            </v-badge>
+          </v-tab>
 
-    </v-list>
+          <v-list-item-action>
+            <v-btn icon @click="openChat(friend)">
+              <v-icon color="green">mdi-message</v-icon>
+            </v-btn>
+          </v-list-item-action>
+          <v-list-item-action>
+            <v-btn icon @click="delFriend(friend.fid)">
+              <v-icon color="red">mdi-close-circle</v-icon>
+            </v-btn>
+          </v-list-item-action>
+          <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
+        </v-list-item>
+      </v-list>
+    </v-card>
   </v-card>
-</v-card>
 </template>
-
-
 
 <script>
 import store from "@/store.js";
@@ -64,57 +74,52 @@ export default {
     };
   },
   computed: {
-    lastmessage : function() {//storeState; chuli; sid -> lastmessage ;return {};
+    lastmessage: function() {
+      //storeState; chuli; sid -> lastmessage ;return {};
       let messages = this.storeState.messages;
       let errMessages = this.storeState.unfinishedMessages;
       let msgHash = {};
-      let isMe={};
-      let redDotHash={};
-      let res=[];//第一个是msg,第二个是红点，第三个是判断是不是自己
+      let isMe = {};
+      let redDotHash = {};
+      let res = []; //第一个是msg,第二个是红点，第三个是判断是不是自己
       console.log("messages-------");
       console.log(messages);
       console.log("errmessages-------");
       //console.log(errMessages.length);//0
-      for(const item of messages) {//item代表一个会话
-        if(item.messages.length === 0) {
+      for (const item of messages) {
+        //item代表一个会话
+        if (item.messages.length === 0) {
           msgHash[item.sid] = null;
           redDotHash[item.sid] = null;
 
           isMe[item.sid] = null;
-
         } else {
           msgHash[item.sid] = item.messages[item.messages.length - 1].message;
           redDotHash[item.sid] = item.messages[item.messages.length - 1].read;
           isMe[item.sid] = item.messages[item.messages.length - 1].isMe;
-       
         }
       }
-      for(const item of  errMessages) {
-        if(item.messages.length !== 0) {
-          let dataErr=item.messages[item.messages.length - 1].date;
-          let dateMes=item.messages[item.messages.length - 1].date;
-          if(dataErr>dateMes){
-            msgHash[item.sid]=item.messages[item.messages.length - 1].message;
+      for (const item of errMessages) {
+        if (item.messages.length !== 0) {
+          let dataErr = item.messages[item.messages.length - 1].date;
+          let dateMes = item.messages[item.messages.length - 1].date;
+          if (dataErr > dateMes) {
+            msgHash[item.sid] = item.messages[item.messages.length - 1].message;
           }
         }
       }
       res.push(msgHash);
-      
-       res.push(redDotHash);
-       res.push(isMe);
-       console.log("小红点：");
-       console.log(res);
 
-       return res;
-      
-     
+      res.push(redDotHash);
+      res.push(isMe);
+      console.log("小红点：");
+      console.log(res);
+
+      return res;
     },
-    flag : function() {
-    return this.storeState.Flag;
-
-  }
-    
-
+    flag: function() {
+      return this.storeState.Flag;
+    },
   },
   mounted() {
     this.getAllFriends();
@@ -152,13 +157,13 @@ export default {
     },
     // 点击聊天按钮
     openChat(friend) {
-      if(friend.sid!==store.state.currSId){
+      if (friend.sid !== store.state.currSId) {
         store.setFlag(0);
       }
       store.setCurrFriendId(friend.id);
       store.setCurrSId(friend.sid);
       store.setFlag(1);
-      console.log(friend.sid+"-----------==");
+      console.log(friend.sid + "-----------==");
       console.log(store.state.flag);
     },
     // 获取和某一个好友的聊天消息
@@ -166,12 +171,12 @@ export default {
       //this.isShow=false;
       let data = {
         friend: friend,
-        sid: friend.sid
+        sid: friend.sid,
       };
-      
+
       console.log(data);
       axios
-        .post('/api/sgMessage/getAll', data)
+        .post("/api/sgMessage/getAll", data)
         .then((res) => {
           if (res.data.success) {
             store.setMessages(friend.sid, res.data.info);
@@ -196,10 +201,10 @@ export default {
             if (res.data.success) {
               console.log(res.data.info[0].message);
               store.setFriends(res.data.info);
-              for(const friend of res.data.info) {
+              for (const friend of res.data.info) {
                 this.getAllMessages(friend);
               }
-             // store.setMessage(res.data.message);
+              // store.setMessage(res.data.message);
               //this.friends = res.data.info;
               this.lists = res.data.lists;
               //console.log(this.friends);
