@@ -78,7 +78,7 @@ export default {
         if(item.messages.length === 0) {
           msgHash[item.sid] = null;
           redDotHash[item.sid] = null;
-          
+
           isMe[item.sid] = null;
 
         } else {
@@ -151,12 +151,14 @@ export default {
     },
     // 点击聊天按钮
     openChat(friend) {
-      if(friend.sid)
+      if(friend.sid!==store.state.currSId){
+        store.setFlag(0);
+      }
       store.setCurrFriendId(friend.id);
       store.setCurrSId(friend.sid);
       store.setFlag(1);
       console.log(friend.sid+"-----------==");
-      console.log(store.state);
+      console.log(store.state.flag);
     },
     // 获取和某一个好友的聊天消息
     getAllMessages(friend) {
