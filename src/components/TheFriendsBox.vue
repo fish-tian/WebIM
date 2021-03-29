@@ -169,6 +169,7 @@ export default {
           console.log("点击之后"+friend.sid+"--"+store.state.currSId+"--"+store.state.flag);
   
        }else{
+         
           store.setFlag(1);
        }
       store.setCurrFriendId(friend.id);
