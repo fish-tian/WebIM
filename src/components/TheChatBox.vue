@@ -1,29 +1,55 @@
 <template>
   <div>
-    <div class="g-Ue-v0h5Oe" v-if="!storeState.currFriendId">
+    <!-- <div class="g-Ue-v0h5Oe" v-if="!storeState.currFriendId">
       <div class="g-Ue-T-R">
         <div>
           <div class="g-Ue-ma">你好！</div>
           <div class="g-Ue-zr-ma">选择好友进行聊天吧！</div>
         </div>
       </div>
-    </div>
-    <v-card v-if="storeState.currFriendId">
+    </div> -->
+    <v-card v-if="!storeState.currFriendId" tile color="grey lighten-5">
+       <v-card-text> 选择好友进行聊天吧！ </v-card-text>
+      <!-- <div class="g-Ue-v0h5Oe" min-width="650px"
+          min-height="380px"
+          max-height="380px">
+      <div class="g-Ue-T-R">
+        <div>
+          <div class="g-Ue-ma">你好！</div>
+          <div class="g-Ue-zr-ma">选择好友进行聊天吧！</div>
+        </div>
+      </div>
+    </div> -->
+    <div>
+        <!-- v-card 里是对话框卡片 -->
+        <v-card
+          min-width="550px"
+          min-height="456px"
+          max-height="456px"
+          class="overflow-y-auto fill-height"
+          tile
+          color="grey lighten-5"
+        >
+
+        </v-card>
+      </div>
+    </v-card>
+    <v-card v-if="storeState.currFriendId" tile color="grey lighten-5">
       <v-card-text>{{friendName}}</v-card-text>
       <div>
         <!-- v-card 里是对话框卡片 -->
         <v-card
-          min-width="800px"
+          min-width="550px"
           min-height="380px"
           max-height="380px"
           class="overflow-y-auto fill-height"
-          outlined
           tile
-          elevation="3"
+          color="grey lighten-5"
         >
-          <v-list subheader dense>
+          <v-list subheader dense color="grey lighten-5">
             <v-list-item ></v-list-item>
-            <v-list-item
+            <v-list-item 
+            
               v-for="message in messages"
               :key="message.mId"
               :class="{ 'd-flex flex-row-reverse': message.isMe }"
@@ -34,7 +60,7 @@
                   height: auto;
                   white-space: normal;
                   font-size: 14px;
-                  padding: 6px;
+                  padding: 8px;
                 "
                 max-width="50px"
                 class=""
@@ -47,6 +73,7 @@
               v-for="unmessage in unfinishedMessages"
               :key="unmessage.mid"
               :class="{ 'd-flex flex-row-reverse': 1 }"
+              
             >
               <v-chip
                 :color="1 ? 'primary' : ''"
@@ -54,7 +81,7 @@
                   height: auto;
                   white-space: normal;
                   font-size: 14px;
-                  padding: 6px;
+                  padding: 8px;
                 "
                 max-width="50px"
                 class=""
@@ -66,7 +93,7 @@
             </v-list-item>
           </v-list>
         </v-card>
-        <v-card>
+        <v-card tile>
           <v-text-field
             placeholder="发送信息"
             filled

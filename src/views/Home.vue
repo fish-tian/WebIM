@@ -1,29 +1,25 @@
 <template>
 
-<v-container fluid>
+<v-container fluid > 
   <!-- 导航栏 -->
-      <TheNavigation />
+
   <v-row>
     <v-spacer></v-spacer>
-    <v-col>
+    <v-col class="d-flex">
+      <TheNavigation />
       <TheFriendsBox />
       <TheRequestBox />
+      <TheChatBox />
       <!-- <router-view/> -->
       <!-- <router-view name="friend"/> -->
       <!-- <router-view name="request"/> -->
     </v-col>
     <!-- <v-col> -->
-      
+      <v-col></v-col>
       <!-- <router-view/> -->
       <!-- <router-view name="friend"/> -->
       <!-- <router-view name="request"/> -->
     <!-- </v-col> -->
-
-    <v-col>
-      <TheChatBox />
-      <!-- <router-view :key="$route.path"/> -->
-    </v-col>
-    <v-spacer></v-spacer>
   </v-row>
 
 </v-container>

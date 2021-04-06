@@ -1,24 +1,55 @@
 <template>
   <!-- v-card 里是请求卡片 -->
   <!-- <v-card max-width="400px" max-height="800px"> -->
-  <v-card v-if="storeState.friendsOrRequest === 1" max-width="350px" min-width="300px" max-height="800px">
+  <v-card
+    v-if="storeState.friendsOrRequest === 1"
+    max-width="250px"
+    min-width="250px"
+    max-height="800px"
+    tile
+  >
     <v-card-text>好友请求</v-card-text>
-    <v-card>
+    <v-card
+      tile
+      max-width="250px"
+      min-width="250px"
+      min-height="456px"
+      max-height="800px"
+    >
       <v-list subheader dense>
         <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
 
         <v-list-item>
-          <v-list-item-content>
+          <!-- <v-list-item-content>
             <v-text-field
-              label="输入对方用户名"
               placeholder="输入对方用户名"
-              solo
+              outlined
+            clearable
+            dense
               v-model="friendName"
             ></v-text-field>
           </v-list-item-content>
-          <v-list-item-action>
-            <v-btn color="primary" @click="addFriend"> 添加好友 </v-btn>
-          </v-list-item-action>
+          <v-list-item-action style="padding: 0px, 0px, 30px, 0px ">
+            <v-btn
+              icon
+              @click="addFriend"
+            >
+              <v-icon>mdi-plus-box</v-icon>
+            </v-btn>
+          </v-list-item-action> -->
+          <v-text-field
+            placeholder="输入对方用户名"
+            outlined
+            clearable
+            dense
+            v-model="friendName"
+          >
+            <template v-slot:append-outer>
+              <v-btn icon @click="addFriend">
+                <v-icon>mdi-plus-box</v-icon>
+              </v-btn>
+            </template>
+          </v-text-field>
         </v-list-item>
 
         <!-- <v-list-item> 里是单个请求 -->

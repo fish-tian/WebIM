@@ -1,38 +1,55 @@
 <template>
   <!-- v-card 里是联系人卡片 -->
-  <v-card
-    v-if="storeState.friendsOrRequest === 0"
-    max-width="350px"
-    min-width="300px"
-    max-height="800px"
-  >
-    <v-card-text>联系人</v-card-text>
+  <v-card v-if="storeState.friendsOrRequest === 0" tile>
+    <v-card-text>会话</v-card-text>
 
-    <v-card>
-      <v-list subheader dense>
+    <v-card tile>
+      <v-list
+        subheader
+        dense
+        max-width="250px"
+        min-width="250px"
+        min-height="456px"
+        max-height="800px"
+      >
         <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
-        <v-list-item v-for="friend in storeState.friends" :key="friend.id">
-          <v-list-item-avatar>
-
-            <!-- 小红点的逻辑是：如果不是自己发的，而且消息没有读。那么显示小红点    :value="dotshow"-->
-             <v-badge left dot bottom bordered overlap color="red" offset-x="15" offset-y="10" :value="lastmessage[1][friend.sid]">
-            <v-avatar color="orange" size="36">
-              <span class="white--text headline">{{
-                friend.user_name[0]
-              }}</span>
-            </v-avatar>
-            </v-badge>
-          </v-list-item-avatar>
-          <!-- <v-badge left dot bottom bordered offset-x="-20"> -->
+        <v-list-item-group v-model="model" mandatory>
+          <v-list-item style="display: none;"></v-list-item>
+          <v-list-item
+            v-for="friend in storeState.friends"
+            :key="friend.id"
+            @click="openChat(friend)"
+          >
+            <v-list-item-avatar>
+              <!-- 小红点的逻辑是：如果不是自己发的，而且消息没有读。那么显示小红点    :value="dotshow"-->
+              <v-badge
+                left
+                dot
+                bottom
+                bordered
+                overlap
+                color="red"
+                offset-x="15"
+                offset-y="10"
+                :value="lastmessage[1][friend.sid]"
+              >
+                <v-avatar color="orange" size="36">
+                  <span class="white--text headline">{{
+                    friend.user_name[0]
+                  }}</span>
+                </v-avatar>
+              </v-badge>
+            </v-list-item-avatar>
+            <!-- <v-badge left dot bottom bordered offset-x="-20"> -->
             <v-list-item-content>
               <v-list-item-title> {{ friend.user_name }} </v-list-item-title>
               <v-list-item-subtitle>
                 {{ lastmessage[0][friend.sid] }}
               </v-list-item-subtitle>
             </v-list-item-content>
-          <!-- </v-badge> -->
+            <!-- </v-badge> -->
 
-          <v-list-item-action>
+            <!-- <v-list-item-action>
             <v-btn icon @click="openChat(friend)">
               <v-icon color="green">mdi-message</v-icon>
             </v-btn>
@@ -41,10 +58,11 @@
             <v-btn icon @click="delFriend(friend.fid)">
               <v-icon color="red">mdi-close-circle</v-icon>
             </v-btn>
-          </v-list-item-action>
+          </v-list-item-action> -->
 
-          <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
-        </v-list-item>
+            <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
     </v-card>
   </v-card>
@@ -66,6 +84,8 @@ export default {
       alert: false,
       alertMessage: "",
       alertType: "",
+      model: 0,
+      dontshow: false,
       //dotshow: false,
       //isShow:true,
     };
@@ -122,8 +142,10 @@ export default {
       return this.storeState.flag;
     },
   },
-  mounted() {
-    this.getAllFriends();
+  async mounted() {
+    let temp = await this.getAllFriends();
+    console.log(temp);
+    this.openChat(this.storeState.friends[0]);
   },
   methods: {
     //显示提示
@@ -208,7 +230,7 @@ export default {
         });
     },
     //获取所有好友
-    getAllFriends() {
+    async getAllFriends() {
       // 如果 cookie 中有 session，就请求获取好友列表
       if (this.$cookies.get("koa.sess")) {
         axios

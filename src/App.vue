@@ -5,7 +5,7 @@
       <v-main>
         <!-- <Home/> -->
         <!-- 在主页和login页面切换 -->
-        <router-view :key="$route.path" />
+        <router-view :key="$route.path" style="padding: 50px "/>
       </v-main>
     </v-app>
   </div>

@@ -1,19 +1,37 @@
 <template>
-  <v-app-bar app color="transparent" dark> 
-    <v-img src="@/assets/logo.png" max-height="36px" max-width="36px"></v-img>
+  <v-card tile>
+    <v-card-title>
+      <v-avatar color="green" size="32">
+        <span class="white--text headline">{{ storeState.user.username }}</span>
+      </v-avatar>
+    </v-card-title>
+    <v-list>
+      <v-list-item-group  v-model="model" mandatory>
+        
+        <v-list-item @click="showFriOrReq(0)">
+
+      <v-icon> mdi-chat</v-icon>
+
+        </v-list-item>
+        <v-list-item @click="showFriOrReq(1)">
+              <v-icon> mdi-account-plus</v-icon>
+        </v-list-item>
+        <v-list-item @click="logout">
+
+          <v-icon> mdi-logout</v-icon>
+        </v-list-item>
+      </v-list-item-group>
+    </v-list>
+    <!-- <v-img src="@/assets/logo.png" max-height="36px" max-width="36px"></v-img> -->
     <!-- <v-btn text :to="{ name: 'Friend' }"> 联系人 </v-btn>
     <v-btn text :to="{ name: 'Request' }"> 请求 </v-btn> -->
-    <v-btn text  style="font-size: 18px;" @click="showFriOrReq(0)"> 联系人 </v-btn>
-    <v-btn text  style="font-size: 18px;" @click="showFriOrReq(1)"> 好友请求 </v-btn>
+    
+
     <!-- <v-btn text> 会话 </v-btn> -->
-
-    <v-spacer></v-spacer>
-
-    <v-avatar color="orange" size="36">
-      <span class="white--text headline">{{storeState.user.username}}</span>
-    </v-avatar>
-    <v-btn target="_blank" text @click="logout" style="font-size: 18px;"> 注销 </v-btn>
-  </v-app-bar>
+  </v-card>
+  <!-- <v-app-bar app color="transparent" dark> 
+    
+  </v-app-bar> -->
 </template>
 
 <script>
@@ -26,11 +44,10 @@ export default {
     return {
       //username: "",
       storeState: store.state,
+      model: 1,
     };
   },
-  mounted() {
-  
-  },
+  mounted() {},
   methods: {
     // 切换显示联系人或者请求
     showFriOrReq(data) {
