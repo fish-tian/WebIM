@@ -1,6 +1,6 @@
 <template>
   <!-- v-card 里是联系人卡片 -->
-  <v-card v-if="storeState.friendsOrRequest === 0" tile>
+  <v-card v-if="storeState.show[0]" tile>
     <v-card-text>会话</v-card-text>
 
     <v-card tile>
@@ -77,17 +77,12 @@ axios.defaults.withCredentials = true;
 export default {
   data() {
     return {
-      //localFriends: store.friends,
-      //friends: store.friends,
       storeState: store.state,
       lists: "",
       alert: false,
       alertMessage: "",
       alertType: "",
       model: 0,
-      dontshow: false,
-      //dotshow: false,
-      //isShow:true,
     };
   },
   computed: {

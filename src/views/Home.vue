@@ -9,6 +9,7 @@
       <TheNavigation />
       <TheFriendsBox />
       <TheRequestBox />
+      <TheGroupBox />
       <TheChatBox />
       <!-- <router-view/> -->
       <!-- <router-view name="friend"/> -->
@@ -30,6 +31,7 @@ import TheFriendsBox from "@/components/TheFriendsBox"
 import TheChatBox from "@/components/TheChatBox"
 import TheNavigation from '@/components/TheNavigation'
 import TheRequestBox from "@/components/TheRequestBox"
+import TheGroupBox from "@/components/TheGroupBox"
 
 export default {
   name: "Home",
@@ -37,7 +39,8 @@ export default {
     TheNavigation,
     TheChatBox,
     TheFriendsBox,
-    TheRequestBox
+    TheRequestBox,
+    TheGroupBox
   },
 };
 </script>

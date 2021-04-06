@@ -6,7 +6,7 @@ export default {
       message:"",
     },
     friends: [],
-    friendsOrRequest: 0,
+    show: [true, false, false, false],
     messages: [],               // 存储和其他人的聊天消息 [{sid: xxx, messages:[] }, {sid: xxx, messages:[] }]
     unfinishedMessages: [],     // 存储和他人暂未发送成功的消息 [{sid: xxx, messages:[], mid }, {sid: xxx, messages:[], mid }] ，mid为自增唯一标识符
     lastMsg:"",
@@ -26,8 +26,16 @@ export default {
     console.log(friends);
     this.state.friends = friends;
   },
-  setFriendsOrRequest(data) {
-    this.state.friendsOrRequest = data;
+  setShow(data) {
+    
+    let temp = [];
+    temp.push(...this.state.show);
+
+    for(let i = 0; i < temp.length; i++) {
+      temp[i] = false;
+    }
+    temp[data] = true;
+    this.state.show = temp;   // 修改数组中元素的值，vue没法动态绑定，只能这样
   },
   setMessages(sid, messages) {
     console.log(messages);

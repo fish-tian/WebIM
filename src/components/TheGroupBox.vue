@@ -1,13 +1,13 @@
 <template>
   <!-- v-card 里是请求卡片 -->
   <v-card
-    v-if="storeState.show[1]"
+    v-if="storeState.show[2]"
     max-width="250px"
     min-width="250px"
     max-height="800px"
     tile
   >
-    <v-card-text>寻找好友</v-card-text>
+    <v-card-text>发起群聊</v-card-text>
     <v-card
       tile
       max-width="250px"

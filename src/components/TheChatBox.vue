@@ -8,7 +8,7 @@
         </div>
       </div>
     </div> -->
-    <v-card v-if="!storeState.currFriendId" tile color="grey lighten-5">
+    <v-card v-if="!storeState.currFriendId" tile color="grey lighten-4">
        <v-card-text> 选择好友进行聊天吧！ </v-card-text>
       <!-- <div class="g-Ue-v0h5Oe" min-width="650px"
           min-height="380px"
@@ -28,13 +28,13 @@
           max-height="456px"
           class="overflow-y-auto fill-height"
           tile
-          color="grey lighten-5"
+          color="grey lighten-4"
         >
 
         </v-card>
       </div>
     </v-card>
-    <v-card v-if="storeState.currFriendId" tile color="grey lighten-5">
+    <v-card v-if="storeState.currFriendId" tile color="grey lighten-4">
       <v-card-text>{{friendName}}</v-card-text>
       <div>
         <!-- v-card 里是对话框卡片 -->
@@ -44,9 +44,9 @@
           max-height="380px"
           class="overflow-y-auto fill-height"
           tile
-          color="grey lighten-5"
+          color="grey lighten-4"
         >
-          <v-list subheader dense color="grey lighten-5">
+          <v-list subheader dense color="grey lighten-4">
             <v-list-item ></v-list-item>
             <v-list-item 
             
