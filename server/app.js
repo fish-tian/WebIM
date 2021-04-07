@@ -74,10 +74,14 @@ io.use((socket, next) => {
 // 引入路由模块
 const userApi = require('./routes/userApi.js');
 const friendApi = require('./routes/friendApi.js');
-const sgMessageApi = require('./routes/sgMessageApi.js');
+const messageApi = require('./routes/messageApi.js');
+const groupApi = require('./routes/groupApi.js');
+const sessionApi = require('./routes/sessionApi.js');
 app.use(userApi.routes(), userApi.allowedMethods());
 app.use(friendApi.routes(), friendApi.allowedMethods());
-app.use(sgMessageApi.routes(), sgMessageApi.allowedMethods());
+app.use(messageApi.routes(), messageApi.allowedMethods());
+app.use(groupApi.routes(), groupApi.allowedMethods());
+app.use(sessionApi.routes(), sessionApi.allowedMethods());
 
 // 监听端口
 server.listen(3001, () => {

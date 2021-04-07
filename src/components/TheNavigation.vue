@@ -6,14 +6,17 @@
       </v-avatar>
     </v-card-title>
     <v-list>
-      <v-list-item-group v-model="model" mandatory>
+      <v-list-item-group :value="model" mandatory>
         <v-list-item @click="changeShow(0)">
           <v-icon> mdi-chat</v-icon>
         </v-list-item>
         <v-list-item @click="changeShow(1)">
-          <v-icon> mdi-account-plus</v-icon>
+          <v-icon> mdi-account</v-icon>
         </v-list-item>
         <v-list-item @click="changeShow(2)">
+          <v-icon> mdi-account-plus</v-icon>
+        </v-list-item>
+        <v-list-item @click="changeShow(3)">
           <v-icon> mdi-human-queue</v-icon>
         </v-list-item>
         <v-list-item @click="logout">
@@ -34,10 +37,21 @@ export default {
     return {
       //username: "",
       storeState: store.state,
-      model: 0,
     };
   },
   mounted() {},
+  computed: {
+    model: function() {
+      let show = this.storeState.show;
+      let res = 0;
+      for(let i = 0; i < show.length; i++) {
+        if(show[i]) {
+          res = i;
+        }
+      }
+      return res;
+    }
+  },
   methods: {
     // 切换显示联系人、请求、群聊等
     changeShow(data) {

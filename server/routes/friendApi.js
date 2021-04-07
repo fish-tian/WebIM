@@ -14,13 +14,11 @@ router.prefix('/api');
 // 获取所有好友
 router.get('/friend/getAll', async (ctx) => {
     if (ctx.isAuthenticated()) {
-
-        const res = await FriendController.getAllFriends(ctx);
+        const res = await FriendController.getAllFriends(ctx.state.user.id);
 
         ctx.body = {
             success: true,
             info: res,
-
         };
     } else {
         // 无法认证

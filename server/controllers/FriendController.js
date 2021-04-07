@@ -9,19 +9,20 @@ var Request = require('../models/request.js')(WebIm, Sequelize);
 var Session = require('../models/session.js')(WebIm, Sequelize);
 var Message = require('../models/message.js')(WebIm, Sequelize);
 var SingleMember = require('../models/single_member.js')(WebIm, Sequelize);
+
+var SessionController = require('../controllers/SessionController');
+
 const io = require('../socket.js').getio();
 const RedisStore = require('koa-redis')();
 
-const getAllFriends = async function (ctx) {
+const getAllFriends = async function (userId) {
     // console.log(ctx.request.user);
-    let user = ctx.state.user;
     let rawFriends = await Friend.findAll({
         raw: true,  // 使sequlize只返回数据
         where: {
-            [Op.or]: [{ uid1: user.id }, { uid2: user.id }],
+            [Op.or]: [{ uid1: userId }, { uid2: userId }],
         }
     });
-
 
     let friends = []; var lastMess = [];
     let messReads = [];
@@ -29,12 +30,8 @@ const getAllFriends = async function (ctx) {
     for (let i = 0; i < rawFriends.length; i++) {
         let rawFriend = rawFriends[i];
 
-        let friendId = (rawFriend.uid1 == user.id) ? rawFriend.uid2 : rawFriend.uid1;
-
-
-
+        let friendId = (rawFriend.uid1 == userId) ? rawFriend.uid2 : rawFriend.uid1;
         let friend = await User.findOne({
-
             raw: true,
             where: {
                 id: friendId
@@ -42,12 +39,12 @@ const getAllFriends = async function (ctx) {
         });
         let member = await SingleMember.findOne({
             where: {
-                uid1: friendId < user.id ? friendId : user.id,
-                uid2: friendId < user.id ? user.id : friendId,
+                uid1: friendId < userId ? friendId : userId,
+                uid2: friendId < userId ? userId : friendId,
             }
         });
+        
         //查询最后一条消息以及消息读的状态
-
         let lastMessage = await Message.findAll({
             attributes: ['message', 'read', 'sender_uid'],
             order: [['date', 'DESC']],
@@ -56,7 +53,6 @@ const getAllFriends = async function (ctx) {
             where: {
                 sid: member.sid,
             }
-
         });
 
         console.log(lastMessage);
@@ -76,13 +72,12 @@ const getAllFriends = async function (ctx) {
             messReads.push(lastMessage[0]["read"]);
             sender.push(lastMessage[0]["sender_uid"]);
         }
-        friend.selfid = ctx.state.user.id;//拿到本人的ID
+        friend.selfid = userId;//拿到本人的ID
         friend.fid = rawFriends[i].fid;
         friend.sid = member.sid;
         friend.message = lastMess[i];
         friend.mesRead = messReads[i];
         friend.send_uid = sender[i];
-
 
         friends.push(friend);
     }
@@ -238,10 +233,7 @@ const passRequest = async function (ctx) {
     // WebSocket 通知该好友
     var friendId = uid1 == ctx.state.user.id ? uid2 : uid1;
     var socketId = await RedisStore.get(friendId);
-    // console.log(socketId);
-    var fakeCtx = ctx;
-    fakeCtx.state.user.id = friendId;
-    var allFriends = await this.getAllFriends(fakeCtx);
+    var allFriends = await this.getAllFriends(friendId);
     // console.log("friends:" + allFriends);
     io.to(socketId).emit("newFriend", allFriends);
 
@@ -287,9 +279,12 @@ const delFriend = async function (ctx) {
     //console.log("friendId:" + friendId + " socketId:" + socketId);
     var fakeCtx = ctx;
     fakeCtx.state.user.id = friendId;
-    var allFriends = await this.getAllFriends(fakeCtx);
+    const allFriends = await this.getAllFriends(fakeCtx);
     //console.log(allFriends);
     io.to(socketId).emit("newFriend", allFriends);
+    
+    const allSessions = await SessionController.getAllSessions(friendId);
+    io.to(socketId).emit("newSession", allSessions);
 
     return result[0] === 1 // 返回一个数组，更新成功的条目为1否则为0。由于只更新一个条目，所以只返回一个元素
 }

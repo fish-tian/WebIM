@@ -18,6 +18,12 @@ INSERT INTO `user` VALUES (1, 'admin', '$2a$10$x3f0Y2SNAmyAfqhKVAV.7uE7RHs3FDGuS
 INSERT INTO `user` VALUES (2, 'qiuheng', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '99999@qq.com');
 INSERT INTO `user` VALUES (3, 'hank', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '22222@qq.com');
 INSERT INTO `user` VALUES (4, 'tsl', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '11111@qq.com');
+INSERT INTO `user` VALUES (5, 'bee', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '3333@qq.com');
+INSERT INTO `user` VALUES (6, 'amey', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '4444@qq.com');
+INSERT INTO `user` VALUES (7, 'shelly', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '5555@qq.com');
+INSERT INTO `user` VALUES (8, 'bull', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '6666@qq.com');
+INSERT INTO `user` VALUES (9, 'carly', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '7777@qq.com');
+INSERT INTO `user` VALUES (10, 'pipper', '$2a$10$h8DgDcQQc7GPtKMT953X0OjT87NeRvkgBx7OIkNg/ltnjlU7NLrX6', '8888@qq.com');
 COMMIT;
 
 select * from user;

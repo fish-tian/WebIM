@@ -1,7 +1,7 @@
 <template>
   <!-- v-card 里是请求卡片 -->
   <v-card
-    v-if="storeState.show[1]"
+    v-if="storeState.show[2]"
     max-width="250px"
     min-width="250px"
     max-height="800px"
@@ -13,7 +13,8 @@
       max-width="250px"
       min-width="250px"
       min-height="456px"
-      max-height="800px"
+      max-height="456px"
+      class="overflow-y-auto fill-height"
     >
       <v-list subheader dense>
         <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
@@ -25,6 +26,8 @@
             clearable
             dense
             v-model="friendName"
+            @keypress.enter="addFriend"
+            style="margin: 2px"
           >
             <template v-slot:append-outer>
               <v-btn icon @click="addFriend">

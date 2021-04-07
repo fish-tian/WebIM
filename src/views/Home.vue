@@ -7,6 +7,7 @@
     <v-spacer></v-spacer>
     <v-col class="d-flex">
       <TheNavigation />
+      <TheSessionBox />
       <TheFriendsBox />
       <TheRequestBox />
       <TheGroupBox />
@@ -32,6 +33,7 @@ import TheChatBox from "@/components/TheChatBox"
 import TheNavigation from '@/components/TheNavigation'
 import TheRequestBox from "@/components/TheRequestBox"
 import TheGroupBox from "@/components/TheGroupBox"
+import TheSessionBox from "@/components/TheSessionBox"
 
 export default {
   name: "Home",
@@ -40,7 +42,8 @@ export default {
     TheChatBox,
     TheFriendsBox,
     TheRequestBox,
-    TheGroupBox
+    TheGroupBox,
+    TheSessionBox
   },
 };
 </script>

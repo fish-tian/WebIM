@@ -1,3 +1,7 @@
+/*
+此文件被遗弃，被MessageController代替
+
+
 const { where } = require('sequelize');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
@@ -15,7 +19,6 @@ const RedisStore = require('koa-redis')();
 // 获取 user 与 friend 的所有单聊消息
 //点开的时候把消息的状态更改
 const getAllMessages = async function (ctx) {
-   
     const user = ctx.state.user;
     const fid =ctx.request.body.friend.id;
     console.log(fid);
@@ -90,4 +93,4 @@ const sendMessage = async function (ctx) {
 module.exports = {
     getAllMessages,
     sendMessage,
-}
+}*/

@@ -1,9 +1,5 @@
-/*
-此文件被废弃，被MessageApi.js代替
-
-
 const passport = require('koa-passport');
-var SingleMessageController = require('../controllers/SingleMessageController');
+var MessageController = require('../controllers/MessageController');
 var router = require('koa-router')();
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
@@ -14,11 +10,11 @@ var User = require('../models/user.js')(WebIm, Sequelize);
 // 此路由的前缀
 router.prefix('/api');
 
-// 获取与某好友的所有消息
-router.post('/sgMessage/getAll', async (ctx) => {
+// 获取所有消息
+router.post('/message/getAll', async (ctx) => {
     if (ctx.isAuthenticated()) {
         console.log("-- getAllMessages");
-        const res = await SingleMessageController.getAllMessages(ctx.state.user.id, ctx.request.body.sid)
+        const res = await MessageController.getAllMessages(ctx.state.user.id, ctx.request.body.sid)
         ctx.body = {
             success: true,
             info: res,
@@ -34,10 +30,10 @@ router.post('/sgMessage/getAll', async (ctx) => {
 });
 
 // 发送消息
-router.post('/sgMessage/sendMessage', async (ctx) => {
+router.post('/message/sendMessage', async (ctx) => {
     if (ctx.isAuthenticated()) {
         console.log("-- sendMessage");
-        const res = await SingleMessageController.sendMessage(
+        const res = await MessageController.sendMessage(
                 ctx.state.user.id,
                 ctx.request.body.sid,
                 ctx.request.body.message
@@ -58,4 +54,3 @@ router.post('/sgMessage/sendMessage', async (ctx) => {
 
 // // 将该router暴露出去
 module.exports = router;
-*/

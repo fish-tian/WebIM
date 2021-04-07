@@ -8,7 +8,7 @@
         </div>
       </div>
     </div> -->
-    <v-card v-if="!storeState.currFriendId" tile color="grey lighten-4">
+    <v-card v-if="!storeState.currSId" tile color="grey lighten-4">
        <v-card-text> 选择好友进行聊天吧！ </v-card-text>
       <!-- <div class="g-Ue-v0h5Oe" min-width="650px"
           min-height="380px"
@@ -34,8 +34,8 @@
         </v-card>
       </div>
     </v-card>
-    <v-card v-if="storeState.currFriendId" tile color="grey lighten-4">
-      <v-card-text>{{friendName}}</v-card-text>
+    <v-card v-if="storeState.currSId" tile color="grey lighten-4">
+      <v-card-text>{{title}}</v-card-text>
       <div>
         <!-- v-card 里是对话框卡片 -->
         <v-card
@@ -135,8 +135,8 @@ export default {
     };
   },
   computed: {
-    friendName: function() {
-      return this.storeState.friends.find(item => item.id === this.storeState.currFriendId).user_name;
+    title: function() {
+      return this.storeState.sessions.find(item => item.sid === this.storeState.currSId).title;
     },
     messages: function() {
       let allMessages = this.storeState.messages.find((item) => item.sid === this.storeState.currSId);
@@ -154,21 +154,16 @@ export default {
   methods: {
     // 获取所有消息
     getMessage() {
-      const theFriend = this.storeState.friends.find((friend) => {
-        return friend.id == this.storeState.currFriendId;
-      });
-
       let data = {
-        friend: theFriend,
-        sid: theFriend.sid,
+        sid: this.storeState.currSId,
       };
       axios
-        .post("/api/sgMessage/getAll", data)
+        .post("/api/message/getAll", data)
         .then((res) => {
           if (res.data.success) {
-            console.log("res.data.info:\n");
-            console.log(res.data.info);
-            store.setMessages(theFriend.sid, res.data.info);
+            //console.log("res.data.info:\n");
+            //console.log(res.data.info);
+            store.setMessages(this.storeState.currSId, res.data.info);
           } else {
             // this.showAlert(res.data.info, "error");
             // console.log(res.data.info);
@@ -182,15 +177,9 @@ export default {
     },
     // 发送消息
     sendMessage() {
-      console.log(this.message);
-
-      const theFriend = this.storeState.friends.find((friend) => {
-        return friend.id == this.storeState.currFriendId;
-      });
       const data = {
         message: this.message,
-        friend: theFriend,
-        sid: theFriend.sid,
+        sid: this.storeState.currSId,
       };
 
       this.message = "";
@@ -198,7 +187,7 @@ export default {
       console.log("unmessage is:\n");
       console.log(unmessage);
       axios
-        .post("/api/sgMessage/sendMessage", data)
+        .post("/api/message/sendMessage", data)
         .then((res) => {
           if (res.data.success) {
             setTimeout(() => {
@@ -233,7 +222,7 @@ export default {
       store.resetUnfinishedMessage(data.sid, message.mid);
 
       axios
-        .post("/api/sgMessage/sendMessage", data)
+        .post("/api/message/sendMessage", data)
         .then((res) => {
           if (res.data.success) {
             setTimeout(() => {

@@ -5,6 +5,7 @@ export default {
       username: "",
       message:"",
     },
+    sessions: [],
     friends: [],
     show: [true, false, false, false],
     messages: [],               // 存储和其他人的聊天消息 [{sid: xxx, messages:[] }, {sid: xxx, messages:[] }]
@@ -12,9 +13,12 @@ export default {
     lastMsg:"",
     requests: [],
     socketId: "",
-    currFriendId: undefined,
+    //currFriendId: undefined,
     currSId: undefined,
     flag: undefined,
+  },
+  setSessions(data) {
+    this.state.sessions = data;
   },
   setUsername(username) {
     this.state.user.username = username;
@@ -23,7 +27,7 @@ export default {
     this.state.user.message = message;
   },
   setFriends(friends) {
-    console.log(friends);
+    //console.log(friends);
     this.state.friends = friends;
   },
   setShow(data) {
@@ -38,7 +42,7 @@ export default {
     this.state.show = temp;   // 修改数组中元素的值，vue没法动态绑定，只能这样
   },
   setMessages(sid, messages) {
-    console.log(messages);
+    //console.log(messages);
     let index = this.state.messages.findIndex(item => {
       return sid === item.sid;
     });
