@@ -34,34 +34,24 @@
                 offset-y="10"
                 :value="lastmessage[1][session.sid]"
               >
-                <v-avatar color="orange" size="36">
+                <v-avatar color="orange" size="36" v-if="!session.group">
+                  <span class="white--text headline">{{
+                    session.title[0]
+                  }}</span>
+                </v-avatar>
+                <v-avatar color="red" size="36" v-if="session.group">
                   <span class="white--text headline">{{
                     session.title[0]
                   }}</span>
                 </v-avatar>
               </v-badge>
             </v-list-item-avatar>
-            <!-- <v-badge left dot bottom bordered offset-x="-20"> -->
             <v-list-item-content>
               <v-list-item-title> {{ session.title }} </v-list-item-title>
               <v-list-item-subtitle>
                 {{ lastmessage[0][session.sid] }}
               </v-list-item-subtitle>
             </v-list-item-content>
-            <!-- </v-badge> -->
-
-            <!-- <v-list-item-action>
-            <v-btn icon @click="openChat(friend)">
-              <v-icon color="green">mdi-message</v-icon>
-            </v-btn>
-          </v-list-item-action>
-          <v-list-item-action>
-            <v-btn icon @click="delFriend(friend.fid)">
-              <v-icon color="red">mdi-close-circle</v-icon>
-            </v-btn>
-          </v-list-item-action> -->
-
-            <!-- <v-overlay absolute :opacity="0.2" :value="hover"></v-overlay> -->
           </v-list-item>
         </v-list-item-group>
       </v-list>

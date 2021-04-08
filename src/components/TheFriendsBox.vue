@@ -180,7 +180,7 @@ export default {
     //flag=1:不显示小红点,0显示.没点聊天之前是underdine
     openChat(friend) {
       store.setShow(0);
-      store.setCurrFriendId(friend.id);
+      //store.setCurrFriendId(friend.id);
       store.setCurrSId(friend.sid);
       this.getAllMessages(friend.sid);
       //store.setFlag(1);

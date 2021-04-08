@@ -9,7 +9,7 @@
       </div>
     </div> -->
     <v-card v-if="!storeState.currSId" tile color="grey lighten-4">
-       <v-card-text> 选择好友进行聊天吧！ </v-card-text>
+      <v-card-text> 选择好友进行聊天吧！ </v-card-text>
       <!-- <div class="g-Ue-v0h5Oe" min-width="650px"
           min-height="380px"
           max-height="380px">
@@ -20,7 +20,7 @@
         </div>
       </div>
     </div> -->
-    <div>
+      <div>
         <!-- v-card 里是对话框卡片 -->
         <v-card
           min-width="550px"
@@ -30,12 +30,11 @@
           tile
           color="grey lighten-4"
         >
-
         </v-card>
       </div>
     </v-card>
     <v-card v-if="storeState.currSId" tile color="grey lighten-4">
-      <v-card-text>{{title}}</v-card-text>
+      <v-card-text>{{ title }}</v-card-text>
       <div>
         <!-- v-card 里是对话框卡片 -->
         <v-card
@@ -45,51 +44,81 @@
           class="overflow-y-auto fill-height"
           tile
           color="grey lighten-4"
+          style="padding: 8px"
         >
           <v-list subheader dense color="grey lighten-4">
-            <v-list-item ></v-list-item>
-            <v-list-item 
-            
+            <v-list-item
               v-for="message in messages"
               :key="message.mId"
-              :class="{ 'd-flex flex-row-reverse': message.isMe }"
+              :class="{'text-right align-self-start': message.isMe}"
             >
-              <v-chip
-                :color="message.isMe ? 'primary' : ''"
-                style="
-                  height: auto;
-                  white-space: normal;
-                  font-size: 14px;
-                  padding: 8px;
-                "
-                max-width="50px"
-                class=""
-              >
-                {{ message.message }}
-              </v-chip>
+              <v-list-item-avatar v-if="!message.isMe" class="mr-1">
+                <v-avatar color="orange" size="36">
+                <span class="white--text headline">{{
+                  message.sender_name[0]
+                }}</span>
+              </v-avatar>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title v-if="!message.isMe">
+                  {{ message.sender_name }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                   <v-chip
+                    :color="message.isMe ? 'primary' : ''"
+                    style="
+                      height: auto;
+                      max-width: 300px;
+                      white-space: normal;
+                      font-size: 14px;
+                      padding: 5px;
+                    "
+                  >
+                    {{ message.message }}
+                  </v-chip>
+                </v-list-item-subtitle>
+              </v-list-item-content>
             </v-list-item>
+
 
             <v-list-item
               v-for="unmessage in unfinishedMessages"
               :key="unmessage.mid"
-              :class="{ 'd-flex flex-row-reverse': 1 }"
-              
+              :class="{'text-right align-self-start': 1}"
             >
-              <v-chip
-                :color="1 ? 'primary' : ''"
-                style="
-                  height: auto;
-                  white-space: normal;
-                  font-size: 14px;
-                  padding: 8px;
-                "
-                max-width="50px"
-                class=""
-              >
-                {{ unmessage.message }}
-              </v-chip>
+              <v-list-item-avatar v-if="0">
+                <v-avatar color="orange" size="36">
+                <span class="white--text headline">{{
+                  message.sender_name[0]
+                }}</span>
+              </v-avatar>
+              </v-list-item-avatar>
+              <v-list-item-content  >
+                <v-list-item-title v-if="0">
+                  {{ message.sender_name }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                   <v-chip
+                    :color="1 ? 'primary' : ''"
+                    style="
+                      height: auto;
+                      max-width: 300px;
+                      white-space: normal;
+                      font-size: 14px;
+                      padding: 5px;
+                    "
+                  >
+                    {{ unmessage.message }}
+                  </v-chip>
+                </v-list-item-subtitle>
+              </v-list-item-content>
               <v-subheader v-if="!unmessage.fail">发送中</v-subheader>
-              <v-icon v-if="unmessage.fail" color="red" @click="resendMessage(unmessage)">mdi-alert-circle</v-icon>
+              <v-icon
+                v-if="unmessage.fail"
+                color="red"
+                @click="resendMessage(unmessage)"
+                >mdi-alert-circle</v-icon
+              >
             </v-list-item>
           </v-list>
         </v-card>
@@ -130,16 +159,20 @@ export default {
       // friendId: this.$route.params.id,
       // userId: store.user.id
       storeState: store.state,
-      
+
       message: "",
     };
   },
   computed: {
-    title: function() {
-      return this.storeState.sessions.find(item => item.sid === this.storeState.currSId).title;
+    title: function () {
+      return this.storeState.sessions.find(
+        (item) => item.sid === this.storeState.currSId
+      ).title;
     },
-    messages: function() {
-      let allMessages = this.storeState.messages.find((item) => item.sid === this.storeState.currSId);
+    messages: function () {
+      let allMessages = this.storeState.messages.find(
+        (item) => item.sid === this.storeState.currSId
+      );
       return allMessages === undefined ? null : allMessages.messages;
     },
     unfinishedMessages: function () {

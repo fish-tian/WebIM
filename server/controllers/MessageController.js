@@ -14,9 +14,6 @@ const RedisStore = require('koa-redis')();
 
 // 获取sid所属会话的所有消息
 const getAllMessages = async function(userId, sid) {
-    // const user = ctx.state.user;
-    // const sid = ctx.request.body.sid;
-
     //更改消息的状态改成已读
     // const mess = await Message.update(
     // {read:1},
@@ -34,6 +31,14 @@ const getAllMessages = async function(userId, sid) {
     });
    
     for (let message of messages) {
+        // 查询消息发送者的用户名
+        let sender = await User.findOne({
+            raw: true,
+            where: {
+                id: message.sender_uid
+            }
+        });
+        message.sender_name = sender.user_name;
         message.isMe = message.sender_uid == userId ? true : false;
     }
    
@@ -42,11 +47,6 @@ const getAllMessages = async function(userId, sid) {
 
 // 向sid所属会话发送消息
 const sendMessage = async function (userId, sid, message) {
-    // const user = ctx.state.user;
-    // ///const friend = ctx.request.body.friend;
-    // const message = ctx.request.body.message;
-    // const sid = ctx.request.body.sid;
-
     const theMessage = await Message.create({
         sid: sid,
         sender_uid: userId,

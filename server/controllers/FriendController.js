@@ -44,40 +44,40 @@ const getAllFriends = async function (userId) {
             }
         });
         
-        //查询最后一条消息以及消息读的状态
-        let lastMessage = await Message.findAll({
-            attributes: ['message', 'read', 'sender_uid'],
-            order: [['date', 'DESC']],
-            limit: 1,
-            raw: true,
-            where: {
-                sid: member.sid,
-            }
-        });
-
-        console.log(lastMessage);
-        // if (lastMessage !== null) {
-        //     // WebSocket发送请求
-        //     var socketId = await RedisStore.get(friend.id);
-        //     if (socketId !== undefined) {
-        //         var fakeCtx = ctx;
-        //         fakeCtx.state.user.id = friend.id;
-        //         var allRequests = await this.getAllRequests(fakeCtx);
-        //         io.to(socketId).emit("lastMeg", allRequests);
+        // //查询最后一条消息以及消息读的状态
+        // let lastMessage = await Message.findAll({
+        //     attributes: ['message', 'read', 'sender_uid'],
+        //     order: [['date', 'DESC']],
+        //     limit: 1,
+        //     raw: true,
+        //     where: {
+        //         sid: member.sid,
         //     }
+        // });
 
+        // console.log(lastMessage);
+        // // if (lastMessage !== null) {
+        // //     // WebSocket发送请求
+        // //     var socketId = await RedisStore.get(friend.id);
+        // //     if (socketId !== undefined) {
+        // //         var fakeCtx = ctx;
+        // //         fakeCtx.state.user.id = friend.id;
+        // //         var allRequests = await this.getAllRequests(fakeCtx);
+        // //         io.to(socketId).emit("lastMeg", allRequests);
+        // //     }
+
+        // // }
+        // if (lastMessage.length !== 0) {
+        //     lastMess.push(lastMessage[0]["message"]);
+        //     messReads.push(lastMessage[0]["read"]);
+        //     sender.push(lastMessage[0]["sender_uid"]);
         // }
-        if (lastMessage.length !== 0) {
-            lastMess.push(lastMessage[0]["message"]);
-            messReads.push(lastMessage[0]["read"]);
-            sender.push(lastMessage[0]["sender_uid"]);
-        }
-        friend.selfid = userId;//拿到本人的ID
-        friend.fid = rawFriends[i].fid;
+        // friend.selfid = userId;//拿到本人的ID
+        // friend.fid = rawFriends[i].fid;
         friend.sid = member.sid;
-        friend.message = lastMess[i];
-        friend.mesRead = messReads[i];
-        friend.send_uid = sender[i];
+        // friend.message = lastMess[i];
+        // friend.mesRead = messReads[i];
+        // friend.send_uid = sender[i];
 
         friends.push(friend);
     }
