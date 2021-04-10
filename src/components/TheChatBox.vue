@@ -34,7 +34,7 @@
       </div>
     </v-card>
     <v-card v-if="storeState.currSId" tile color="grey lighten-4">
-      <v-card-text>{{ title }}</v-card-text>
+      <v-card-text>{{ title }}--{{msgStart}}</v-card-text>
 
       <div>
         <!-- v-card 里是对话框卡片 -->
@@ -220,14 +220,24 @@ export default {
     //   return this.storeState.msgNums;
     // },
     msgStart: function() {
-      if (this.storeState.msgNums < 10) {
-        var start = 0;
-      } else {
-        start = this.storeState.msgNums - (this.storeState.k + 1) * 10;
-      }
-      if (start < 0) start = 0;
-      console.log("会话开始start:" + start);
+      let allMessages = this.storeState.messages.find(
+        (item) => item.sid === this.storeState.currSId
+      );
+      let len = allMessages.messages.length;
+      store.setMsgNums(len);
+      //let start=9;
+      let start = this.storeState.msgNums - (this.storeState.k + 1) * 10;
+      if(start<0) start=0;
+      console.log("----------");
+      console.log(start);
+      console.log("消息总数"+this.storeState.msgNums+"K"+this.storeState.k);
+
       return start;
+      // console.log("K:"+this.storeState.k);
+      // let start = this.storeState.msgNums - (this.storeState.k + 1) * 10;
+      // if (start < 0) start = 0;
+      // console.log("更新后的start:" + start);
+      // return start;
       //return this.storeState.msgStart;
     },
     unfinishedMessages: function() {
