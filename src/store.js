@@ -16,15 +16,28 @@ export default {
     //currFriendId: undefined,
     currSId: undefined,
     flag: undefined,
+    msgStart:undefined,//每个会话的消息数量是不一样的
+    k:undefined
+  
+   
   },
   setSessions(data) {
     this.state.sessions = data;
+  },
+  setMsgNums(nums){
+    this.state.msgNums=nums;
   },
   setUsername(username) {
     this.state.user.username = username;
   },
   setMessage(message) {
     this.state.user.message = message;
+  },
+  setMsgStart(num){
+    this.state.msgStart=num;
+  },
+  setK(num){//调用方法的次数
+    this.state.k=num;
   },
   setFriends(friends) {
     //console.log(friends);
@@ -41,16 +54,21 @@ export default {
     temp[data] = true;
     this.state.show = temp;   // 修改数组中元素的值，vue没法动态绑定，只能这样
   },
-  setMessages(sid, messages) {
-    //console.log(messages);
+  setMessages(sid,messages) {
+    console.log("-----"+sid+"---"+messages.length);
     let index = this.state.messages.findIndex(item => {
       return sid === item.sid;
     });
     if(index === -1) {
-      this.state.messages.push({sid: sid, messages: []});
+      this.state.messages.push({sid: sid, messages: [],length:messages.length});
+      
       index = this.state.messages.length - 1;
     }
+    
     this.state.messages[index].messages = messages;
+    this.state.messages[index].length = messages.length;
+   
+
   },
   setLastMsg(lastMsg) {
     this.state.lastMsg = lastMsg;

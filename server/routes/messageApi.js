@@ -10,10 +10,15 @@ var User = require('../models/user.js')(WebIm, Sequelize);
 // 此路由的前缀
 router.prefix('/api');
 
+// router.post('/message/update', async()) {
+//     MessageController.updateMessage(ctx.state.user.id, ctx.request.body.sid);
+// }
+
 // 获取所有消息
 router.post('/message/getAll', async (ctx) => {
     if (ctx.isAuthenticated()) {
         console.log("-- getAllMessages");
+       
         const res = await MessageController.getAllMessages(ctx.state.user.id, ctx.request.body.sid)
         ctx.body = {
             success: true,

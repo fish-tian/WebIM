@@ -97,10 +97,7 @@ export default {
       let isMe = {};
       let redDotHash = {};
       let res = []; //第一个是msg,第二个是红点，第三个是判断是不是自己
-      //console.log("messages-------");
-      //console.log(messages);
-      //console.log("errmessages-------");
-      //console.log(errMessages.length);//0
+      
       for (const item of messages) {
         //item代表一个会话
         if (item.messages.length === 0) {

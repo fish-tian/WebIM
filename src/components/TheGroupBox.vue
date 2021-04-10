@@ -170,7 +170,8 @@ export default {
             if (res.data.success) {
               store.setSessions(res.data.info);
               for (const session of res.data.info) {
-                this.getAllMessages(session.sid);
+                let group=true;
+                this.getAllMessages(session.sid,group);
               }
 
               //this.lists = res.data.lists;

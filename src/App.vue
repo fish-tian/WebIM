@@ -59,7 +59,14 @@ export default {
     newMessage(data) {
       //console.log("-- newmessage: \n" + data[data.length-1]["message"]);
       //store.setLastMsg(data[data.length-1]["message"]);
-      store.setMessages(data.sid, data.messages);
+      console.log("newMsg------");
+      store.setMessages(data.sid,data.messages);
+      console.log(this.storeState.currSId);
+//如果是发送的消息会话是当前窗口的会话，那么更新自己已读的状态
+      if(this.storeState.currSId===data.sid){
+            this.getMessage();
+      }
+      //this.storeState.currSid === data.sid; getAllMessage read; houduan newMessage;
     },
     newSession(data) {
       store.setSessions(data);
@@ -70,6 +77,29 @@ export default {
     }
   },
   methods: {
+    // 获取所有消息
+    getMessage() {
+      let data = {
+        sid: this.storeState.currSId,
+      };
+      axios
+        .post("/api/message/getAll", data)
+        .then((res) => {
+          if (res.data.success) {
+            //console.log("res.data.info:\n");
+            //console.log(res.data.info);
+            store.setMessages(this.storeState.currSId, res.data.info);
+          } else {
+            // this.showAlert(res.data.info, "error");
+            // console.log(res.data.info);
+          }
+        })
+        .catch((err) => {
+          this.showAlert("请求错误！", "error");
+          //this.showAlert(err, "error");
+          console.log(err);
+        });
+    },
     // 用于在刷新页面或者重新打开页面时更新用户的socket.id
     keepAlive() {
       let data = { socketId: this.$socket.id };

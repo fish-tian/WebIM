@@ -35,6 +35,7 @@
     </v-card>
     <v-card v-if="storeState.currSId" tile color="grey lighten-4">
       <v-card-text>{{ title }}</v-card-text>
+
       <div>
         <!-- v-card 里是对话框卡片 -->
         <v-card
@@ -47,24 +48,29 @@
           style="padding: 8px"
         >
           <v-list subheader dense color="grey lighten-4">
+            <v-list-item-title>
+              点击加载更多<v-icon @click="onloadMore()">mdi-update</v-icon>
+            </v-list-item-title>
             <v-list-item
-              v-for="message in messages"
+              v-for="message in messages.slice(msgStart)"
               :key="message.mId"
-              :class="{'text-right align-self-start': message.isMe}"
+              :class="{ 'text-right align-self-start': message.isMe }"
             >
               <v-list-item-avatar v-if="!message.isMe" class="mr-1">
                 <v-avatar color="orange" size="36">
-                <span class="white--text headline">{{
-                  message.sender_name[0]
-                }}</span>
-              </v-avatar>
+                  <span class="white--text headline">{{
+                    message.sender_name[0]
+                  }}</span>
+                </v-avatar>
               </v-list-item-avatar>
+
               <v-list-item-content>
                 <v-list-item-title v-if="!message.isMe">
                   {{ message.sender_name }}
                 </v-list-item-title>
+
                 <v-list-item-subtitle>
-                   <v-chip
+                  <v-chip
                     :color="message.isMe ? 'primary' : ''"
                     style="
                       height: auto;
@@ -78,27 +84,34 @@
                   </v-chip>
                 </v-list-item-subtitle>
               </v-list-item-content>
+              <v-subheader
+                v-if="message.read === 0 && message.isMe && isGroup === 0"
+                >未读</v-subheader
+              >
+              <v-subheader
+                v-if="message.read === 1 && message.isMe && isGroup === 0"
+                >已读</v-subheader
+              >
             </v-list-item>
-
 
             <v-list-item
               v-for="unmessage in unfinishedMessages"
               :key="unmessage.mid"
-              :class="{'text-right align-self-start': 1}"
+              :class="{ 'text-right align-self-start': 1 }"
             >
               <v-list-item-avatar v-if="0">
                 <v-avatar color="orange" size="36">
-                <span class="white--text headline">{{
-                  message.sender_name[0]
-                }}</span>
-              </v-avatar>
+                  <span class="white--text headline">{{
+                    message.sender_name[0]
+                  }}</span>
+                </v-avatar>
               </v-list-item-avatar>
-              <v-list-item-content  >
+              <v-list-item-content>
                 <v-list-item-title v-if="0">
                   {{ message.sender_name }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                   <v-chip
+                  <v-chip
                     :color="1 ? 'primary' : ''"
                     style="
                       height: auto;
@@ -112,6 +125,7 @@
                   </v-chip>
                 </v-list-item-subtitle>
               </v-list-item-content>
+
               <v-subheader v-if="!unmessage.fail">发送中</v-subheader>
               <v-icon
                 v-if="unmessage.fail"
@@ -159,25 +173,64 @@ export default {
       // friendId: this.$route.params.id,
       // userId: store.user.id
       storeState: store.state,
-
+      // end:store.state.msgNums,
+      // start:store.state.msgNums-10,
       message: "",
     };
   },
+  mounted() {
+    store.setK(0);
+  },
   computed: {
-    title: function () {
+    //查找当前会话是不是群聊
+    isGroup: function() {
+      return this.storeState.sessions.find(
+        (item) => item.sid === this.storeState.currSId
+      ).group;
+    },
+
+    title: function() {
       return this.storeState.sessions.find(
         (item) => item.sid === this.storeState.currSId
       ).title;
     },
-    messages: function () {
+
+    messages: function() {
       let allMessages = this.storeState.messages.find(
         (item) => item.sid === this.storeState.currSId
       );
+      let len = allMessages.messages.length;
+      console.log("会话消息------：");
+      console.log(allMessages);
+      //初始化：
+      store.setMsgNums(len);
+      // store.setK(0);
+      //store.setMsgStart(len-10);
+      console.log(
+        "初始化->调用方法的次数" +
+          this.storeState.k +
+          "消息总数：" +
+          this.storeState.msgNums
+      );
+
       return allMessages === undefined ? null : allMessages.messages;
     },
-    unfinishedMessages: function () {
-      //console.log("unfinishedMessages is:\n");
-      //console.log(this.storeState.unfinishedMessages.find(item => item.sid === this.storeState.currSId));
+    // msgNums: function() {
+    //   console.log("会话消息总数：---" + this.storeState.msgNums);
+    //   return this.storeState.msgNums;
+    // },
+    msgStart: function() {
+      if (this.storeState.msgNums < 10) {
+        var start = 0;
+      } else {
+        start = this.storeState.msgNums - (this.storeState.k + 1) * 10;
+      }
+      if (start < 0) start = 0;
+      console.log("会话开始start:" + start);
+      return start;
+      //return this.storeState.msgStart;
+    },
+    unfinishedMessages: function() {
       let unmessages = this.storeState.unfinishedMessages.find(
         (item) => item.sid === this.storeState.currSId
       );
@@ -185,11 +238,34 @@ export default {
     },
   },
   methods: {
+    //加载更多的消息
+    onloadMore() {
+      // console.log("加载更多消息->消息开始展示的下标"+this.storeState.msgStart+"消息总数："+this.storeState.msgNums);
+      // let start=this.storeState.msgStart;
+      // if(start<10){
+      //    start=0;
+      // }else{
+      //   start=this.storeState.msgStart-10;
+      // }
+      // store.setMsgStart(start);
+      // console.log("更新后的start："+this.storeState.msgStart);
+      let k = this.storeState.k + 1;
+      console.log(k);
+      store.setK(k);
+      console.log("K---" + this.storeState.k);
+      //  if(this.storeState.msgNums<10){
+      //     var start=0;
+      //   }else{
+      //     start=this.storeState.msgNums-(this.storeState.k+1)*10;
+      //   }
+      //   return start;
+    },
     // 获取所有消息
     getMessage() {
       let data = {
         sid: this.storeState.currSId,
       };
+
       axios
         .post("/api/message/getAll", data)
         .then((res) => {
