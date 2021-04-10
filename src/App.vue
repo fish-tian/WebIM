@@ -107,7 +107,8 @@ export default {
         .post("/api/user/keepAlive", data)
         .then((res) => {
           if (res.data.success) {
-          
+           
+           
             store.setUsername(res.data.username);
            
           } else {
