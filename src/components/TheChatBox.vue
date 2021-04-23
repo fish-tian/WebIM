@@ -1,25 +1,9 @@
 <template>
   <div>
-    <!-- <div class="g-Ue-v0h5Oe" v-if="!storeState.currFriendId">
-      <div class="g-Ue-T-R">
-        <div>
-          <div class="g-Ue-ma">你好！</div>
-          <div class="g-Ue-zr-ma">选择好友进行聊天吧！</div>
-        </div>
-      </div>
-    </div> -->
+    
     <v-card v-if="!storeState.currSId" tile color="grey lighten-4">
       <v-card-text> 选择好友进行聊天吧！ </v-card-text>
-      <!-- <div class="g-Ue-v0h5Oe" min-width="650px"
-          min-height="380px"
-          max-height="380px">
-      <div class="g-Ue-T-R">
-        <div>
-          <div class="g-Ue-ma">你好！</div>
-          <div class="g-Ue-zr-ma">选择好友进行聊天吧！</div>
-        </div>
-      </div>
-    </div> -->
+      
       <div>
         <!-- v-card 里是对话框卡片 -->
         <v-card
@@ -52,7 +36,7 @@
               点击加载更多<v-icon @click="onloadMore()">mdi-update</v-icon>
             </v-list-item-title>
             <v-list-item
-              v-for="message in messages.slice(msgStart)"
+              v-for="message in messages.slice(start)"
               :key="message.mId"
               :class="{ 'text-right align-self-start': message.isMe }"
             >
@@ -182,6 +166,13 @@ export default {
     store.setK(0);
   },
   computed: {
+    //查找每个会话开始显示消息的下标
+    start:function(){
+      let allMessages = this.storeState.messages.find(
+        (item) => item.sid === this.storeState.currSId
+      );
+      return allMessages.start;
+    },
     //查找当前会话是不是群聊
     isGroup: function() {
       return this.storeState.sessions.find(
@@ -190,6 +181,8 @@ export default {
     },
 
     title: function() {
+      console.log("-----");
+      console.log(this.storeState.sessions);
       return this.storeState.sessions.find(
         (item) => item.sid === this.storeState.currSId
       ).title;
@@ -206,6 +199,7 @@ export default {
       store.setMsgNums(len);
       // store.setK(0);
       //store.setMsgStart(len-10);
+<<<<<<< HEAD
       // console.log(
       //   "初始化->调用方法的次数" +
       //     this.storeState.k +
@@ -213,6 +207,15 @@ export default {
       //     this.storeState.msgNums
       // );
 
+=======
+      console.log(
+        "初始化->调用方法的次数" +
+          this.storeState.k +
+          "消息总数：" +
+          this.storeState.msgNums
+      );
+      //this.getMessage();
+>>>>>>> 3083f642802e25d14cac1da3cdade03091417772
       return allMessages === undefined ? null : allMessages.messages;
     },
     // msgNums: function() {
@@ -220,6 +223,7 @@ export default {
     //   return this.storeState.msgNums;
     // },
     msgStart: function() {
+<<<<<<< HEAD
       if (this.storeState.msgNums < 10) {
         var start = 0;
       } else {
@@ -227,7 +231,26 @@ export default {
       }
       if (start < 0) start = 0;
       //console.log("会话开始start:" + start);
+=======
+      let allMessages = this.storeState.messages.find(
+        (item) => item.sid === this.storeState.currSId
+      );
+      let len = allMessages.messages.length;
+      store.setMsgNums(len);
+      //let start=9;
+      let start = this.storeState.msgNums - (this.storeState.k + 1) * 10;
+      if(start<0) start=0;
+      console.log("----------");
+      console.log(start);
+      console.log("消息总数"+this.storeState.msgNums+"K"+this.storeState.k);
+
+>>>>>>> 3083f642802e25d14cac1da3cdade03091417772
       return start;
+      // console.log("K:"+this.storeState.k);
+      // let start = this.storeState.msgNums - (this.storeState.k + 1) * 10;
+      // if (start < 0) start = 0;
+      // console.log("更新后的start:" + start);
+      // return start;
       //return this.storeState.msgStart;
     },
     unfinishedMessages: function() {
@@ -239,7 +262,9 @@ export default {
   },
   methods: {
     //加载更多的消息
+    
     onloadMore() {
+<<<<<<< HEAD
       // console.log("加载更多消息->消息开始展示的下标"+this.storeState.msgStart+"消息总数："+this.storeState.msgNums);
       // let start=this.storeState.msgStart;
       // if(start<10){
@@ -253,6 +278,27 @@ export default {
       //console.log(k);
       store.setK(k);
       //console.log("K---" + this.storeState.k);
+=======
+      let sid=this.storeState.currSId;
+      
+     // let len = allMessages.messages.length;
+      store.updateMsg(this.storeState.currSId);
+      let allMessages = this.storeState.messages.find(
+        (item) => item.sid === sid
+      );
+
+      console.log("加载更多会话ID----"+sid+"开始下标"+allMessages.start);
+
+  
+      
+      
+      // let k = this.storeState.k + 1;
+      // console.log(k);
+      // store.setK(k);
+      // console.log("K---" + this.storeState.k);
+
+
+>>>>>>> 3083f642802e25d14cac1da3cdade03091417772
       //  if(this.storeState.msgNums<10){
       //     var start=0;
       //   }else{
@@ -265,7 +311,6 @@ export default {
       let data = {
         sid: this.storeState.currSId,
       };
-
       axios
         .post("/api/message/getAll", data)
         .then((res) => {

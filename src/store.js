@@ -10,7 +10,7 @@ export default {
     show: [true, false, false, false],
     messages: [],               // 存储和其他人的聊天消息 [{sid: xxx, messages:[] }, {sid: xxx, messages:[] }]
     unfinishedMessages: [],     // 存储和他人暂未发送成功的消息 [{sid: xxx, messages:[], mid }, {sid: xxx, messages:[], mid }] ，mid为自增唯一标识符
-    lastMsg:"",
+   
     requests: [],
     socketId: "",
     //currFriendId: undefined,
@@ -60,14 +60,33 @@ export default {
       return sid === item.sid;
     });
     if(index === -1) {
-      this.state.messages.push({sid: sid, messages: [],length:messages.length});
+      
+      this.state.messages.push({sid: sid, messages: [],start:0});
       
       index = this.state.messages.length - 1;
     }
-    
+    let nums=0;
+      if(messages.length<10){
+          nums=0;
+      }else{
+         nums=messages.length-10;
+      }
     this.state.messages[index].messages = messages;
-    this.state.messages[index].length = messages.length;
+    this.state.messages[index].start =nums
    
+
+  },
+  updateMsg(sid){
+    let index = this.state.messages.findIndex(item => {
+      return sid === item.sid;
+    });
+    if(this.state.messages[index].start>=10){
+      this.state.messages[index].start-=10;
+    }else{
+      this.state.messages[index].start=0;
+    }
+  
+  
 
   },
   setLastMsg(lastMsg) {
