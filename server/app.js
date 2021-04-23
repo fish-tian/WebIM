@@ -45,28 +45,28 @@ const co = require('co');
 // 结合使用 socket.io、passport
 io.use((socket, next) => {
     if (!socket.handshake.headers.cookie) {
+        //console.log("!!-- 有问题！");
         return next('Didn\'t receive cookies');
     }
     //console.log(socket.handshake.headers.cookie);
     let cookies = cookie.parse(socket.handshake.headers.cookie);
     co(function* () {
-        //console.log(cookies['koa.sess']);
+        console.log(cookies['koa.sess']);
         let curSession = yield RedisStore.get(cookies['koa.sess']);
-        //console.log(curSession);
+        console.log(curSession);
         if (!curSession) {
             return next('Didn\'t find session for user. curSession id: ' + cookies['koa.sess']);
         }
-
+        console.log(curSession.passport);
         passport.deserializeUser(curSession.passport.user, (error, user) => {
             if (!error && user) {
-                //console.log(user);
                 socket.user = user;
                 return next();
             }
             next('Authentication error.');
         });
 
-    })
+    });
 });
 
 // 路由

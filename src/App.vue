@@ -1,11 +1,11 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden;">
+  <div style="width: 100%; height: 100%; overflow: hidden">
     <span class="bg"></span>
     <v-app>
       <v-main>
         <!-- <Home/> -->
         <!-- 在主页和login页面切换 -->
-        <router-view :key="$route.path" style="padding: 50px "/>
+        <router-view :key="$route.path" style="padding: 50px" />
       </v-main>
     </v-app>
   </div>
@@ -42,11 +42,13 @@ export default {
       this.keepAlive();
     },
     // 出现连接错误，重新连接
-    connect_error() {
-      this.connect();
+    connect_error(err) { 
+      console.log("错误" );
+      console.log(err);
+      //this.connect();
     },
     disconnect() {
-      alert("websocket连接出现错误，请刷新页面后重试");
+      //alert("websocket连接出现错误，请刷新页面后重试");
     },
     newRequest(data) {
       console.log("-- newrequest: \n" + data);
@@ -60,12 +62,14 @@ export default {
       //console.log("-- newmessage: \n" + data[data.length-1]["message"]);
       //store.setLastMsg(data[data.length-1]["message"]);
       console.log("newMsg------");
-      store.setMessages(data.sid,data.messages);
+      store.setMessages(data.sid, data.messages);
       console.log(this.storeState.currSId);
-//如果是发送的消息会话是当前窗口的会话，那么更新自己已读的状态
-      if(this.storeState.currSId===data.sid){
-            this.getMessage();
+      //如果是发送的消息会话是当前窗口的会话，那么更新自己已读的状态
+
+      if (this.storeState.currSId === data.sid) {
+        this.getMessage();
       }
+
       //this.storeState.currSid === data.sid; getAllMessage read; houduan newMessage;
     },
     newSession(data) {
@@ -74,7 +78,7 @@ export default {
     lastMsg(data) {
       console.log("-- LastMessage: \n" + data);
       store.setlastMsg(data);
-    }
+    },
   },
   methods: {
     // 获取所有消息
@@ -107,15 +111,12 @@ export default {
         .post("/api/user/keepAlive", data)
         .then((res) => {
           if (res.data.success) {
-           
-           
             store.setUsername(res.data.username);
-           
           } else {
             console.log("转到login");
             this.$router.push({ name: "Login" }); // 进入主页
           }
-          
+
           // if (res.data.success) {
           //   //this.showAlert("成功删除好友！", "success");
           //   //this.getAllFriends();
@@ -129,7 +130,7 @@ export default {
           //this.showAlert(err, "error");
           console.log(err);
         });
-    }
+    },
   },
 };
 </script>

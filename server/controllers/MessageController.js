@@ -36,7 +36,7 @@ const getAllMessages = async function (userId, sid, flag) {
     //当flag==0时，说明是sendMsg调用此方法，此时的uid是对方的id,需要分别处理
 
     if (flag !== 0) {
-        console.log("当前用户的ID:" + userId);
+        //console.log("当前用户的ID:" + userId);
         var mids = await Message.findAll({
             raw: true,
             attributes: ['mid', "sender_uid"],

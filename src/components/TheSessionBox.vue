@@ -195,7 +195,7 @@ export default {
 
               //this.lists = res.data.lists;
             } else {
-              store.setFriends(null);
+              store.setSessions(null);
             }
           })
           .catch((err) => {

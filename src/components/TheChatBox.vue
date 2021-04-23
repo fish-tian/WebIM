@@ -200,18 +200,18 @@ export default {
         (item) => item.sid === this.storeState.currSId
       );
       let len = allMessages.messages.length;
-      console.log("会话消息------：");
-      console.log(allMessages);
+      //console.log("会话消息------：");
+      //console.log(allMessages);
       //初始化：
       store.setMsgNums(len);
       // store.setK(0);
       //store.setMsgStart(len-10);
-      console.log(
-        "初始化->调用方法的次数" +
-          this.storeState.k +
-          "消息总数：" +
-          this.storeState.msgNums
-      );
+      // console.log(
+      //   "初始化->调用方法的次数" +
+      //     this.storeState.k +
+      //     "消息总数：" +
+      //     this.storeState.msgNums
+      // );
 
       return allMessages === undefined ? null : allMessages.messages;
     },
@@ -226,7 +226,7 @@ export default {
         start = this.storeState.msgNums - (this.storeState.k + 1) * 10;
       }
       if (start < 0) start = 0;
-      console.log("会话开始start:" + start);
+      //console.log("会话开始start:" + start);
       return start;
       //return this.storeState.msgStart;
     },
@@ -250,9 +250,9 @@ export default {
       // store.setMsgStart(start);
       // console.log("更新后的start："+this.storeState.msgStart);
       let k = this.storeState.k + 1;
-      console.log(k);
+      //console.log(k);
       store.setK(k);
-      console.log("K---" + this.storeState.k);
+      //console.log("K---" + this.storeState.k);
       //  if(this.storeState.msgNums<10){
       //     var start=0;
       //   }else{
@@ -293,8 +293,8 @@ export default {
 
       this.message = "";
       let unmessage = store.addUnfinishedMessage(data.sid, data.message);
-      console.log("unmessage is:\n");
-      console.log(unmessage);
+      //console.log("unmessage is:\n");
+      //console.log(unmessage);
       axios
         .post("/api/message/sendMessage", data)
         .then((res) => {
@@ -317,7 +317,7 @@ export default {
     },
     // 点击红叹号，重发消息
     resendMessage(message) {
-      console.log("mid为" + message.mid);
+      //console.log("mid为" + message.mid);
 
       const theFriend = this.storeState.friends.find((friend) => {
         return friend.id == this.storeState.currFriendId;

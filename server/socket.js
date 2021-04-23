@@ -1,5 +1,6 @@
 let io;
 const RedisStore = require('koa-redis')();
+
 const init = function (server) {
     // start socket.io server and cache io value
     io = require('socket.io')(server, {
@@ -12,12 +13,14 @@ const init = function (server) {
     });
     // socket连接
     io.on('connection', (socket) => {
-        console.log('-- user ' + socket.user.id +  '\'s websocket  connected');
-        
+
         socket.on('disconnect', () => {
-            // redis 进行清除
-            RedisStore.destroy(socket.user.id);
-            console.log('-- user ' + socket.user.id +  '\'s websocket disconnected');
+            if (socket.user) {
+                // redis 进行清除
+                RedisStore.destroy(socket.user.id);
+                console.log('-- user ' + socket.user.id + '\'s websocket disconnected');
+            }
+
         });
     });
 
