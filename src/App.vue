@@ -5,11 +5,7 @@
       <v-main>
         <!-- <Home/> -->
         <!-- 在主页和login页面切换 -->
-<<<<<<< HEAD
-        <router-view :key="$route.path" style="padding: 50px" />
-=======
         <router-view :key="$route.path" style="padding: 50px " />
->>>>>>> 3083f642802e25d14cac1da3cdade03091417772
       </v-main>
     </v-app>
   </div>
@@ -69,10 +65,6 @@ export default {
       store.setMessages(data.sid, data.messages);
       console.log(this.storeState.currSId);
       //如果是发送的消息会话是当前窗口的会话，那么更新自己已读的状态
-<<<<<<< HEAD
-
-=======
->>>>>>> 3083f642802e25d14cac1da3cdade03091417772
       if (this.storeState.currSId === data.sid) {
         this.getMessage();
       }
