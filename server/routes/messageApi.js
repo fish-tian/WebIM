@@ -56,6 +56,28 @@ router.post('/message/sendMessage', async (ctx) => {
         ctx.throw(401);
     }
 });
-
+// 更新消息状态
+router.post('/message/updateRead', async (ctx) => {
+    if (ctx.isAuthenticated()) {
+        console.log("-- updateRead");
+        console.log(ctx.request.body.message);
+        const res = await MessageController.updateRead(
+                ctx.state.user.id,
+                ctx.request.body.sid,
+                ctx.request.body.message
+            );
+        ctx.body = {
+            success: true,
+            info: res,
+        };
+    } else {
+        // 无法认证
+        ctx.body = {
+            success: false,
+            info: "发送消息失败"
+        };
+        ctx.throw(401);
+    }
+});
 // // 将该router暴露出去
 module.exports = router;

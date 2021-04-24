@@ -154,6 +154,7 @@ export default {
       //store.setCurrFriendId(friend.id);
       store.setCurrSId(sid);
       this.getAllMessages(sid);
+      this.updateRead(sid)
       //store.setFlag(1);
     },
     // 获取某个会话的所有聊天消息
@@ -168,6 +169,7 @@ export default {
         .then((res) => {
           if (res.data.success) {
             store.setMessages(sid, res.data.info);
+            this.updateRead(sid);
           } else {
             // this.showAlert(res.data.info, "error");
             // console.log(res.data.info);
@@ -177,6 +179,25 @@ export default {
           this.showAlert("请求错误！", "error");
           console.log(err);
         });
+    },
+    //更新发送消息状态
+     updateRead(sid) {
+      const data = {
+        message: "",
+        sid: sid,
+      };
+      this.message = "";
+      axios
+        .post("/api/message/updateRead", data)
+        .then((res) => {
+          if (res.data.success) {
+            setTimeout(() => {
+              // 发送成功就获取所有消息
+             // this.getAllMessages(sid);
+              console.log("更新状态消息发送---");
+            }, 1000);
+          } 
+        })
     },
     //获取所有会话
     async getAllSessions() {
