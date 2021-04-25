@@ -169,7 +169,7 @@ export default {
         .then((res) => {
           if (res.data.success) {
             store.setMessages(sid, res.data.info);
-            this.updateRead(sid);
+           // this.updateRead(sid);
           } else {
             // this.showAlert(res.data.info, "error");
             // console.log(res.data.info);

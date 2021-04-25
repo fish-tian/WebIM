@@ -63,6 +63,7 @@ export default {
       console.log("newMsg------");
       store.setMessages(data.sid, data.messages);
       console.log(this.storeState.currSId);
+    
       if (this.storeState.currSId === data.sid) {
         this.getMessage();
       }
