@@ -34,7 +34,7 @@ const RedisStore = require('koa-redis')();
 //获取全部消息的时候就把自己收到的消息的状态改成已读
 const getAllMessages = async function (userId, sid, flag) {
     //当flag==0时，说明是sendMsg调用此方法，此时的uid是对方的id,需要分别处理
-
+    
     if (flag !== 0) {
         //console.log("当前用户的ID:" + userId);
         var mids = await Message.findAll({
@@ -79,9 +79,11 @@ const getAllMessages = async function (userId, sid, flag) {
             var read = 2; //群聊
         }
 
-        const mess = await Message.update({
+        const mess = await Message.update(
+            {
             read: read
-        }, {
+            }, 
+            {
             where: {
                 // sid:sid,
                 // sender_uid:mid.sender_uid
@@ -118,7 +120,7 @@ const getAllMessages = async function (userId, sid, flag) {
 };
 
 // 向sid所属会话发送消息
-const sendMessage = async function (userId, sid, message) {
+const sendMessage = async function (userId, sid,message) {
     const theMessage = await Message.create({
         sid: sid,
         sender_uid: userId,
@@ -144,6 +146,7 @@ const sendMessage = async function (userId, sid, message) {
             }
         });
         ids.push(sgMember.uid1 === userId ? sgMember.uid2 : sgMember.uid1);
+        
     } else {
         //该会话是群聊
         const gpMembers = await GroupMember.findAll({
@@ -158,7 +161,6 @@ const sendMessage = async function (userId, sid, message) {
             }
         }
     }
-
     // 存储 id与socket id 的映射
     let idAndSocketIds = [];
     for (const id of ids) {
@@ -170,7 +172,6 @@ const sendMessage = async function (userId, sid, message) {
             });
         }
     }
-
     // WebSocket 即时通知单聊好友或者群聊好友
     for (const idAndSocketId of idAndSocketIds) {
         //发送消息时，设置一个flag,当flag==0时，不调用getMsg方法的更新已读/未读
@@ -187,7 +188,44 @@ const sendMessage = async function (userId, sid, message) {
     }
 };
 
+const updateRead=async function(userId,sid,message){
+    const chat = await SingleMember.findOne({
+        raw: true,
+        where: {
+            sid: sid
+        }
+    });
+    let friendId;
+    if(chat.uid1===userId){
+        friendId=chat.uid2;
+    }else{
+        friendId=chat.uid1;
+    }
+    let ids=[];
+    ids.push(friendId);
+    ids.push(userId);
+    for(const id of ids){
+
+    const socketId = await RedisStore.get(id);
+
+    let allMessages = await this.getAllMessages(id, sid);
+    let data = {
+        sid: sid,
+        messages: allMessages,
+      
+    };
+    io.to(socketId).emit("newMessage", data);
+
+    }
+    
+    
+
+   
+
+}
+
 module.exports = {
     getAllMessages,
     sendMessage,
+    updateRead
 }

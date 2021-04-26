@@ -59,17 +59,14 @@ export default {
       store.setFriends(data);
     },
     newMessage(data) {
-      //console.log("-- newmessage: \n" + data[data.length-1]["message"]);
-      //store.setLastMsg(data[data.length-1]["message"]);
+      
       console.log("newMsg------");
       store.setMessages(data.sid, data.messages);
       console.log(this.storeState.currSId);
-      //如果是发送的消息会话是当前窗口的会话，那么更新自己已读的状态
+    
       if (this.storeState.currSId === data.sid) {
         this.getMessage();
       }
-
-      //this.storeState.currSid === data.sid; getAllMessage read; houduan newMessage;
     },
     newSession(data) {
       store.setSessions(data);
