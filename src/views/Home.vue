@@ -33,7 +33,9 @@ import TheChatBox from "@/components/TheChatBox"
 import TheNavigation from '@/components/TheNavigation'
 import TheRequestBox from "@/components/TheRequestBox"
 import TheGroupBox from "@/components/TheGroupBox"
-import TheSessionBox from "@/components/TheSessionBox"
+import TheSession
+
+Box from "@/components/TheSessionBox"
 
 export default {
   name: "Home",

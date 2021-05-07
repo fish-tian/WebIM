@@ -3,7 +3,7 @@
     <!--  -->
     <v-card v-if="!storeState.currSId" tile color="grey lighten-4">
       <v-card-text> 选择好友进行聊天吧！ </v-card-text>
-      
+
       <div>
         <!-- v-card 里是对话框卡片 -->
         <v-card
@@ -13,6 +13,7 @@
           class="overflow-y-auto fill-height"
           tile
           color="grey lighten-4"
+          
         >
         </v-card>
       </div>
@@ -30,11 +31,17 @@
           tile
           color="grey lighten-4"
           style="padding: 8px"
+          v-scroll.self="onScroll"
+          id="card"
         >
           <v-list subheader dense color="grey lighten-4">
-            <v-list-item-title>
-              点击加载更多<v-icon @click="onloadMore()">mdi-update</v-icon>
-            </v-list-item-title>
+            <div class="text-center" v-show="scrollTimeout">
+              <v-progress-circular
+                :size="24"
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+            </div>
             <v-list-item
               v-for="message in messages.slice(start)"
               :key="message.mId"
@@ -157,51 +164,61 @@ export default {
       // friendId: this.$route.params.id,
       // userId: store.user.id
       storeState: store.state,
+      // currSId: store.storeState.currSId,
       // end:store.state.msgNums,
       // start:store.state.msgNums-10,
       message: "",
+      scrollTimeout: null,
     };
   },
   mounted() {
     store.setK(0);
+    console.log("mounted!!!!!!!!!!!");
   },
+  updated() {
+    // this.onOpen();
+  },
+  // watch: {
+  //   currSId: function() {
+  //     this.scrollToDown();
+  //   }
+  // },
   computed: {
     //查找每个会话开始显示消息的下标
-    start:function(){
+    start: function () {
       let allMessages = this.storeState.messages.find(
         (item) => item.sid === this.storeState.currSId
       );
       return allMessages.start;
     },
     //查找当前会话是不是群聊
-    isGroup: function() {
+    isGroup: function () {
       return this.storeState.sessions.find(
         (item) => item.sid === this.storeState.currSId
       ).group;
     },
 
-    title: function() {
-      console.log("-----");
-      console.log(this.storeState.sessions);
+    title: function () {
+      //console.log("-----");
+      //console.log(this.storeState.sessions);
       return this.storeState.sessions.find(
         (item) => item.sid === this.storeState.currSId
       ).title;
     },
 
-    messages: function() {
+    messages: function () {
       let allMessages = this.storeState.messages.find(
         (item) => item.sid === this.storeState.currSId
       );
-      console.log("message------");
-      console.log(allMessages);
-     
+      //console.log("message------");
+      //console.log(allMessages);
+
       //this.updateRead();
-      
+
       return allMessages === undefined ? null : allMessages.messages;
     },
-  
-      
-    unfinishedMessages: function() {
+
+    unfinishedMessages: function () {
       let unmessages = this.storeState.unfinishedMessages.find(
         (item) => item.sid === this.storeState.currSId
       );
@@ -209,24 +226,37 @@ export default {
     },
   },
   methods: {
+    // 在切换 chatbox 时，将滑动条滑到最下面
+    scrollToDown() {
+      let card = document.getElementById("card");
+      card.scrollTop = card.scrollHeight;
+    },
+    // 滑动鼠标事件，做了节流处理
+    onScroll(e) { 
+      console.log(e.target.scrollTop);
+      if (e.target.scrollTop === 0) {
+        if (!this.scrollTimeout) {  // 当前没有定时器要执行
+          this.scrollTimeout = setTimeout(() => {
+            this.onloadMore();
+            this.scrollTimeout = null;
+          }, 1500);
+        }
+      }
+    },
     //加载更多的消息
-    
     onloadMore() {
-      let sid=this.storeState.currSId;
-      
-     // let len = allMessages.messages.length;
+      let sid = this.storeState.currSId;
+
+      // let len = allMessages.messages.length;
       store.updateMsg(this.storeState.currSId);
       let allMessages = this.storeState.messages.find(
         (item) => item.sid === sid
       );
 
-      console.log("加载更多会话ID----"+sid+"开始下标"+allMessages.start);
-
-
+      console.log("加载更多会话ID----" + sid + "开始下标" + allMessages.start);
     },
     // 获取所有消息
     getMessage() {
-    
       let data = {
         sid: this.storeState.currSId,
       };
@@ -270,7 +300,7 @@ export default {
               store.clearUnfinishedMessage(data.sid, unmessage.mid);
               // 发送成功就获取所有消息
               this.getMessage();
-            }, 1000);
+            }, 500);
           } else {
             // 将未完成消息设置为失败消息
             store.resetUnfinishedMessage(data.sid, unmessage.mid);
@@ -282,24 +312,20 @@ export default {
         });
     },
     //更新发送消息状态
-     updateRead(sid) {
+    updateRead(sid) {
       const data = {
         message: "",
-        sid: sid
+        sid: sid,
       };
 
       this.message = "";
-      axios
-        .post("/api/message/updateRead", data)
-        .then((res) => {
-          if (res.data.success) {
-            setTimeout(() => {
-             
-              console.log("更新状态消息发送---");
-            }, 1000);
-          } 
-        })
-        
+      axios.post("/api/message/updateRead", data).then((res) => {
+        if (res.data.success) {
+          setTimeout(() => {
+            console.log("更新状态消息发送---");
+          }, 1000);
+        }
+      });
     },
     // 点击红叹号，重发消息
     resendMessage(message) {

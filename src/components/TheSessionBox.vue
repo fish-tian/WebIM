@@ -17,7 +17,7 @@
         <v-list-item-group :value="model" mandatory>
           <v-list-item style="display: none"></v-list-item>
           <v-list-item
-            v-for="session in storeState.sessions"
+            v-for="session in orderSession"
             :key="session.sid"
             @click="openChat(session.sid)"
           >
@@ -60,8 +60,10 @@
 </template>
 
 <script>
+
 import store from "@/store.js";
 import axios from "axios";
+import _ from "lodash"
 // 解决跨域
 axios.defaults.withCredentials = true;
 
@@ -79,25 +81,38 @@ export default {
     model: function () {
       return 0;
     },
+    // 对会话进行按照时间的排序
+    orderSession: function() {
+      let data = _.orderBy(this.storeState.sessions, 'lastdate', 'desc');
+      console.log("#########");
+      console.log(data);
+      return data;
+    },
     lastmessage: function () {
       //storeState; chuli; sid -> lastmessage ;return {};
       let messages = this.storeState.messages;
       let errMessages = this.storeState.unfinishedMessages;
+      // let msg = [];
       let msgHash = {};
       let isMe = {};
       let redDotHash = {};
       let res = []; //第一个是msg,第二个是红点，第三个是判断是不是自己
-      //console.log("messages-------"); 
+      //console.log("messages-------");
       //console.log(messages);
       //console.log("errmessages-------");
       //console.log(errMessages.length);//0
       for (const item of messages) {
+        //console.log(item);
         //item代表一个会话
         if (item.messages.length === 0) {
           msgHash[item.sid] = null;
           redDotHash[item.sid] = null;
           isMe[item.sid] = null;
         } else {
+          // msg.push({
+          //   sid: item.sid,
+          //   message: item.messages[item.messages.length - 1].message,
+          // });
           msgHash[item.sid] = item.messages[item.messages.length - 1].message;
           redDotHash[item.sid] =
             !item.messages[item.messages.length - 1].read &&
@@ -112,16 +127,39 @@ export default {
           let dataErr = item.messages[item.messages.length - 1].date;
           let dateMes = item.messages[item.messages.length - 1].date;
           if (dataErr > dateMes) {
+            // msg.push({
+            //   sid: item.sid,
+            //   message: item.messages[item.messages.length - 1].message,
+            // });
             msgHash[item.sid] = item.messages[item.messages.length - 1].message;
             redDotHash[item.sid] = 0;
           }
         }
       }
+      // console.log("msg！！");
+      // console.log(msg);
+
+      // msg.sort((a, b)=>{
+      //   return a.date > b.date;
+      // });
+
+      // 用于将 store 里面的 sessions 按时间进行排序
+      // let sessionsOrder = {};
+      // let index = 0;
+      // for (const item of msg) {
+      //   console.log("----" + item.sid);
+      //   sessionsOrder[item.sid] = index++;
+      //   msgHash[item.sid] = item.message;
+      // }
+      // let sessions = this.storeState.sessions;
+      // for(const item of sessions) {
+      //   item["index"] = sessionsOrder[item.sid];
+      // }
+      // //store.setSessions(sessions);
+      // console.log("会话！！");
+      // console.log(sessions);
       res.push(msgHash);
-
       res.push(redDotHash);
-      
-
       return res;
     },
     flag: function () {
@@ -150,11 +188,11 @@ export default {
     // 需要修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 
     openChat(sid) {
-      console.log(sid);
+      //console.log(sid);
       //store.setCurrFriendId(friend.id);
       store.setCurrSId(sid);
-      this.getAllMessages(sid);
-      this.updateRead(sid)
+      //this.getAllMessages(sid);
+      this.updateRead(sid);
       //store.setFlag(1);
     },
     // 获取某个会话的所有聊天消息
@@ -169,7 +207,7 @@ export default {
         .then((res) => {
           if (res.data.success) {
             store.setMessages(sid, res.data.info);
-           // this.updateRead(sid);
+            // this.updateRead(sid);
           } else {
             // this.showAlert(res.data.info, "error");
             // console.log(res.data.info);
@@ -181,23 +219,21 @@ export default {
         });
     },
     //更新发送消息状态
-     updateRead(sid) {
+    updateRead(sid) {
       const data = {
         message: "",
         sid: sid,
       };
       this.message = "";
-      axios
-        .post("/api/message/updateRead", data)
-        .then((res) => {
-          if (res.data.success) {
-            setTimeout(() => {
-              // 发送成功就获取所有消息
-             // this.getAllMessages(sid);
-              console.log("更新状态消息发送---");
-            }, 1000);
-          } 
-        })
+      axios.post("/api/message/updateRead", data).then((res) => {
+        if (res.data.success) {
+          setTimeout(() => {
+            // 发送成功就获取所有消息
+            // this.getAllMessages(sid);
+            console.log("更新状态消息发送---");
+          }, 1000);
+        }
+      });
     },
     //获取所有会话
     async getAllSessions() {
