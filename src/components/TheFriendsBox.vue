@@ -179,54 +179,7 @@ export default {
       store.setShow(0);
       //store.setCurrFriendId(friend.id);
       store.setCurrSId(friend.sid);
-      this.getAllMessages(friend.sid);
       //store.setFlag(1);
-    },
-    // 获取和某一个好友的聊天消息
-    getAllMessages(sid) {
-      let data = {
-        sid: sid,
-      };
-
-      //console.log(data);
-      axios
-        .post("/api/message/getAll", data)
-        .then((res) => {
-          if (res.data.success) {
-            store.setMessages(sid, res.data.info);
-          } else {
-            // this.showAlert(res.data.info, "error");
-            // console.log(res.data.info);
-          }
-        })
-        .catch((err) => {
-          this.showAlert("请求错误！", "error");
-          console.log(err);
-        });
-    },
-    //获取所有好友
-    async getAllFriends() {
-      // 如果 cookie 中有 session，就请求获取好友列表
-      if (this.$cookies.get("koa.sess")) {
-        axios
-          .get("/api/friend/getAll")
-          .then((res) => {
-            if (res.data.success) {
-              //console.log(res.data.info[0].message);
-              store.setFriends(res.data.info);
-              // store.setMessage(res.data.message);
-              //this.friends = res.data.info;
-              this.lists = res.data.lists;
-              //console.log(this.friends);
-              //console.log(this.lists);
-            } else {
-              store.setFriends(null);
-            }
-          })
-          .catch((err) => {
-            alert(err);
-          });
-      }
     },
   },
 };

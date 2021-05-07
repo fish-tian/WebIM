@@ -64,6 +64,7 @@
 import store from "@/store.js";
 import axios from "axios";
 import _ from "lodash"
+import eventBus from '@/eventBus.js'
 // 解决跨域
 axios.defaults.withCredentials = true;
 
@@ -136,28 +137,7 @@ export default {
           }
         }
       }
-      // console.log("msg！！");
-      // console.log(msg);
 
-      // msg.sort((a, b)=>{
-      //   return a.date > b.date;
-      // });
-
-      // 用于将 store 里面的 sessions 按时间进行排序
-      // let sessionsOrder = {};
-      // let index = 0;
-      // for (const item of msg) {
-      //   console.log("----" + item.sid);
-      //   sessionsOrder[item.sid] = index++;
-      //   msgHash[item.sid] = item.message;
-      // }
-      // let sessions = this.storeState.sessions;
-      // for(const item of sessions) {
-      //   item["index"] = sessionsOrder[item.sid];
-      // }
-      // //store.setSessions(sessions);
-      // console.log("会话！！");
-      // console.log(sessions);
       res.push(msgHash);
       res.push(redDotHash);
       return res;
@@ -167,11 +147,12 @@ export default {
     },
   },
   async mounted() {
-    let temp = await this.getAllSessions();
-    console.log(temp);
-    //this.openChat(this.storeState.friends[0]);
+    //await this.getAllSessions();
   },
   methods: {
+    currSIdChange() {
+      eventBus.$emit('sidChanged');
+    },
     //显示提示
     showAlert(alertMessage, alertType) {
       this.alert = true;
@@ -183,11 +164,8 @@ export default {
       }, 3000);
     },
     // 点击聊天按钮
-    //flag=1:不显示小红点,0显示.没点聊天之前是underdine
-
-    // 需要修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-
     openChat(sid) {
+      // this.currSIdChange();
       //console.log(sid);
       //store.setCurrFriendId(friend.id);
       store.setCurrSId(sid);
@@ -195,68 +173,22 @@ export default {
       this.updateRead(sid);
       //store.setFlag(1);
     },
-    // 获取某个会话的所有聊天消息
-    getAllMessages(sid) {
-      let data = {
-        sid: sid,
-      };
-
-      //console.log(data);
-      axios
-        .post("/api/message/getAll", data)
-        .then((res) => {
-          if (res.data.success) {
-            store.setMessages(sid, res.data.info);
-            // this.updateRead(sid);
-          } else {
-            // this.showAlert(res.data.info, "error");
-            // console.log(res.data.info);
-          }
-        })
-        .catch((err) => {
-          this.showAlert("请求错误！", "error");
-          console.log(err);
-        });
-    },
     //更新发送消息状态
     updateRead(sid) {
-      const data = {
-        message: "",
-        sid: sid,
-      };
-      this.message = "";
-      axios.post("/api/message/updateRead", data).then((res) => {
-        if (res.data.success) {
-          setTimeout(() => {
-            // 发送成功就获取所有消息
-            // this.getAllMessages(sid);
-            console.log("更新状态消息发送---");
-          }, 1000);
-        }
-      });
-    },
-    //获取所有会话
-    async getAllSessions() {
-      // 如果 cookie 中有 session，就请求获取好友列表
-      if (this.$cookies.get("koa.sess")) {
-        axios
-          .get("/api/session/getAll")
-          .then((res) => {
-            if (res.data.success) {
-              store.setSessions(res.data.info);
-              for (const session of res.data.info) {
-                this.getAllMessages(session.sid);
-              }
-
-              //this.lists = res.data.lists;
-            } else {
-              store.setSessions(null);
-            }
-          })
-          .catch((err) => {
-            alert(err);
-          });
-      }
+      // const data = {
+      //   message: "",
+      //   sid: sid,
+      // };
+      // this.message = "";
+      // axios.post("/api/message/updateRead", data).then((res) => {
+      //   if (res.data.success) {
+      //     setTimeout(() => {
+      //       // 发送成功就获取所有消息
+      //       // this.getAllMessages(sid);
+      //       console.log("更新状态消息发送---");
+      //     }, 1000);
+      //   }
+      // });
     },
   },
 };

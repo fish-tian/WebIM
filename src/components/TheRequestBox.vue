@@ -97,27 +97,6 @@ export default {
         this.alert = false;
       }, 3000);
     },
-    // 获取所有请求
-    getAllRequests() {
-      // 如果 cookie 中有 session，就请求获取所有好友请求
-      if (this.$cookies.get("koa.sess")) {
-        axios
-          .get("/api/friend/getAllRequests")
-          .then((res) => {
-            if (res.data.success) {
-              store.setRequests(res.data.info);
-              //this.requests = res.data.info;
-              //console.log("this.requests--------");
-              //console.log(this.requests);
-            } else {
-              store.setRequests(null);
-            }
-          })
-          .catch((err) => {
-            alert(err);
-          });
-      }
-    },
     // 添加好友
     addFriend() {
       let data = { friendName: this.friendName };
@@ -183,24 +162,24 @@ export default {
     },
     getAllFriends() {
       // 如果 cookie 中有 session，就请求获取好友列表
-      if (this.$cookies.get("koa.sess")) {
-        axios
-          .get("/api/friend/getAll")
-          .then((res) => {
-            if (res.data.success) {
-              store.setFriends(res.data.info);
-              //this.friends = res.data.info;
-              this.lists = res.data.lists;
-              //console.log(this.friends);
-              //console.log(this.lists);
-            } else {
-              store.setFriends(null);
-            }
-          })
-          .catch((err) => {
-            alert(err);
-          });
-      }
+      // if (this.$cookies.get("koa.sess")) {
+      //   axios
+      //     .get("/api/friend/getAll")
+      //     .then((res) => {
+      //       if (res.data.success) {
+      //         store.setFriends(res.data.info);
+      //         //this.friends = res.data.info;
+      //         this.lists = res.data.lists;
+      //         //console.log(this.friends);
+      //         //console.log(this.lists);
+      //       } else {
+      //         store.setFriends(null);
+      //       }
+      //     })
+      //     .catch((err) => {
+      //       alert(err);
+      //     });
+      // }
     },
   },
 };

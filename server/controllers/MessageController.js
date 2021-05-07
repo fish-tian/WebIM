@@ -204,19 +204,20 @@ const updateRead = async function (userId, sid, message) {
     let ids = [];
     ids.push(friendId);
     ids.push(userId);
-    for (const id of ids) {
+    // 暂时隐藏，调试
+    // for (const id of ids) {
 
-        const socketId = await RedisStore.get(id);
+    //     const socketId = await RedisStore.get(id);
 
-        let allMessages = await this.getAllMessages(id, sid);
-        let data = {
-            sid: sid,
-            messages: allMessages,
+    //     let allMessages = await this.getAllMessages(id, sid);
+    //     let data = {
+    //         sid: sid,
+    //         messages: allMessages,
 
-        };
-        io.to(socketId).emit("newMessage", data);
+    //     };
+    //     io.to(socketId).emit("newMessage", data);
 
-    }
+    // }
 
 
 

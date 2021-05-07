@@ -27,6 +27,9 @@ export default {
     //console.log(data);
     this.state.sessions = data;
   },
+  addSession(data) {
+    
+  },
   setMsgNums(nums) {
     this.state.msgNums = nums;
   },

@@ -37,13 +37,18 @@
           <v-list subheader dense color="grey lighten-4">
             <div class="text-center" v-show="scrollTimeout">
               <v-progress-circular
-                :size="24"
+                :size="16"
                 indeterminate
                 color="primary"
               ></v-progress-circular>
             </div>
-            <v-list-item
+            <!-- <v-list-item
               v-for="message in messages.slice(start)"
+              :key="message.mId"
+              :class="{ 'text-right align-self-start': message.isMe }"
+            > -->
+            <v-list-item
+              v-for="message in messages"
               :key="message.mId"
               :class="{ 'text-right align-self-start': message.isMe }"
             >
@@ -157,6 +162,7 @@
 <script>
 import store from "@/store.js";
 import axios from "axios";
+import eventBus from '@/eventBus.js'
 
 export default {
   data() {
@@ -164,7 +170,6 @@ export default {
       // friendId: this.$route.params.id,
       // userId: store.user.id
       storeState: store.state,
-      // currSId: store.storeState.currSId,
       // end:store.state.msgNums,
       // start:store.state.msgNums-10,
       message: "",
@@ -173,17 +178,22 @@ export default {
   },
   mounted() {
     store.setK(0);
-    console.log("mounted!!!!!!!!!!!");
+    //console.log("mounted!!!!!!!!!!!");
   },
-  updated() {
-    // this.onOpen();
+  created() {
+    eventBus.$on('sidChanged',()=>{
+        //一些操作，message就是从top组件传过来的值
+        this.scrollToDown();
+    });
   },
-  // watch: {
-  //   currSId: function() {
-  //     this.scrollToDown();
-  //   }
-  // },
   computed: {
+    currSId: function() {
+      // this.scrollToDown();
+      // console.log("滑动到最下面");
+      // let card = document.getElementById("card");
+      // card.scrollTop = card.scrollHeight;
+      return store.storeState.currSId;
+    },
     //查找每个会话开始显示消息的下标
     start: function () {
       let allMessages = this.storeState.messages.find(
@@ -228,6 +238,7 @@ export default {
   methods: {
     // 在切换 chatbox 时，将滑动条滑到最下面
     scrollToDown() {
+      console.log("滑动到最下面");
       let card = document.getElementById("card");
       card.scrollTop = card.scrollHeight;
     },
@@ -254,78 +265,6 @@ export default {
       );
 
       console.log("加载更多会话ID----" + sid + "开始下标" + allMessages.start);
-    },
-    // 获取所有消息
-    getMessage() {
-      let data = {
-        sid: this.storeState.currSId,
-      };
-      axios
-        .post("/api/message/getAll", data)
-        .then((res) => {
-          if (res.data.success) {
-            //console.log("res.data.info:\n");
-            //console.log(res.data.info);
-            store.setMessages(this.storeState.currSId, res.data.info);
-            // console.log("当前会话为--------"+this.storeState.currSId);
-            // this.updateRead(this.storeState.currSId);
-          } else {
-            // this.showAlert(res.data.info, "error");
-            // console.log(res.data.info);
-          }
-        })
-        .catch((err) => {
-          this.showAlert("请求错误！", "error");
-          //this.showAlert(err, "error");
-          console.log(err);
-        });
-    },
-    // 发送消息
-    sendMessage() {
-      const data = {
-        message: this.message,
-        sid: this.storeState.currSId,
-      };
-
-      this.message = "";
-      let unmessage = store.addUnfinishedMessage(data.sid, data.message);
-      //console.log("unmessage is:\n");
-      //console.log(unmessage);
-      axios
-        .post("/api/message/sendMessage", data)
-        .then((res) => {
-          if (res.data.success) {
-            setTimeout(() => {
-              // 发送成功就在未完成消息中清除掉
-              store.clearUnfinishedMessage(data.sid, unmessage.mid);
-              // 发送成功就获取所有消息
-              this.getMessage();
-            }, 500);
-          } else {
-            // 将未完成消息设置为失败消息
-            store.resetUnfinishedMessage(data.sid, unmessage.mid);
-          }
-        })
-        .catch((err) => {
-          store.resetUnfinishedMessage(data.sid, unmessage.mid);
-          console.log(err);
-        });
-    },
-    //更新发送消息状态
-    updateRead(sid) {
-      const data = {
-        message: "",
-        sid: sid,
-      };
-
-      this.message = "";
-      axios.post("/api/message/updateRead", data).then((res) => {
-        if (res.data.success) {
-          setTimeout(() => {
-            console.log("更新状态消息发送---");
-          }, 1000);
-        }
-      });
     },
     // 点击红叹号，重发消息
     resendMessage(message) {

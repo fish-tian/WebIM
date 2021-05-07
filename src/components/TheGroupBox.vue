@@ -161,29 +161,29 @@ export default {
         });
     },
     //获取所有会话
-    async getAllSessions() {
-      // 如果 cookie 中有 session，就请求获取好友列表
-      if (this.$cookies.get("koa.sess")) {
-        axios
-          .get("/api/session/getAll")
-          .then((res) => {
-            if (res.data.success) {
-              store.setSessions(res.data.info);
-              for (const session of res.data.info) {
-                let group=true;
-                this.getAllMessages(session.sid,group);
-              }
+    // async getAllSessions() {
+    //   // 如果 cookie 中有 session，就请求获取好友列表
+    //   if (this.$cookies.get("koa.sess")) {
+    //     axios
+    //       .get("/api/session/getAll")
+    //       .then((res) => {
+    //         if (res.data.success) {
+    //           store.setSessions(res.data.info);
+    //           for (const session of res.data.info) {
+    //             let group=true;
+    //             this.getAllMessages(session.sid,group);
+    //           }
 
-              //this.lists = res.data.lists;
-            } else {
-              store.setSessions(null);
-            }
-          })
-          .catch((err) => {
-            alert(err);
-          });
-      }
-    },
+    //           //this.lists = res.data.lists;
+    //         } else {
+    //           store.setSessions(null);
+    //         }
+    //       })
+    //       .catch((err) => {
+    //         alert(err);
+    //       });
+    //   }
+    // },
   },
 };
 </script>
