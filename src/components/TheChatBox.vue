@@ -62,7 +62,7 @@
               :key="message.mId"
               :class="{ 'text-right align-self-start': message.isMe }"
             >
-              <v-list-item-avatar v-show="!message.isMe" class="mr-1">
+              <v-list-item-avatar v-if="!message.isMe" class="mr-1">
                 <v-avatar color="orange" size="36">
                   <span class="white--text headline">{{
                     message.sender_name[0]
@@ -71,7 +71,7 @@
               </v-list-item-avatar>
 
               <v-list-item-content>
-                <v-list-item-title v-show="!message.isMe">
+                <v-list-item-title v-if="!message.isMe">
                   {{ message.sender_name }}
                 </v-list-item-title>
 
@@ -121,7 +121,7 @@
               :key="unmessage.mid"
               :class="{ 'text-right align-self-start': 1 }"
             >
-              <v-list-item-avatar v-show="0">
+              <v-list-item-avatar v-if="0">
                 <v-avatar color="orange" size="36">
                   <span class="white--text headline">{{
                     message.sender_name[0]
@@ -129,9 +129,10 @@
                 </v-avatar>
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title v-show="0">
+                <v-list-item-title v-if="0">
                   {{ message.sender_name }}
                 </v-list-item-title>
+                
                 <v-list-item-subtitle>
                   <v-chip
                     :color="1 ? 'primary' : ''"
@@ -145,10 +146,13 @@
                   >
                     {{ unmessage.message }}
                   </v-chip>
+                  <div v-show="!unmessage.fail" style="margin-top: 3px">
+                  发送中
+                </div>
                 </v-list-item-subtitle>
               </v-list-item-content>
 
-              <v-subheader v-show="!unmessage.fail">发送中</v-subheader>
+              <!-- <v-subheader v-show="!unmessage.fail">发送中</v-subheader> -->
               <v-icon
                 v-show="unmessage.fail"
                 color="red"
@@ -189,6 +193,7 @@
 import store from "@/store.js";
 import axios from "axios";
 import eventBus from "@/eventBus.js";
+import sharedMethods from "@/sharedMethods";
 
 export default {
   data() {
@@ -197,6 +202,7 @@ export default {
       // userId: store.user.id
       storeState: store.state,
       sidChangedFlag: false,
+      addUnfinishedMessageFlag: false,
       // end:store.state.msgNums,
       // start:store.state.msgNums-10,
       message: "",
@@ -208,7 +214,6 @@ export default {
     //console.log("mounted!!!!!!!!!!!");
   },
   created() {
-    
     eventBus.$on("sidChanged", () => {
       //alert("切换之前的");
       //一些操作，message就是从top组件传过来的值
@@ -222,13 +227,14 @@ export default {
       this.sidChangedFlag = false;
       this.scrollToDown();
     }
+
+    if(this.addUnfinishedMessageFlag) {
+      this.addUnfinishedMessageFlag = false;
+      this.scrollToDown();
+    }
   },
   computed: {
     currSId: function () {
-      // this.scrollToDown();
-      // console.log("滑动到最下面");
-      // let card = document.getElementById("card");
-      // card.scrollTop = card.scrollHeight;
       return store.storeState.currSId;
     },
     //查找每个会话开始显示消息的下标
@@ -246,8 +252,6 @@ export default {
     },
 
     title: function () {
-      //console.log("-----");
-      //console.log(this.storeState.sessions);
       let session = this.storeState.sessions.find(
         (item) => item.sid === this.storeState.currSId
       );
@@ -258,8 +262,6 @@ export default {
       let allMessages = this.storeState.messages.find(
         (item) => item.sid === this.storeState.currSId
       );
-      //console.log("message------");
-      //console.log(allMessages);
 
       //this.updateRead();
 
@@ -280,12 +282,14 @@ export default {
         message: this.message,
         sid: this.storeState.currSId,
       };
-
       this.message = "";
+
+      this.addUnfinishedMessageFlag = true;
       let unmessage = store.addUnfinishedMessage(data.sid, data.message);
+      
       //console.log("unmessage is:\n");
       //console.log(unmessage);
-      return axios
+      axios
         .post("/api/message/sendMessage", data)
         .then((res) => {
           if (res.data.success) {
@@ -293,7 +297,14 @@ export default {
               // 发送成功就在未完成消息中清除掉
               store.clearUnfinishedMessage(data.sid, unmessage.mid);
               // 发送成功就获取所有消息
-              this.getMessage();
+              sharedMethods.getMessage
+                .call(this, data.sid)
+                .then((res) => {
+                  store.setMessages(data.sid, res.data.info);
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
             }, 500);
           } else {
             // 将未完成消息设置为失败消息
@@ -305,10 +316,11 @@ export default {
           console.log(err);
         });
     },
+
     // 在切换 chatbox 之后，将滑动条滑到最下面
     scrollToDown() {
       let card = document.getElementById("card");
-      if (card && (card.offsetHeight !== card.scrollHeight)) {
+      if (card && card.offsetHeight !== card.scrollHeight) {
         console.log("滑动到最下面");
         console.log("scrollHeight: " + card.scrollHeight);
         console.log("offsetHeight：" + card.offsetHeight);
@@ -319,16 +331,20 @@ export default {
     // 在切换 chatbox 之前，将滑动条滑到最上面
     scrollToTop() {
       let card = document.getElementById("card");
-      if (card && (card.offsetHeight !== card.scrollHeight)) {
+      if (card && card.offsetHeight !== card.scrollHeight) {
         console.log("滑动到最上面");
         card.scrollTop = 0;
         console.log(card.scrollTop);
       }
     },
     // 滑动鼠标事件，做了节流处理
-    onWheel(e) {
+    onWheel() {
       let card = document.getElementById("card");
-      if (e.target.scrollTop === 0 && (card.offsetHeight !== card.scrollHeight)) {
+      if (
+        card &&
+        card.scrollTop === 0 &&
+        card.offsetHeight !== card.scrollHeight
+      ) {
         if (!this.scrollTimeout) {
           // 当前没有定时器要执行
           this.scrollTimeout = setTimeout(() => {
@@ -352,15 +368,9 @@ export default {
     },
     // 点击红叹号，重发消息
     resendMessage(message) {
-      //console.log("mid为" + message.mid);
-
-      const theFriend = this.storeState.friends.find((friend) => {
-        return friend.id == this.storeState.currFriendId;
-      });
       const data = {
         message: message.message,
-        friend: theFriend,
-        sid: theFriend.sid,
+        sid: this.storeState.currSId,
       };
 
       store.resetUnfinishedMessage(data.sid, message.mid);
@@ -373,7 +383,7 @@ export default {
               // 发送成功就在未完成消息中清除掉
               store.clearUnfinishedMessage(data.sid, message.mid);
               // 发送成功就获取所有消息
-              this.getMessage();
+              sharedMethods.getMessage.call(this, data.sid);
             }, 1000);
           } else {
             // 将未完成消息设置为失败消息
