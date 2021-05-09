@@ -84,7 +84,7 @@ export default {
   },
   computed: {},
   mounted() {
-    this.getAllRequests();
+    //this.getAllRequests();
   },
   methods: {
     //显示提示

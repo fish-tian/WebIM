@@ -165,16 +165,14 @@ export default {
     },
     // 点击聊天按钮
     openChat(sid) {
-      // this.currSIdChange();
-      //console.log(sid);
-      //store.setCurrFriendId(friend.id);
+      this.currSIdChange();
+
       store.setCurrSId(sid);
-      //this.getAllMessages(sid);
-      this.updateRead(sid);
-      //store.setFlag(1);
+      //this.updateRead(sid);
+      
     },
     //更新发送消息状态
-    updateRead(sid) {
+    //updateRead(sid) {
       // const data = {
       //   message: "",
       //   sid: sid,
@@ -189,7 +187,7 @@ export default {
       //     }, 1000);
       //   }
       // });
-    },
+    //},
   },
 };
 </script>

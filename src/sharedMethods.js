@@ -1,7 +1,9 @@
+import axios from "axios";
+
 // 获取所有消息
-async function getMessage() {
+async function getMessage(sid) {
   let data = {
-    sid: this.storeState.currSId,
+    sid: sid,
   };
   return axios
     .post("/api/message/getAll", data);
@@ -41,38 +43,6 @@ async function updateRead(sid) {
   // });
 }
 
-// 发送消息
-async function sendMessage() {
-  const data = {
-    message: this.message,
-    sid: this.storeState.currSId,
-  };
-
-  this.message = "";
-  let unmessage = store.addUnfinishedMessage(data.sid, data.message);
-  //console.log("unmessage is:\n");
-  //console.log(unmessage);
-  return axios
-    .post("/api/message/sendMessage", data);
-    // .then((res) => {
-    //   if (res.data.success) {
-    //     setTimeout(() => {
-    //       // 发送成功就在未完成消息中清除掉
-    //       store.clearUnfinishedMessage(data.sid, unmessage.mid);
-    //       // 发送成功就获取所有消息
-    //       this.getMessage();
-    //     }, 500);
-    //   } else {
-    //     // 将未完成消息设置为失败消息
-    //     store.resetUnfinishedMessage(data.sid, unmessage.mid);
-    //   }
-    // })
-    // .catch((err) => {
-    //   store.resetUnfinishedMessage(data.sid, unmessage.mid);
-    //   console.log(err);
-    // });
-}
-
 //获取所有会话
 async function getAllSessions() {
   // 如果 cookie 中有 session，就请求获取好友列表
@@ -94,6 +64,8 @@ async function getAllSessions() {
       // .catch((err) => {
       //   alert(err);
       // });
+  } else {
+    return Promise.reject();
   }
 }
 
@@ -119,6 +91,8 @@ async function getAllFriends() {
       // .catch((err) => {
       //   alert(err);
       // });
+  }  else {
+    return Promise.reject();
   }
 }
 
@@ -141,12 +115,13 @@ async function getAllRequests() {
       // .catch((err) => {
       //   alert(err);
       // });
+  }  else {
+    return Promise.reject();
   }
 }
 
 export default {
   updateRead,
-  sendMessage,
   getMessage,
   getAllSessions,
   getAllFriends,

@@ -13,7 +13,6 @@
           class="overflow-y-auto fill-height"
           tile
           color="grey lighten-4"
-          
         >
         </v-card>
       </div>
@@ -23,7 +22,7 @@
 
       <div>
         <!-- v-card 里是对话框卡片 -->
-        <v-card
+        <!-- <v-card
           min-width="550px"
           min-height="380px"
           max-height="380px"
@@ -32,6 +31,17 @@
           color="grey lighten-4"
           style="padding: 8px"
           v-scroll.self="onScroll"
+          id="card"
+        > -->
+        <v-card
+          min-width="550px"
+          min-height="380px"
+          max-height="380px"
+          class="overflow-y-auto fill-height"
+          tile
+          color="grey lighten-4"
+          style="padding: 8px"
+          @wheel="onWheel"
           id="card"
         >
           <v-list subheader dense color="grey lighten-4">
@@ -48,11 +58,11 @@
               :class="{ 'text-right align-self-start': message.isMe }"
             > -->
             <v-list-item
-              v-for="message in messages"
+              v-for="message in messages.slice(start)"
               :key="message.mId"
               :class="{ 'text-right align-self-start': message.isMe }"
             >
-              <v-list-item-avatar v-if="!message.isMe" class="mr-1">
+              <v-list-item-avatar v-show="!message.isMe" class="mr-1">
                 <v-avatar color="orange" size="36">
                   <span class="white--text headline">{{
                     message.sender_name[0]
@@ -61,7 +71,7 @@
               </v-list-item-avatar>
 
               <v-list-item-content>
-                <v-list-item-title v-if="!message.isMe">
+                <v-list-item-title v-show="!message.isMe">
                   {{ message.sender_name }}
                 </v-list-item-title>
 
@@ -78,16 +88,32 @@
                   >
                     {{ message.message }}
                   </v-chip>
+                  <div
+                    v-show="message.read === 0 && message.isMe && isGroup === 0"
+                    style="margin-top: 3px"
+                  >
+                    未读
+                  </div>
+                  <div
+                    v-show="message.read === 1 && message.isMe && isGroup === 0"
+                    style="margin-top: 3px"
+                  >
+                    已读
+                  </div>
                 </v-list-item-subtitle>
               </v-list-item-content>
+              <!-- <div v-show="message.read === 0 && message.isMe && isGroup === 0">
+                未读
+              </div>
+              <div v-show="message.read === 1 && message.isMe && isGroup === 0">
+                已读
+              </div> -->
+              <!-- <v-subheader
+                v-show="message.read === 0 && message.isMe && isGroup === 0"
+                >未读</v-subheader>
               <v-subheader
-                v-if="message.read === 0 && message.isMe && isGroup === 0"
-                >未读</v-subheader
-              >
-              <v-subheader
-                v-if="message.read === 1 && message.isMe && isGroup === 0"
-                >已读</v-subheader
-              >
+                v-show="message.read === 1 && message.isMe && isGroup === 0"
+                >已读</v-subheader> -->
             </v-list-item>
 
             <v-list-item
@@ -95,7 +121,7 @@
               :key="unmessage.mid"
               :class="{ 'text-right align-self-start': 1 }"
             >
-              <v-list-item-avatar v-if="0">
+              <v-list-item-avatar v-show="0">
                 <v-avatar color="orange" size="36">
                   <span class="white--text headline">{{
                     message.sender_name[0]
@@ -103,7 +129,7 @@
                 </v-avatar>
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title v-if="0">
+                <v-list-item-title v-show="0">
                   {{ message.sender_name }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
@@ -122,9 +148,9 @@
                 </v-list-item-subtitle>
               </v-list-item-content>
 
-              <v-subheader v-if="!unmessage.fail">发送中</v-subheader>
+              <v-subheader v-show="!unmessage.fail">发送中</v-subheader>
               <v-icon
-                v-if="unmessage.fail"
+                v-show="unmessage.fail"
                 color="red"
                 @click="resendMessage(unmessage)"
                 >mdi-alert-circle</v-icon
@@ -162,7 +188,7 @@
 <script>
 import store from "@/store.js";
 import axios from "axios";
-import eventBus from '@/eventBus.js'
+import eventBus from "@/eventBus.js";
 
 export default {
   data() {
@@ -170,6 +196,7 @@ export default {
       // friendId: this.$route.params.id,
       // userId: store.user.id
       storeState: store.state,
+      sidChangedFlag: false,
       // end:store.state.msgNums,
       // start:store.state.msgNums-10,
       message: "",
@@ -181,13 +208,23 @@ export default {
     //console.log("mounted!!!!!!!!!!!");
   },
   created() {
-    eventBus.$on('sidChanged',()=>{
-        //一些操作，message就是从top组件传过来的值
-        this.scrollToDown();
+    
+    eventBus.$on("sidChanged", () => {
+      //alert("切换之前的");
+      //一些操作，message就是从top组件传过来的值
+      console.log("");
+      this.sidChangedFlag = true;
+      //this.scrollToTop();
     });
   },
+  updated() {
+    if (this.sidChangedFlag) {
+      this.sidChangedFlag = false;
+      this.scrollToDown();
+    }
+  },
   computed: {
-    currSId: function() {
+    currSId: function () {
       // this.scrollToDown();
       // console.log("滑动到最下面");
       // let card = document.getElementById("card");
@@ -211,9 +248,10 @@ export default {
     title: function () {
       //console.log("-----");
       //console.log(this.storeState.sessions);
-      return this.storeState.sessions.find(
+      let session = this.storeState.sessions.find(
         (item) => item.sid === this.storeState.currSId
-      ).title;
+      );
+      return session ? session.title : "";
     },
 
     messages: function () {
@@ -236,17 +274,63 @@ export default {
     },
   },
   methods: {
-    // 在切换 chatbox 时，将滑动条滑到最下面
+    // 发送消息
+    sendMessage() {
+      const data = {
+        message: this.message,
+        sid: this.storeState.currSId,
+      };
+
+      this.message = "";
+      let unmessage = store.addUnfinishedMessage(data.sid, data.message);
+      //console.log("unmessage is:\n");
+      //console.log(unmessage);
+      return axios
+        .post("/api/message/sendMessage", data)
+        .then((res) => {
+          if (res.data.success) {
+            setTimeout(() => {
+              // 发送成功就在未完成消息中清除掉
+              store.clearUnfinishedMessage(data.sid, unmessage.mid);
+              // 发送成功就获取所有消息
+              this.getMessage();
+            }, 500);
+          } else {
+            // 将未完成消息设置为失败消息
+            store.resetUnfinishedMessage(data.sid, unmessage.mid);
+          }
+        })
+        .catch((err) => {
+          store.resetUnfinishedMessage(data.sid, unmessage.mid);
+          console.log(err);
+        });
+    },
+    // 在切换 chatbox 之后，将滑动条滑到最下面
     scrollToDown() {
-      console.log("滑动到最下面");
       let card = document.getElementById("card");
-      card.scrollTop = card.scrollHeight;
+      if (card && (card.offsetHeight !== card.scrollHeight)) {
+        console.log("滑动到最下面");
+        console.log("scrollHeight: " + card.scrollHeight);
+        console.log("offsetHeight：" + card.offsetHeight);
+        card.scrollTop = card.scrollHeight - card.offsetHeight;
+        console.log("scrollTop：" + card.scrollTop);
+      }
+    },
+    // 在切换 chatbox 之前，将滑动条滑到最上面
+    scrollToTop() {
+      let card = document.getElementById("card");
+      if (card && (card.offsetHeight !== card.scrollHeight)) {
+        console.log("滑动到最上面");
+        card.scrollTop = 0;
+        console.log(card.scrollTop);
+      }
     },
     // 滑动鼠标事件，做了节流处理
-    onScroll(e) { 
-      console.log(e.target.scrollTop);
-      if (e.target.scrollTop === 0) {
-        if (!this.scrollTimeout) {  // 当前没有定时器要执行
+    onWheel(e) {
+      let card = document.getElementById("card");
+      if (e.target.scrollTop === 0 && (card.offsetHeight !== card.scrollHeight)) {
+        if (!this.scrollTimeout) {
+          // 当前没有定时器要执行
           this.scrollTimeout = setTimeout(() => {
             this.onloadMore();
             this.scrollTimeout = null;

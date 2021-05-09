@@ -16,10 +16,8 @@
 //import Home from './views/Home'
 import store from "@/store.js";
 import axios from "axios";
-import sharedMethods from "@/sharedMethods"
 import { io } from "socket.io-client";
 
-// 解决跨域
 axios.defaults.withCredentials = true;
 
 export default {
@@ -36,83 +34,111 @@ export default {
   },
   created() {
     const options = { withCredentials: true };
-    const socket = io('http://localhost:3001', options);
-    socket.on('connect', () => {
+    const socket = io("http://localhost:3001", options);
+    socket.on("connect", () => {
+      console.log("哈哈");
       // Fired when the socket connects.
-      console.log("socket id: " + this.$socket.id);
-      store.setSocketId(this.$socket.id);
+      console.log("socket id: " + socket.id);
+      store.setSocketId(socket.id);
       this.keepAlive();
     });
 
-    socket.on('connect_error', (err) => {
-      console.log("socket.io 错误" );
+    socket.on("connect_error", (err) => {
+      console.log("socket.io 错误");
       console.log(err);
       //this.connect();
     });
 
-    socket.on('disconnect', () => {
-      //alert("websocket连接出现错误，请刷新页面后重试");
+    socket.on("disconnect", () => {
+      alert("websocket连接出现错误，请刷新页面后重试");
     });
 
-    socket.on('newRequest', (data) => {
+    socket.on("newRequest", (data) => {
       console.log("-- newrequest: \n" + data);
       store.setRequests(data);
     });
 
-    socket.on('newFriend', (data) => {
+    socket.on("newFriend", (data) => {
       console.log("-- newfriend: \n" + data);
       store.setFriends(data);
     });
 
-    socket.on('newMessage', (data) => {
+    socket.on("newMessage", (data) => {
       console.log("newMsg------");
       store.setMessages(data.sid, data.messages);
       console.log(this.storeState.currSId);
-    
+
       if (this.storeState.currSId === data.sid) {
         this.getMessage();
       }
     });
 
-    socket.on('newSession', () => {
+    socket.on("newSession", (data) => {
       store.setSessions(data);
     });
 
-    socket.on('lastMsg', () => {
+    socket.on("lastMsg", (data) => {
       console.log("-- LastMessage: \n" + data);
       store.setlastMsg(data);
     });
   },
-  mounted() {
-    await this.getAllSessions();
-  },
+  // created() {
+  //   const options = { withCredentials: true };
+  //   const socket = io("http://localhost:3001", options);
+  //   socket.on("connect", () => {
+  //     console.log("哈哈");
+  //     // Fired when the socket connects.
+  //     console.log("socket id: " + socket.id);
+  //     store.setSocketId(socket.id);
+  //     this.keepAlive();
+  //   });
+
+  //   socket.on("connect_error", (err) => {
+  //     console.log("socket.io 错误");
+  //     console.log(err);
+  //     //this.connect();
+  //   });
+
+  //   socket.on("disconnect", () => {
+  //     alert("websocket连接出现错误，请刷新页面后重试");
+  //   });
+
+  //   socket.on("newRequest", (data) => {
+  //     console.log("-- newrequest: \n" + data);
+  //     store.setRequests(data);
+  //   });
+
+  //   socket.on("newFriend", (data) => {
+  //     console.log("-- newfriend: \n" + data);
+  //     store.setFriends(data);
+  //   });
+
+  //   socket.on("newMessage", (data) => {
+  //     console.log("newMsg------");
+  //     store.setMessages(data.sid, data.messages);
+  //     console.log(this.storeState.currSId);
+
+  //     if (this.storeState.currSId === data.sid) {
+  //       this.getMessage();
+  //     }
+  //   });
+
+  //   socket.on("newSession", (data) => {
+  //     store.setSessions(data);
+  //   });
+
+  //   socket.on("lastMsg", (data) => {
+  //     console.log("-- LastMessage: \n" + data);
+  //     store.setlastMsg(data);
+  //   });
+  // },
+  // mounted() {
+  //   this.getAll();
+  // },
   methods: {
-    // 获取所有消息
-    getMessage() {
-      // let data = {
-      //   sid: this.storeState.currSId,
-      // };
-      // axios
-      //   .post("/api/message/getAll", data)
-      //   .then((res) => {
-      //     if (res.data.success) {
-      //       //console.log("res.data.info:\n");
-      //       //console.log(res.data.info);
-      //       store.setMessages(this.storeState.currSId, res.data.info);
-      //     } else {
-      //       // this.showAlert(res.data.info, "error");
-      //       // console.log(res.data.info);
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     this.showAlert("请求错误！", "error");
-      //     //this.showAlert(err, "error");
-      //     console.log(err);
-      //   });
-    },
     // 用于在刷新页面或者重新打开页面时更新用户的socket.id
     keepAlive() {
-      let data = { socketId: this.$socket.id };
+      let data = { socketId: this.storeState.socketId };
       axios
         .post("/api/user/keepAlive", data)
         .then((res) => {
@@ -124,9 +150,9 @@ export default {
           }
         })
         .catch((err) => {
-          this.showAlert("请求错误！", "error");
+          //this.showAlert("请求错误！", "error");
           //this.showAlert(err, "error");
-          console.log(err);
+          console.log("444" + err);
         });
     },
   },

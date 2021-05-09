@@ -79,7 +79,6 @@ export default {
   data() {
     return {
       storeState: store.state,
-      lists: "",
       alert: false,
       alertMessage: "",
       alertType: "",
@@ -138,8 +137,8 @@ export default {
     },
   },
   async mounted() {
-    let temp = await this.getAllFriends();
-    console.log(temp);
+    //let temp = await this.getAllFriends();
+    //console.log(temp);
     //this.openChat(this.storeState.friends[0]);
   },
   methods: {
