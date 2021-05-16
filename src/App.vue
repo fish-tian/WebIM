@@ -36,7 +36,6 @@ export default {
     const options = { withCredentials: true };
     const socket = io("http://localhost:3001", options);
     socket.on("connect", () => {
-      console.log("哈哈");
       // Fired when the socket connects.
       console.log("socket id: " + socket.id);
       store.setSocketId(socket.id);
@@ -65,7 +64,8 @@ export default {
 
     socket.on("newMessage", (data) => {
       console.log("newMsg------");
-      store.setMessages(data.sid, data.messages);
+      store.addMessage(data.sid, data.message);
+      //store.setMessages(data.sid, data.messages);
       console.log(this.storeState.currSId);
 
       if (this.storeState.currSId === data.sid) {

@@ -85,8 +85,6 @@ export default {
     // 对会话进行按照时间的排序
     orderSession: function() {
       let data = _.orderBy(this.storeState.sessions, 'lastdate', 'desc');
-      console.log("#########");
-      console.log(data);
       return data;
     },
     lastmessage: function () {

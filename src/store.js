@@ -28,7 +28,7 @@ export default {
     this.state.sessions = data;
   },
   addSession(data) {
-    
+    this.state.sessions.push(data);
   },
   setMsgNums(nums) {
     this.state.msgNums = nums;
@@ -61,6 +61,7 @@ export default {
     this.state.show = temp;   // 修改数组中元素的值，vue没法动态绑定，只能这样
   },
   setMessages(sid, messages) {
+    console.log(messages);
     //console.log("-----"+sid+"---"+messages.length);
     let index = this.state.messages.findIndex(item => {
       return sid === item.sid;
@@ -79,11 +80,31 @@ export default {
     this.state.messages[index].start = nums;
 
     // 给每一个 session 设置最近发送的 lastdate
-    let sidIndex = this.state.sessions.findIndex((item)=>{
+    let sidIndex = this.state.sessions.findIndex((item) => {
       return item.sid === sid;
     });
     let len = this.state.messages[index].messages.length;
-    Vue.set(this.state.sessions[sidIndex], "lastdate", len === 0 ? 0 : Date.parse(this.state.messages[index].messages[len - 1].date));
+    Vue.set(this.state.sessions[sidIndex],
+      "lastdate", len === 0 ? 0 : Date.parse(this.state.messages[index].messages[len - 1].date));
+  },
+  addMessage(sid, message) {
+    let index = this.state.messages.findIndex(item => {
+      return sid === item.sid;
+    });
+    if (index === -1) {
+      this.state.messages.push({ sid: sid, messages: [], start: 0 });
+      index = this.state.messages.length - 1;
+    }
+
+    this.state.messages[index].push(message);
+
+    // 给每一个 session 设置最近发送的 lastdate
+    let sidIndex = this.state.sessions.findIndex((item) => {
+      return item.sid === sid;
+    });
+    let len = this.state.messages[index].messages.length;
+    Vue.set(this.state.sessions[sidIndex],
+      "lastdate", len === 0 ? 0 : Date.parse(this.state.messages[index].messages[len - 1].date));
   },
   updateMsg(sid) {
     let index = this.state.messages.findIndex(item => {
@@ -94,9 +115,6 @@ export default {
     } else {
       this.state.messages[index].start = 0;
     }
-
-
-
   },
   setLastMsg(lastMsg) {
     this.state.lastMsg = lastMsg;

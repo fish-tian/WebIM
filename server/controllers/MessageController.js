@@ -175,13 +175,13 @@ const sendMessage = async function (userId, sid, message) {
     // WebSocket 即时通知单聊好友或者群聊好友
     for (const idAndSocketId of idAndSocketIds) {
         //发送消息时，设置一个flag,当flag==0时，不调用getMsg方法的更新已读/未读
-        let flag = 0;
-        var allMessages = await this.getAllMessages(idAndSocketId.id, sid, flag);
-
+        //let flag = 0;
+        //var allMessages = await this.getAllMessages(idAndSocketId.id, sid, flag);
+        
+        // 仅发送一条消息
         let data = {
             sid: sid,
-            messages: allMessages,
-
+            message: theMessage,
         };
 
         io.to(idAndSocketId.socketId).emit("newMessage", data);
@@ -218,11 +218,6 @@ const updateRead = async function (userId, sid, message) {
     //     io.to(socketId).emit("newMessage", data);
 
     // }
-
-
-
-
-
 }
 
 module.exports = {

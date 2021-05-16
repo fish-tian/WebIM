@@ -100,20 +100,20 @@
                   >
                     已读
                   </div>
+                  <div
+                    v-show="message.read === 2 && message.isMe && isGroup === 0"
+                    style="margin-top: 3px"
+                  >
+                    发送中
+                  </div>
                 </v-list-item-subtitle>
               </v-list-item-content>
-              <!-- <div v-show="message.read === 0 && message.isMe && isGroup === 0">
-                未读
-              </div>
-              <div v-show="message.read === 1 && message.isMe && isGroup === 0">
-                已读
-              </div> -->
-              <!-- <v-subheader
-                v-show="message.read === 0 && message.isMe && isGroup === 0"
-                >未读</v-subheader>
-              <v-subheader
-                v-show="message.read === 1 && message.isMe && isGroup === 0"
-                >已读</v-subheader> -->
+              <v-icon
+                v-show="message.read === 3 && message.isMe && isGroup === 0"
+                color="red"
+                @click="resendMessage(unmessage)"
+                >mdi-alert-circle
+              </v-icon>
             </v-list-item>
 
             <v-list-item
@@ -132,7 +132,7 @@
                 <v-list-item-title v-if="0">
                   {{ message.sender_name }}
                 </v-list-item-title>
-                
+
                 <v-list-item-subtitle>
                   <v-chip
                     :color="1 ? 'primary' : ''"
@@ -147,8 +147,8 @@
                     {{ unmessage.message }}
                   </v-chip>
                   <div v-show="!unmessage.fail" style="margin-top: 3px">
-                  发送中
-                </div>
+                    发送中
+                  </div>
                 </v-list-item-subtitle>
               </v-list-item-content>
 
@@ -217,7 +217,7 @@ export default {
     eventBus.$on("sidChanged", () => {
       //alert("切换之前的");
       //一些操作，message就是从top组件传过来的值
-      console.log("");
+      //console.log("");
       this.sidChangedFlag = true;
       //this.scrollToTop();
     });
@@ -228,7 +228,7 @@ export default {
       this.scrollToDown();
     }
 
-    if(this.addUnfinishedMessageFlag) {
+    if (this.addUnfinishedMessageFlag) {
       this.addUnfinishedMessageFlag = false;
       this.scrollToDown();
     }
@@ -286,7 +286,7 @@ export default {
 
       this.addUnfinishedMessageFlag = true;
       let unmessage = store.addUnfinishedMessage(data.sid, data.message);
-      
+
       //console.log("unmessage is:\n");
       //console.log(unmessage);
       axios
@@ -321,20 +321,20 @@ export default {
     scrollToDown() {
       let card = document.getElementById("card");
       if (card && card.offsetHeight !== card.scrollHeight) {
-        console.log("滑动到最下面");
-        console.log("scrollHeight: " + card.scrollHeight);
-        console.log("offsetHeight：" + card.offsetHeight);
+        //console.log("滑动到最下面");
+        //console.log("scrollHeight: " + card.scrollHeight);
+        //console.log("offsetHeight：" + card.offsetHeight);
         card.scrollTop = card.scrollHeight - card.offsetHeight;
-        console.log("scrollTop：" + card.scrollTop);
+        //console.log("scrollTop：" + card.scrollTop);
       }
     },
     // 在切换 chatbox 之前，将滑动条滑到最上面
     scrollToTop() {
       let card = document.getElementById("card");
       if (card && card.offsetHeight !== card.scrollHeight) {
-        console.log("滑动到最上面");
+        //console.log("滑动到最上面");
         card.scrollTop = 0;
-        console.log(card.scrollTop);
+        //console.log(card.scrollTop);
       }
     },
     // 滑动鼠标事件，做了节流处理
@@ -356,15 +356,12 @@ export default {
     },
     //加载更多的消息
     onloadMore() {
-      let sid = this.storeState.currSId;
-
       // let len = allMessages.messages.length;
       store.updateMsg(this.storeState.currSId);
-      let allMessages = this.storeState.messages.find(
-        (item) => item.sid === sid
-      );
-
-      console.log("加载更多会话ID----" + sid + "开始下标" + allMessages.start);
+      // let allMessages = this.storeState.messages.find(
+      //   (item) => item.sid === sid
+      // );
+      //console.log("加载更多会话ID----" + sid + "开始下标" + allMessages.start);
     },
     // 点击红叹号，重发消息
     resendMessage(message) {
