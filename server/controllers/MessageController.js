@@ -128,7 +128,7 @@ const sendMessage = async function (userId, sid, message) {
         date: Date.now(),
         read: 0
     });
-
+    
     const session = await Session.findOne({
         raw: true,
         where: {
@@ -179,9 +179,19 @@ const sendMessage = async function (userId, sid, message) {
         //var allMessages = await this.getAllMessages(idAndSocketId.id, sid, flag);
         
         // 仅发送一条消息
+        let realMessage = theMessage.dataValues;
+        let sender = await User.findOne({
+            raw: true,
+            where: {
+                id: userId
+            }
+        });
+        realMessage.sender_name = sender.user_name;
+        realMessage.isMe = false;
+
         let data = {
             sid: sid,
-            message: theMessage,
+            message: realMessage,
         };
 
         io.to(idAndSocketId.socketId).emit("newMessage", data);

@@ -64,13 +64,14 @@ export default {
 
     socket.on("newMessage", (data) => {
       console.log("newMsg------");
+      //console.log(data.message);
       store.addMessage(data.sid, data.message);
       //store.setMessages(data.sid, data.messages);
       console.log(this.storeState.currSId);
 
-      if (this.storeState.currSId === data.sid) {
-        this.getMessage();
-      }
+      // if (this.storeState.currSId === data.sid) {
+      //   this.getMessage();
+      // }
     });
 
     socket.on("newSession", (data) => {
@@ -171,5 +172,11 @@ export default {
   background-size: cover;
   transform: scale(1);
   overflow: hidden;
+}
+</style>
+
+<style>
+* {
+  font-weight: normal!important;
 }
 </style>

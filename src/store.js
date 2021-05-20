@@ -61,7 +61,7 @@ export default {
     this.state.show = temp;   // 修改数组中元素的值，vue没法动态绑定，只能这样
   },
   setMessages(sid, messages) {
-    console.log(messages);
+    //console.log(messages);
     //console.log("-----"+sid+"---"+messages.length);
     let index = this.state.messages.findIndex(item => {
       return sid === item.sid;
@@ -96,13 +96,16 @@ export default {
       index = this.state.messages.length - 1;
     }
 
-    this.state.messages[index].push(message);
+    this.state.messages[index].messages.push(message);
 
     // 给每一个 session 设置最近发送的 lastdate
     let sidIndex = this.state.sessions.findIndex((item) => {
       return item.sid === sid;
     });
     let len = this.state.messages[index].messages.length;
+    // console.log("!!!!!!!!!!!");
+    // console.log(this.state.messages[index].messages);
+    // console.log("!!!!!!!!!!!");
     Vue.set(this.state.sessions[sidIndex],
       "lastdate", len === 0 ? 0 : Date.parse(this.state.messages[index].messages[len - 1].date));
   },

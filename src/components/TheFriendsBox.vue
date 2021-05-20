@@ -43,7 +43,7 @@
             </v-list-item-avatar>
             <!-- <v-badge left dot bottom bordered offset-x="-20"> -->
             <v-list-item-content>
-              <v-list-item-title> {{ friend.user_name }} </v-list-item-title>
+              <v-list-item-title style="font-weight: normal;"> {{ friend.user_name }} </v-list-item-title>
               <!-- <v-list-item-subtitle>
                 {{ lastmessage[0][friend.sid] }}
               </v-list-item-subtitle> -->

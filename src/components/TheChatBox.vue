@@ -52,16 +52,46 @@
                 color="primary"
               ></v-progress-circular>
             </div>
-            <!-- <v-list-item
-              v-for="message in messages.slice(start)"
-              :key="message.mId"
-              :class="{ 'text-right align-self-start': message.isMe }"
-            > -->
             <v-list-item
               v-for="message in messages.slice(start)"
-              :key="message.mId"
+              :key="message.mid"
               :class="{ 'text-right align-self-start': message.isMe }"
+              class="flex-wrap"
             >
+              <!-- 显示时间 -->
+              <div
+                v-show="times[message.mid]"
+                style="
+                  flex-basis: 550px;
+                  font-size: 13px;
+                  text-align: center !important;
+                  padding: 2px;
+                  color: rgba(0, 0, 0, 0.6);
+                "
+                class="text-left"
+              >
+                {{ times[message.mid] }}
+              </div>
+              <div style="flex: 1 1 auto; font-size: 14px; color: rgba(0, 0, 0, 0.6); padding: 5px;" v-show="message.isMe">
+                <div
+                  v-show="message.read === 0 && message.isMe && isGroup === 0"
+                  style="margin-top: 3px"
+                >
+                  未读
+                </div>
+                <div
+                  v-show="message.read === 1 && message.isMe && isGroup === 0"
+                  style="margin-top: 3px;"
+                > 
+                  已读
+                </div>
+                <div
+                  v-show="message.read === 2 && message.isMe && isGroup === 0"
+                  style="margin-top: 3px"
+                >
+                  发送中
+                </div>
+              </div>
               <v-list-item-avatar v-if="!message.isMe" class="mr-1">
                 <v-avatar color="orange" size="36">
                   <span class="white--text headline">{{
@@ -70,7 +100,7 @@
                 </v-avatar>
               </v-list-item-avatar>
 
-              <v-list-item-content>
+              <v-list-item-content  style="flex: 0 1 auto">
                 <v-list-item-title v-if="!message.isMe">
                   {{ message.sender_name }}
                 </v-list-item-title>
@@ -83,29 +113,11 @@
                       max-width: 300px;
                       white-space: normal;
                       font-size: 14px;
-                      padding: 5px;
+                      padding: 7px 10px;
                     "
                   >
                     {{ message.message }}
                   </v-chip>
-                  <div
-                    v-show="message.read === 0 && message.isMe && isGroup === 0"
-                    style="margin-top: 3px"
-                  >
-                    未读
-                  </div>
-                  <div
-                    v-show="message.read === 1 && message.isMe && isGroup === 0"
-                    style="margin-top: 3px"
-                  >
-                    已读
-                  </div>
-                  <div
-                    v-show="message.read === 2 && message.isMe && isGroup === 0"
-                    style="margin-top: 3px"
-                  >
-                    发送中
-                  </div>
                 </v-list-item-subtitle>
               </v-list-item-content>
               <v-icon
@@ -141,7 +153,7 @@
                       max-width: 300px;
                       white-space: normal;
                       font-size: 14px;
-                      padding: 5px;
+                      padding: 7px 10px;
                     "
                   >
                     {{ unmessage.message }}
@@ -264,8 +276,39 @@ export default {
       );
 
       //this.updateRead();
-
       return allMessages === undefined ? null : allMessages.messages;
+    },
+
+    // 设置每条消息的时间是否显示
+    times: function () {
+      let allMessages = this.storeState.messages.find(
+        (item) => item.sid === this.storeState.currSId
+      );
+      console.log(allMessages);
+      if (allMessages === undefined || allMessages.messages.length === 0) {
+        return {};
+      }
+      allMessages = allMessages.messages;
+      //使用双指针，preIndex 指向上一个设置时间的消息，currIndex 指向当前遍历的消息
+      let preDate = new Date(allMessages[0].date);
+      let res = {};
+      res[allMessages[0].mid] = this.createDate(preDate);
+      let tenMin = 1000 * 60 * 10;
+      for (
+        let currIndex = 1, len = allMessages.length;
+        currIndex < len;
+        currIndex++
+      ) {
+        let currDate = new Date(allMessages[currIndex].date);
+        console.log(currDate);
+        if (currDate - preDate > tenMin) {
+          res[allMessages[currIndex].mid] = this.createDate(currDate);
+          preDate = currDate;
+        } else {
+          res[allMessages[currIndex].mid] = null;
+        }
+      }
+      return res;
     },
 
     unfinishedMessages: function () {
@@ -276,6 +319,12 @@ export default {
     },
   },
   methods: {
+    // 处理一下正确的时间
+    createDate(originDate) {
+      let [year, month, day] = originDate.toLocaleDateString().split("/");
+      let [hour, minute, second] = originDate.toLocaleTimeString().split(/:| /);
+      return `${year}.${month}.${day} ${hour}:${minute}:${second}`;
+    },
     // 发送消息
     sendMessage() {
       const data = {

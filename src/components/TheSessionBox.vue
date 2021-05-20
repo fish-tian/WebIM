@@ -20,6 +20,7 @@
             v-for="session in orderSession"
             :key="session.sid"
             @click="openChat(session.sid)"
+              
           >
             <v-list-item-avatar>
               <!-- 小红点的逻辑是：如果不是自己发的，而且消息没有读。那么显示小红点    :value="dotshow"-->
@@ -46,9 +47,9 @@
                 </v-avatar>
               </v-badge>
             </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title> {{ session.title }} </v-list-item-title>
-              <v-list-item-subtitle>
+            <v-list-item-content >
+              <v-list-item-title style="font-weight: normal;"> {{ session.title }} </v-list-item-title>
+              <v-list-item-subtitle style="font-weight: normal;">
                 {{ lastmessage[0][session.sid] }}
               </v-list-item-subtitle>
             </v-list-item-content>
