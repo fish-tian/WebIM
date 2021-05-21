@@ -12,7 +12,7 @@ export default {
     show: [true, false, false, false],
     messages: [],               // 存储和其他人的聊天消息 [{sid: xxx, messages:[] }, {sid: xxx, messages:[] }]
     unfinishedMessages: [],     // 存储和他人暂未发送成功的消息 [{sid: xxx, messages:[], mid }, {sid: xxx, messages:[], mid }] ，mid为自增唯一标识符
-
+    members: [],
     requests: [],
     socketId: "",
     //currFriendId: undefined,
@@ -60,6 +60,17 @@ export default {
     temp[data] = true;
     this.state.show = temp;   // 修改数组中元素的值，vue没法动态绑定，只能这样
   },
+  setMembers(sid,members){
+    let index = this.state.members.findIndex(item => {
+      return sid === item.sid;
+    });
+    if (index === -1) {
+      this.state.members.push({ sid: sid, members: [] });
+      index = this.state.members.length - 1;
+    }
+    
+    this.state.members[index].members = members;
+  },
   setMessages(sid, messages) {
     //console.log(messages);
     //console.log("-----"+sid+"---"+messages.length);
@@ -103,9 +114,7 @@ export default {
       return item.sid === sid;
     });
     let len = this.state.messages[index].messages.length;
-    // console.log("!!!!!!!!!!!");
-    // console.log(this.state.messages[index].messages);
-    // console.log("!!!!!!!!!!!");
+
     Vue.set(this.state.sessions[sidIndex],
       "lastdate", len === 0 ? 0 : Date.parse(this.state.messages[index].messages[len - 1].date));
   },
