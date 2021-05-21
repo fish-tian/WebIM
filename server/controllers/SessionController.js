@@ -1,4 +1,6 @@
-const { where } = require('sequelize');
+const {
+    where
+} = require('sequelize');
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 var WebIm = require('../config/db.js');
@@ -19,13 +21,17 @@ const getAllSessions = async function (userId) {
     let sessions = [];
     // 所有单聊会话
     const sgMemberSessions = await SingleMember.findAll({
-        raw: true,  // 使sequlize只返回数据
+        raw: true, // 使sequlize只返回数据
         where: {
-            [Op.or]: [{ uid1: userId }, { uid2: userId }],
+            [Op.or]: [{
+                uid1: userId
+            }, {
+                uid2: userId
+            }],
         }
     });
 
-    for(const session of sgMemberSessions) {
+    for (const session of sgMemberSessions) {
         const friendId = session.uid1 === userId ? session.uid2 : session.uid1;
         const friend = await User.findOne({
             raw: true,
@@ -37,7 +43,9 @@ const getAllSessions = async function (userId) {
         //查询最后一条消息以及消息读的状态
         let lastMessage = await Message.findAll({
             attributes: ['message', 'read', 'sender_uid'],
-            order: [['date', 'DESC']],
+            order: [
+                ['date', 'DESC']
+            ],
             limit: 1,
             raw: true,
             where: {
@@ -71,7 +79,11 @@ const getAllSessions = async function (userId) {
         // friend.send_uid = sender[i];
 
         sessions.push(tempSession);
+
+
     }
+
+
 
     // 所有群聊会话
     const gpMemberSessions = await GroupMember.findAll({
@@ -81,18 +93,43 @@ const getAllSessions = async function (userId) {
         }
     });
 
-    for(const session of gpMemberSessions) {
+    for (const session of gpMemberSessions) {
         const group = await Group.findOne({
             raw: true,
             where: {
                 sid: session.sid
             }
         });
-
+        console.log("group----");
+        let members = await GroupMember.findAll({
+            attributes: ['uid'],
+            raw: true,
+            where: {
+                sid: session.sid,
+            }
+        })
+        
+        
+        let gpMemberInfos = [];
+        for (member of members) {
+            
+            const info = await User.findOne({
+                attributes: ['user_name'],
+                raw: true,
+                where: {
+                    id: member.uid
+                }
+            })
+            gpMemberInfos.push(info);
+        }
+        
+        console.log(gpMemberInfos);
         //查询最后一条消息以及消息读的状态
         let lastMessage = await Message.findAll({
             attributes: ['message', 'read', 'sender_uid'],
-            order: [['date', 'DESC']],
+            order: [
+                ['date', 'DESC']
+            ],
             limit: 1,
             raw: true,
             where: {
@@ -116,7 +153,8 @@ const getAllSessions = async function (userId) {
             // fid: friend.id,
             message: lastMess,
             //mesRead: messRead, 对于群聊不可用
-            send_uid: sender
+            send_uid: sender,
+            gpMemberInfos:gpMemberInfos
         };
 
         sessions.push(tempSession);

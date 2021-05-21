@@ -69,10 +69,17 @@ export default {
         .then((res1) => {
           if (res1.data.success) {
             store.setSessions(res1.data.info);
+            //console.log("res---");
+            //console.log(res1.data.info);
             for (const session of res1.data.info) {
               sharedMethods.getMessage
                 .call(this, session.sid)
                 .then((res2) => {
+                  //console.log(session);
+                  if(session.group===1){
+                    store.setMembers(session.sid,session.gpMemberInfos)
+                  }
+                  console.log(this.storeState.Members);
                   if (res2.data.success) {
                     store.setMessages(session.sid, res2.data.info);
                   } else {

@@ -19,6 +19,7 @@
     </v-card>
     <v-card v-if="storeState.currSId" tile color="grey lighten-4">
       <v-card-text>{{ title }}</v-card-text>
+      群成员：{{showMembers.join('、')}}
 
       <div>
         <!-- v-card 里是对话框卡片 -->
@@ -300,6 +301,27 @@ export default {
       );
       return session ? session.title : "";
     },
+    // showMembers:function () {
+    //   let members=this.storeState.members;
+    //   let memberHash={};
+    //   for(const item of members){
+    //     memberHash[item.sid]=item.members;
+    //   }
+
+    //   console.log(memberHash);
+    //   return memberHash;
+    // },
+     showMembers:function () {
+       let allMembers = this.storeState.members.find(
+        (item) => item.sid === this.storeState.currSId
+      );
+      
+      let res=[];
+      for(const item of allMembers.members){
+        res.push(item.user_name);
+      }
+      return res;
+     },
 
     messages: function () {
       let allMessages = this.storeState.messages.find(

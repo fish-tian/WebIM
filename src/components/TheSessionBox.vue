@@ -43,12 +43,15 @@
                 <v-avatar color="red" size="36" v-if="session.group">
                   <span class="white--text headline">{{
                     session.title[0]
+              
                   }}</span>
+                  
                 </v-avatar>
               </v-badge>
             </v-list-item-avatar>
             <v-list-item-content >
               <v-list-item-title style="font-weight: normal;"> {{ session.title }} </v-list-item-title>
+            
               <v-list-item-subtitle style="font-weight: normal;">
                 {{ lastmessage[0][session.sid] }}
               </v-list-item-subtitle>
@@ -88,7 +91,9 @@ export default {
       let data = _.orderBy(this.storeState.sessions, 'lastdate', 'desc');
       return data;
     },
+    
     lastmessage: function () {
+      
       //storeState; chuli; sid -> lastmessage ;return {};
       let messages = this.storeState.messages;
       let errMessages = this.storeState.unfinishedMessages;
@@ -97,10 +102,6 @@ export default {
       let isMe = {};
       let redDotHash = {};
       let res = []; //第一个是msg,第二个是红点，第三个是判断是不是自己
-      //console.log("messages-------");
-      //console.log(messages);
-      //console.log("errmessages-------");
-      //console.log(errMessages.length);//0
       for (const item of messages) {
         //console.log(item);
         //item代表一个会话
