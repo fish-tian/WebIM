@@ -8,8 +8,8 @@
         <!-- v-card 里是对话框卡片 -->
         <v-card
           min-width="550px"
-          min-height="456px"
-          max-height="456px"
+          min-height="496px"
+          max-height="496px"
           class="overflow-y-auto fill-height"
           tile
           color="grey lighten-4"
@@ -39,12 +39,11 @@
           max-height="380px"
           class="overflow-y-auto fill-height"
           tile
-          color="grey lighten-4"
           style="padding: 8px"
           @wheel="onWheel"
           id="card"
         >
-          <v-list subheader dense color="grey lighten-4">
+          <v-list subheader dense>
             <div class="text-center" v-show="scrollTimeout">
               <v-progress-circular
                 :size="16"
@@ -65,14 +64,22 @@
                   flex-basis: 550px;
                   font-size: 13px;
                   text-align: center !important;
-                  padding: 2px;
+                  padding: 10px;
                   color: rgba(0, 0, 0, 0.6);
                 "
                 class="text-left"
               >
                 {{ times[message.mid] }}
               </div>
-              <div style="flex: 1 1 auto; font-size: 14px; color: rgba(0, 0, 0, 0.6); padding: 5px;" v-show="message.isMe">
+              <div
+                style="
+                  flex: 1 1 auto;
+                  font-size: 13px;
+                  color: rgba(0, 0, 0, 0.6);
+                  padding: 5px;
+                "
+                v-show="message.isMe"
+              >
                 <div
                   v-show="message.read === 0 && message.isMe && isGroup === 0"
                   style="margin-top: 3px"
@@ -81,8 +88,8 @@
                 </div>
                 <div
                   v-show="message.read === 1 && message.isMe && isGroup === 0"
-                  style="margin-top: 3px;"
-                > 
+                  style="margin-top: 3px"
+                >
                   已读
                 </div>
                 <div
@@ -100,7 +107,7 @@
                 </v-avatar>
               </v-list-item-avatar>
 
-              <v-list-item-content  style="flex: 0 1 auto">
+              <v-list-item-content style="flex: 0 1 auto">
                 <v-list-item-title v-if="!message.isMe">
                   {{ message.sender_name }}
                 </v-list-item-title>
@@ -174,27 +181,51 @@
             </v-list-item>
           </v-list>
         </v-card>
-        <v-card tile>
-          <v-text-field
-            placeholder="发送信息"
-            filled
-            dense
-            style="padding: 10px 5px 0px 10px; font-size: 13px"
-            @keypress.enter="sendMessage"
-            v-model="message"
+
+        <v-card
+          tile
+          style="max-height: 116px; min-height: 116px; overflow: hidden"
+        >
+          <!-- 表情 -->
+          <div
+            style="
+              height: 27px;
+              display: flex;
+              overflow: hidden;
+              padding: 8px 0px 0px 15px;
+            "
           >
-            <template v-slot:append-outer>
-              <v-btn
-                depressed
-                tile
-                color="primary"
-                class="ma-1"
-                @click="sendMessage"
-              >
-                发送
-              </v-btn>
-            </template>
-          </v-text-field>
+            <v-icon>mdi-emoticon-happy-outline</v-icon>
+          </div>
+          <!-- 聊天框 -->
+          <div
+            style="
+              max-height: 89px;
+              min-height: 89px;
+              display: flex;
+              overflow: hidden;
+            "
+          >
+            <v-form ref="form" style="width: 100%">
+              <v-textarea
+                solo
+                no-resize
+                hide-details
+                rows="3"
+                style="font-size: 14px"
+                @keyup.enter="sendMessage"
+                v-model="message"
+              ></v-textarea>
+              <!-- <v-textarea v-model="message" @keyup.enter="sendMessage"></v-textarea> -->
+              <!-- <v-checkbox
+
+                :rules="[(v) => !!v || 'You must agree to continue!']"
+                label="Do you agree?"
+                required
+              ></v-checkbox>
+              <v-btn @click="temp"></v-btn> -->
+            </v-form>
+          </div>
         </v-card>
       </div>
     </v-card>
@@ -300,7 +331,7 @@ export default {
         currIndex++
       ) {
         let currDate = new Date(allMessages[currIndex].date);
-        console.log(currDate);
+        //console.log(currDate);
         if (currDate - preDate > tenMin) {
           res[allMessages[currIndex].mid] = this.createDate(currDate);
           preDate = currDate;
@@ -327,43 +358,48 @@ export default {
     },
     // 发送消息
     sendMessage() {
-      const data = {
-        message: this.message,
-        sid: this.storeState.currSId,
-      };
-      this.message = "";
+      if (this.message.trim()) {
+        //console.log("before:" + this.message);
+        const data = {
+          message: this.message,
+          sid: this.storeState.currSId,
+        };
+        this.$refs.form.reset(); 
+        this.message = "";
+        
+        //console.log("after:" + this.message);
+        this.addUnfinishedMessageFlag = true;
+        let unmessage = store.addUnfinishedMessage(data.sid, data.message);
 
-      this.addUnfinishedMessageFlag = true;
-      let unmessage = store.addUnfinishedMessage(data.sid, data.message);
-
-      //console.log("unmessage is:\n");
-      //console.log(unmessage);
-      axios
-        .post("/api/message/sendMessage", data)
-        .then((res) => {
-          if (res.data.success) {
-            setTimeout(() => {
-              // 发送成功就在未完成消息中清除掉
-              store.clearUnfinishedMessage(data.sid, unmessage.mid);
-              // 发送成功就获取所有消息
-              sharedMethods.getMessage
-                .call(this, data.sid)
-                .then((res) => {
-                  store.setMessages(data.sid, res.data.info);
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            }, 500);
-          } else {
-            // 将未完成消息设置为失败消息
+        //console.log("unmessage is:\n");
+        //console.log(unmessage);
+        axios
+          .post("/api/message/sendMessage", data)
+          .then((res) => {
+            if (res.data.success) {
+              setTimeout(() => {
+                // 发送成功就在未完成消息中清除掉
+                store.clearUnfinishedMessage(data.sid, unmessage.mid);
+                // 发送成功就获取所有消息
+                sharedMethods.getMessage
+                  .call(this, data.sid)
+                  .then((res) => {
+                    store.setMessages(data.sid, res.data.info);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              }, 500);
+            } else {
+              // 将未完成消息设置为失败消息
+              store.resetUnfinishedMessage(data.sid, unmessage.mid);
+            }
+          })
+          .catch((err) => {
             store.resetUnfinishedMessage(data.sid, unmessage.mid);
-          }
-        })
-        .catch((err) => {
-          store.resetUnfinishedMessage(data.sid, unmessage.mid);
-          console.log(err);
-        });
+            console.log(err);
+          });
+      }
     },
 
     // 在切换 chatbox 之后，将滑动条滑到最下面

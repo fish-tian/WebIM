@@ -9,8 +9,8 @@
         dense
         max-width="250px"
         min-width="250px"
-        min-height="456px"
-        max-height="456px"
+        min-height="496px"
+        max-height="496px"
         class="overflow-y-auto fill-height"
       >
         <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
