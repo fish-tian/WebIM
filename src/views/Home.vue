@@ -77,7 +77,11 @@ export default {
                 .then((res2) => {
                   //console.log(session);
                   if(session.group===1){
-                    store.setMembers(session.sid,session.gpMemberInfos)
+                    //console.log("Home.vue");
+                    //console.log(session);
+                    store.setMembers(session.sid, session.gpMemberInfos);
+                  } else {
+                    store.setMembers(session.sid, null);
                   }
                   console.log(this.storeState.Members);
                   if (res2.data.success) {
@@ -96,7 +100,7 @@ export default {
           }
         })
         .catch((err) => {
-          console("111" + err);
+          console.log("111" + err);
         });
 
       // 获取请求
@@ -110,7 +114,7 @@ export default {
           }
         })
         .catch((err) => {
-          console("222" + err);
+          console.log("222" + err);
         });
 
       // 获取好友
@@ -124,7 +128,7 @@ export default {
           }
         })
         .catch((err) => {
-          console("333" + err);
+          console.log("333" + err);
         });
     },
   },

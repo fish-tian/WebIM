@@ -70,6 +70,8 @@ export default {
     }
     
     this.state.members[index].members = members;
+    console.log("store.js --------------");
+    console.log(members);
   },
   setMessages(sid, messages) {
     //console.log(messages);

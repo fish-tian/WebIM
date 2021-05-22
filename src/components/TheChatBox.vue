@@ -19,7 +19,7 @@
     </v-card>
     <v-card v-if="storeState.currSId" tile color="grey lighten-4">
       <v-card-text>{{ title }}</v-card-text>
-      群成员：{{showMembers.join('、')}}
+      <!-- 群成员：{{showMembers.join('、')}} -->
 
       <div>
         <!-- v-card 里是对话框卡片 -->
@@ -72,6 +72,7 @@
               >
                 {{ times[message.mid] }}
               </div>
+              <!-- 消息状态：未读、已读、发送中 -->
               <div
                 style="
                   flex: 1 1 auto;
@@ -118,13 +119,21 @@
                     :color="message.isMe ? 'primary' : ''"
                     style="
                       height: auto;
-                      max-width: 300px;
-                      white-space: normal;
+                      max-width: 380px;  
                       font-size: 14px;
                       padding: 7px 10px;
+                      text-align: left !important;
+                      ;
                     "
                   >
-                    {{ message.message }}
+                  <p style="
+                      max-width: 350px;
+                      white-space: normal;
+                      font-size: 14px;
+                      margin: 0px !important 
+                      padding: 7px 10px; 
+                    ">{{ message.message }}</p>
+                    
                   </v-chip>
                 </v-list-item-subtitle>
               </v-list-item-content>
@@ -135,7 +144,7 @@
                 >mdi-alert-circle
               </v-icon>
             </v-list-item>
-
+            <!-- 应废弃 -->
             <v-list-item
               v-for="unmessage in unfinishedMessages"
               :key="unmessage.mid"
@@ -315,6 +324,7 @@ export default {
        let allMembers = this.storeState.members.find(
         (item) => item.sid === this.storeState.currSId
       );
+      console.log(allMembers);
       
       let res=[];
       for(const item of allMembers.members){
