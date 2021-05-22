@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex">
     <!--  -->
     <v-card v-if="!storeState.currSId" tile color="grey lighten-4">
       <v-card-text> 选择好友进行聊天吧！ </v-card-text>
@@ -8,8 +8,8 @@
         <!-- v-card 里是对话框卡片 -->
         <v-card
           min-width="550px"
-          min-height="496px"
-          max-height="496px"
+          min-height="526px"
+          max-height="526px"
           class="overflow-y-auto fill-height"
           tile
           color="grey lighten-4"
@@ -18,22 +18,16 @@
       </div>
     </v-card>
     <v-card v-if="storeState.currSId" tile color="grey lighten-4">
-      <v-card-text>{{ title }}</v-card-text>
+      <v-card-text>
+        {{ title }}
+        <v-btn dense v-show="groupMembers" icon x-small @click="showMembers">
+          <v-icon dense> mdi-dots-horizontal </v-icon>
+        </v-btn>
+      </v-card-text>
       <!-- 群成员：{{showMembers.join('、')}} -->
 
       <div>
         <!-- v-card 里是对话框卡片 -->
-        <!-- <v-card
-          min-width="550px"
-          min-height="380px"
-          max-height="380px"
-          class="overflow-y-auto fill-height"
-          tile
-          color="grey lighten-4"
-          style="padding: 8px"
-          v-scroll.self="onScroll"
-          id="card"
-        > -->
         <v-card
           min-width="550px"
           min-height="380px"
@@ -101,6 +95,7 @@
                   发送中
                 </div>
               </div>
+              <!-- 头像 -->
               <v-list-item-avatar v-if="!message.isMe" class="mr-1">
                 <v-avatar color="orange" size="36">
                   <span class="white--text headline">{{
@@ -108,7 +103,7 @@
                   }}</span>
                 </v-avatar>
               </v-list-item-avatar>
-
+              <!-- 气泡 -->
               <v-list-item-content style="flex: 0 1 auto">
                 <v-list-item-title v-if="!message.isMe">
                   {{ message.sender_name }}
@@ -119,21 +114,23 @@
                     :color="message.isMe ? 'primary' : ''"
                     style="
                       height: auto;
-                      max-width: 380px;  
+                      max-width: 380px;
                       font-size: 14px;
                       padding: 7px 10px;
-                      text-align: left !important;
-                      ;
+                      text-align: left !important; ;
                     "
                   >
-                  <p style="
+                    <p
+                      style="
                       max-width: 350px;
                       white-space: normal;
                       font-size: 14px;
                       margin: 0px !important 
                       padding: 7px 10px; 
-                    ">{{ message.message }}</p>
-                    
+                    "
+                    >
+                      {{ message.message }}
+                    </p>
                   </v-chip>
                 </v-list-item-subtitle>
               </v-list-item-content>
@@ -194,7 +191,7 @@
 
         <v-card
           tile
-          style="max-height: 116px; min-height: 116px; overflow: hidden"
+          style="max-height: 146px; min-height: 146px; overflow: hidden"
         >
           <!-- 表情 -->
           <div
@@ -205,7 +202,7 @@
               padding: 8px 0px 0px 15px;
             "
           >
-            <v-icon>mdi-emoticon-happy-outline</v-icon>
+            <v-icon dense>mdi-emoticon-happy-outline</v-icon>
           </div>
           <!-- 聊天框 -->
           <div
@@ -226,16 +223,44 @@
                 @keyup.enter="sendMessage"
                 v-model="message"
               ></v-textarea>
-              <!-- <v-textarea v-model="message" @keyup.enter="sendMessage"></v-textarea> -->
-              <!-- <v-checkbox
-
-                :rules="[(v) => !!v || 'You must agree to continue!']"
-                label="Do you agree?"
-                required
-              ></v-checkbox>
-              <v-btn @click="temp"></v-btn> -->
             </v-form>
           </div>
+          <!-- 发送按钮 -->
+          <div style="max-height: 27px; min-height: 27px; margin-left: 480px">
+            <v-btn depressed small color="primary" @click="sendMessage">
+              发送
+            </v-btn>
+          </div>
+        </v-card>
+      </div>
+    </v-card>
+
+    <v-card v-if="showMembersFlag" tile color="grey lighten-4">
+      <v-card-text> 群成员 </v-card-text>
+
+      <div>
+        <!-- v-card 里是对话框卡片 -->
+        <v-card
+          min-width="200px"
+          min-height="526px"
+          max-height="526px"
+          class="overflow-y-auto fill-height"
+          tile
+        >
+          <v-list dense>
+            <v-list-item v-for="member in groupMembers" :key="member">
+              <v-list-item-avatar class="mr-1">
+                <v-avatar color="orange" size="28">
+                  <span class="white--text headline">
+                    {{ member[0] }}
+                  </span>
+                </v-avatar>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{ member }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
         </v-card>
       </div>
     </v-card>
@@ -260,6 +285,7 @@ export default {
       // start:store.state.msgNums-10,
       message: "",
       scrollTimeout: null,
+      showMembersFlag: false,
     };
   },
   mounted() {
@@ -277,6 +303,7 @@ export default {
   },
   updated() {
     if (this.sidChangedFlag) {
+      this.showMembersFlag = false;
       this.sidChangedFlag = false;
       this.scrollToDown();
     }
@@ -310,28 +337,21 @@ export default {
       );
       return session ? session.title : "";
     },
-    // showMembers:function () {
-    //   let members=this.storeState.members;
-    //   let memberHash={};
-    //   for(const item of members){
-    //     memberHash[item.sid]=item.members;
-    //   }
-
-    //   console.log(memberHash);
-    //   return memberHash;
-    // },
-     showMembers:function () {
-       let allMembers = this.storeState.members.find(
+    groupMembers: function () {
+      let allMembers = this.storeState.members.find(
         (item) => item.sid === this.storeState.currSId
       );
       console.log(allMembers);
-      
-      let res=[];
-      for(const item of allMembers.members){
-        res.push(item.user_name);
+      if (allMembers.members) {
+        let res = [];
+        for (const item of allMembers.members) {
+          res.push(item.user_name);
+        }
+        return res;
+      } else {
+        return null;
       }
-      return res;
-     },
+    },
 
     messages: function () {
       let allMessages = this.storeState.messages.find(
@@ -382,6 +402,9 @@ export default {
     },
   },
   methods: {
+    showMembers() {
+      this.showMembersFlag = !this.showMembersFlag;
+    },
     // 处理一下正确的时间
     createDate(originDate) {
       let [year, month, day] = originDate.toLocaleDateString().split("/");
@@ -396,9 +419,9 @@ export default {
           message: this.message,
           sid: this.storeState.currSId,
         };
-        this.$refs.form.reset(); 
+        this.$refs.form.reset();
         this.message = "";
-        
+
         //console.log("after:" + this.message);
         this.addUnfinishedMessageFlag = true;
         let unmessage = store.addUnfinishedMessage(data.sid, data.message);

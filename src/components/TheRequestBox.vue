@@ -12,8 +12,8 @@
       tile
       max-width="250px"
       min-width="250px"
-      min-height="496px"
-        max-height="496px"
+      min-height="526px"
+        max-height="526px"
       class="overflow-y-auto fill-height"
     >
       <v-list subheader dense>

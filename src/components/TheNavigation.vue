@@ -1,5 +1,5 @@
 <template>
-  <v-card tile style="height: 550px">
+  <v-card tile style="height: 580px">
     <v-card-title>
       <v-avatar color="green" size="32">
         <span class="white--text headline">{{ storeState.user.username }}</span>
