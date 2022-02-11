@@ -1,6 +1,6 @@
 <template>
   <!-- v-card 里是联系人卡片 -->
-  <v-card v-if="storeState.show[1]" tile>
+  <v-card v-if="this.$store.state.show[1]" tile>
     <v-card-text>朋友</v-card-text>
 
     <v-card tile>
@@ -15,9 +15,9 @@
       >
         <v-alert :type="alertType" v-if="alert"> {{ alertMessage }} </v-alert>
         <v-list-item-group v-model="model" mandatory>
-          <v-list-item style="display: none;"></v-list-item>
+          <v-list-item style="display: none"></v-list-item>
           <v-list-item
-            v-for="friend in storeState.friends"
+            v-for="friend in this.$store.state.friends"
             :key="friend.id"
             @click="openChat(friend)"
           >
@@ -43,7 +43,9 @@
             </v-list-item-avatar>
             <!-- <v-badge left dot bottom bordered offset-x="-20"> -->
             <v-list-item-content>
-              <v-list-item-title style="font-weight: normal;"> {{ friend.user_name }} </v-list-item-title>
+              <v-list-item-title style="font-weight: normal">
+                {{ friend.user_name }}
+              </v-list-item-title>
               <!-- <v-list-item-subtitle>
                 {{ lastmessage[0][friend.sid] }}
               </v-list-item-subtitle> -->
@@ -70,7 +72,6 @@
 </template>
 
 <script>
-import store from "@/store.js";
 import axios from "axios";
 // 解决跨域
 axios.defaults.withCredentials = true;
@@ -78,25 +79,25 @@ axios.defaults.withCredentials = true;
 export default {
   data() {
     return {
-      storeState: store.state,
+      // storeState: store.state,
       alert: false,
       alertMessage: "",
       alertType: "",
     };
   },
   computed: {
-    model: function() {
+    model: function () {
       return 0;
     },
-    lastmessage: function() {
+    lastmessage: function () {
       //storeState; chuli; sid -> lastmessage ;return {};
-      let messages = this.storeState.messages;
-      let errMessages = this.storeState.unfinishedMessages;
+      let messages = this.$store.state.messages;
+      let errMessages = this.$store.state.unfinishedMessages;
       let msgHash = {};
       let isMe = {};
       let redDotHash = {};
       let res = []; //第一个是msg,第二个是红点，第三个是判断是不是自己
-      
+
       for (const item of messages) {
         //item代表一个会话
         if (item.messages.length === 0) {
@@ -108,7 +109,7 @@ export default {
           redDotHash[item.sid] =
             !item.messages[item.messages.length - 1].read &&
             !item.messages[item.messages.length - 1].isMe &&
-            item.sid !== this.storeState.currSId;
+            item.sid !== this.$store.state.currSId;
           //console.log("");
           //console.log(redDotHash[item.sid]);
         }
@@ -133,7 +134,7 @@ export default {
       return res;
     },
     flag: function () {
-      return this.storeState.flag;
+      return this.$store.state.flag;
     },
   },
   async mounted() {
@@ -175,9 +176,13 @@ export default {
     // 点击聊天按钮
     //flag=1:不显示小红点,0显示.没点聊天之前是underdine
     openChat(friend) {
-      store.setShow(0);
+      // store.setShow(0);
+      this.$store.commit("setShow", 0);
+
       //store.setCurrFriendId(friend.id);
-      store.setCurrSId(friend.sid);
+      // store.setCurrSId(friend.sid);
+      this.$store.commit("setCurrSId", friend.sid);
+
       //store.setFlag(1);
     },
   },

@@ -86,14 +86,13 @@
 </template>
 
 <script>
-import store from "@/store.js";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
 export default {
   data() {
     return {
-      storeState: store.state,
+      // this.$store.state.: store.state,
       loginSeen: true,
       username: "",
       email: "",
@@ -123,7 +122,7 @@ export default {
       let user = {
         username: this.username,
         password: this.password,
-        socketId: this.storeState.socketId,
+        socketId: this.$store.state.socketId,
       };
 
       if (this.username === "") {
@@ -139,7 +138,9 @@ export default {
         .post("/api/user", user)
         .then((res) => {
           if (res.data.success) {
-            store.setUsername(this.username.substring(0,1));
+            // store.setUsername(this.username.substring(0, 1));
+            this.$store.commit("setUsername", this.username.substring(0, 1));
+
             this.showAlert("登录成功，正在跳转至主页！", "success");
             setTimeout(() => {
               this.$router.push({ name: "Home" }); // 进入主页
@@ -187,14 +188,15 @@ export default {
         username: this.username,
         password: this.password,
         email: this.email,
-        socketId: this.storeState.socketId,
+        socketId: this.$store.state.socketId,
       };
 
       axios
         .post("/api/user/register", user)
         .then((res) => {
           if (res.data.success) {
-            store.setUsername(this.username.substring(0,1));
+            // store.setUsername(this.username.substring(0,1));
+            this.$store.commit("setUsername", this.username.substring(0, 1));
             this.showAlert("注册成功，正在跳转至主页！", "success");
             setTimeout(() => {
               this.$router.push({ name: "Home" }); // 进入主页

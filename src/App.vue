@@ -14,7 +14,7 @@
 <script>
 //import TheNavigation from '@/components/TheNavigation';
 //import Home from './views/Home'
-import store from "@/store.js";
+
 import axios from "axios";
 import { io } from "socket.io-client";
 
@@ -29,7 +29,7 @@ export default {
   },
   data() {
     return {
-      storeState: store.state,
+      // storeState: store.state,
     };
   },
   created() {
@@ -38,7 +38,8 @@ export default {
     socket.on("connect", () => {
       // Fired when the socket connects.
       console.log("socket id: " + socket.id);
-      store.setSocketId(socket.id);
+      // store.setSocketId(socket.id);
+      this.$store.commit("setSocketId", socket.id);
       this.keepAlive();
     });
 
@@ -54,33 +55,42 @@ export default {
 
     socket.on("newRequest", (data) => {
       console.log("-- newrequest: \n" + data);
-      store.setRequests(data);
+      // store.setRequests(data);
+      this.$store.commit("setRequests", data);
     });
 
     socket.on("newFriend", (data) => {
       console.log("-- newfriend: \n" + data);
-      store.setFriends(data);
+      // store.setFriends(data);
+      this.$store.commit("setFriends", data);
     });
 
     socket.on("newMessage", (data) => {
       console.log("newMsg------");
       //console.log(data.message);
-      store.addMessage(data.sid, data.message);
-      //store.setMessages(data.sid, data.messages);
-      console.log(this.storeState.currSId);
+      // store.addMessage(data.sid, data.message);
+      this.$store.commit("addMessage", {
+        sid: data.sid,
+        message: data.message,
+      });
 
-      // if (this.storeState.currSId === data.sid) {
+      //store.setMessages(data.sid, data.messages);
+      console.log(this.$store.state.currSId);
+
+      // if (this.$store.state.currSId === data.sid) {
       //   this.getMessage();
       // }
     });
 
     socket.on("newSession", (data) => {
-      store.setSessions(data);
+      // store.setSessions(data);
+      this.$store.commit("setSessions", data);
     });
 
     socket.on("lastMsg", (data) => {
       console.log("-- LastMessage: \n" + data);
-      store.setlastMsg(data);
+      // store.setlastMsg(data);
+      this.$store.commit("setlastMsg", data);
     });
   },
   // created() {
@@ -117,9 +127,9 @@ export default {
   //   socket.on("newMessage", (data) => {
   //     console.log("newMsg------");
   //     store.setMessages(data.sid, data.messages);
-  //     console.log(this.storeState.currSId);
+  //     console.log(this.$store.state.currSId);
 
-  //     if (this.storeState.currSId === data.sid) {
+  //     if (this.$store.state.currSId === data.sid) {
   //       this.getMessage();
   //     }
   //   });
@@ -139,12 +149,13 @@ export default {
   methods: {
     // 用于在刷新页面或者重新打开页面时更新用户的socket.id
     keepAlive() {
-      let data = { socketId: this.storeState.socketId };
+      let data = { socketId: this.$store.state.socketId };
       axios
         .post("/api/user/keepAlive", data)
         .then((res) => {
           if (res.data.success) {
-            store.setUsername(res.data.username);
+            // store.setUsername(res.data.username);
+            this.$store.commit("setUsername", res.data.username);
           } else {
             console.log("转到login");
             this.$router.push({ name: "Login" }); // 进入主页
@@ -177,6 +188,6 @@ export default {
 
 <style>
 * {
-  font-weight: normal!important;
+  font-weight: normal !important;
 }
 </style>

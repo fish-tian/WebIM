@@ -1,7 +1,7 @@
 <template>
   <!-- v-card 里是请求卡片 -->
   <v-card
-    v-if="storeState.show[3]"
+    v-if="this.$store.state.show[3]"
     max-width="250px"
     min-width="250px"
     max-height="800px"
@@ -86,14 +86,14 @@
 </template>
 
 <script>
-import store from "@/store.js";
+
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
 export default {
   data() {
     return {
-      storeState: store.state,
+      // this.$store.state.: store.state,
       alert: false,
       alertMessage: "",
       alertType: "",

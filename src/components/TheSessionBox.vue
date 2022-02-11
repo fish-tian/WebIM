@@ -1,6 +1,6 @@
 <template>
   <!-- v-card 里是联系人卡片 -->
-  <v-card v-if="storeState.show[0]" tile>
+  <v-card v-if="this.$store.state.show[0]" tile>
     <v-card-text>会话</v-card-text>
 
     <v-card tile>
@@ -20,7 +20,6 @@
             v-for="session in orderSession"
             :key="session.sid"
             @click="openChat(session.sid)"
-              
           >
             <v-list-item-avatar>
               <!-- 小红点的逻辑是：如果不是自己发的，而且消息没有读。那么显示小红点    :value="dotshow"-->
@@ -43,16 +42,16 @@
                 <v-avatar color="red" size="36" v-if="session.group">
                   <span class="white--text headline">{{
                     session.title[0]
-              
                   }}</span>
-                  
                 </v-avatar>
               </v-badge>
             </v-list-item-avatar>
-            <v-list-item-content >
-              <v-list-item-title style="font-weight: normal;"> {{ session.title }} </v-list-item-title>
-            
-              <v-list-item-subtitle style="font-weight: normal;">
+            <v-list-item-content>
+              <v-list-item-title style="font-weight: normal">
+                {{ session.title }}
+              </v-list-item-title>
+
+              <v-list-item-subtitle style="font-weight: normal">
                 {{ lastmessage[0][session.sid] }}
               </v-list-item-subtitle>
             </v-list-item-content>
@@ -64,18 +63,16 @@
 </template>
 
 <script>
-
-import store from "@/store.js";
 import axios from "axios";
-import _ from "lodash"
-import eventBus from '@/eventBus.js'
+import _ from "lodash";
+import eventBus from "@/eventBus.js";
 // 解决跨域
 axios.defaults.withCredentials = true;
 
 export default {
   data() {
     return {
-      storeState: store.state,
+      // storeState: store.state,
       lists: "",
       alert: false,
       alertMessage: "",
@@ -87,16 +84,15 @@ export default {
       return 0;
     },
     // 对会话进行按照时间的排序
-    orderSession: function() {
-      let data = _.orderBy(this.storeState.sessions, 'lastdate', 'desc');
+    orderSession: function () {
+      let data = _.orderBy(this.$store.state.sessions, "lastdate", "desc");
       return data;
     },
-    
+
     lastmessage: function () {
-      
       //storeState; chuli; sid -> lastmessage ;return {};
-      let messages = this.storeState.messages;
-      let errMessages = this.storeState.unfinishedMessages;
+      let messages = this.$store.state.messages;
+      let errMessages = this.$store.state.unfinishedMessages;
       // let msg = [];
       let msgHash = {};
       let isMe = {};
@@ -118,7 +114,7 @@ export default {
           redDotHash[item.sid] =
             !item.messages[item.messages.length - 1].read &&
             !item.messages[item.messages.length - 1].isMe &&
-            item.sid !== this.storeState.currSId;
+            item.sid !== this.$store.state.currSId;
           //console.log("");
           //console.log(redDotHash[item.sid]);
         }
@@ -143,7 +139,7 @@ export default {
       return res;
     },
     flag: function () {
-      return this.storeState.flag;
+      return this.$store.state.flag;
     },
   },
   async mounted() {
@@ -151,7 +147,7 @@ export default {
   },
   methods: {
     currSIdChange() {
-      eventBus.$emit('sidChanged');
+      eventBus.$emit("sidChanged");
     },
     //显示提示
     showAlert(alertMessage, alertType) {
@@ -167,26 +163,26 @@ export default {
     openChat(sid) {
       this.currSIdChange();
 
-      store.setCurrSId(sid);
+      // store.setCurrSId(sid);
+      this.$store.commit("setCurrSId", sid);
       //this.updateRead(sid);
-      
     },
     //更新发送消息状态
     //updateRead(sid) {
-      // const data = {
-      //   message: "",
-      //   sid: sid,
-      // };
-      // this.message = "";
-      // axios.post("/api/message/updateRead", data).then((res) => {
-      //   if (res.data.success) {
-      //     setTimeout(() => {
-      //       // 发送成功就获取所有消息
-      //       // this.getAllMessages(sid);
-      //       console.log("更新状态消息发送---");
-      //     }, 1000);
-      //   }
-      // });
+    // const data = {
+    //   message: "",
+    //   sid: sid,
+    // };
+    // this.message = "";
+    // axios.post("/api/message/updateRead", data).then((res) => {
+    //   if (res.data.success) {
+    //     setTimeout(() => {
+    //       // 发送成功就获取所有消息
+    //       // this.getAllMessages(sid);
+    //       console.log("更新状态消息发送---");
+    //     }, 1000);
+    //   }
+    // });
     //},
   },
 };

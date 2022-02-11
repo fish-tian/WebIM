@@ -1,7 +1,7 @@
 <template>
   <!-- v-card 里是请求卡片 -->
   <v-card
-    v-if="storeState.show[2]"
+    v-if="this.$store.state.show[2]"
     max-width="250px"
     min-width="250px"
     max-height="800px"
@@ -36,7 +36,7 @@
             </template>
           </v-text-field>
         </v-list-item>
-        <v-list-item v-for="request in storeState.requests" :key="request.rid">
+        <v-list-item v-for="request in this.$store.state.requests" :key="request.rid">
           <v-list-item-avatar size="36px">
             <v-img :src="require('@/assets/' + 'avatar1.jpeg')" alt="avatar1" />
           </v-list-item-avatar>
@@ -65,14 +65,14 @@
 </template>
 
 <script>
-import store from "@/store.js";
+
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
 export default {
   data() {
     return {
-      storeState: store.state,
+      // storeState: store.state,
       alert: false,
       alertMessage: "",
       alertType: "",

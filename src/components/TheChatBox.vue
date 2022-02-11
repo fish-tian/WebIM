@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex">
     <!--  -->
-    <v-card v-if="!storeState.currSId" tile color="grey lighten-4">
+    <v-card v-if="!this.$store.state.currSId" tile color="grey lighten-4">
       <v-card-text> 选择好友进行聊天吧！ </v-card-text>
 
       <div>
@@ -17,7 +17,7 @@
         </v-card>
       </div>
     </v-card>
-    <v-card v-if="storeState.currSId" tile color="grey lighten-4">
+    <v-card v-if="this.$store.state.currSId" tile color="grey lighten-4" @mousedown="setFocus">
       <v-card-text>
         {{ title }}
         <v-btn dense v-show="groupMembers" icon x-small @click="showMembers">
@@ -222,6 +222,8 @@
                 style="font-size: 14px"
                 @keyup.enter="sendMessage"
                 v-model="message"
+                @focus="handleOnfocus"
+                id="textarea"
               ></v-textarea>
             </v-form>
           </div>
@@ -268,7 +270,6 @@
 </template>
 
 <script>
-import store from "@/store.js";
 import axios from "axios";
 import eventBus from "@/eventBus.js";
 import sharedMethods from "@/sharedMethods";
@@ -278,7 +279,7 @@ export default {
     return {
       // friendId: this.$route.params.id,
       // userId: store.user.id
-      storeState: store.state,
+      // storeState: this.$store.state,
       sidChangedFlag: false,
       addUnfinishedMessageFlag: false,
       // end:store.state.msgNums,
@@ -289,7 +290,8 @@ export default {
     };
   },
   mounted() {
-    store.setK(0);
+    // store.setK(0);
+    this.$store.commit("setK", 0);
     //console.log("mounted!!!!!!!!!!!");
   },
   created() {
@@ -315,31 +317,31 @@ export default {
   },
   computed: {
     currSId: function () {
-      return store.storeState.currSId;
+      return this.$store.state.currSId;
     },
     //查找每个会话开始显示消息的下标
     start: function () {
-      let allMessages = this.storeState.messages.find(
-        (item) => item.sid === this.storeState.currSId
+      let allMessages = this.$store.state.messages.find(
+        (item) => item.sid === this.$store.state.currSId
       );
       return allMessages.start;
     },
     //查找当前会话是不是群聊
     isGroup: function () {
-      return this.storeState.sessions.find(
-        (item) => item.sid === this.storeState.currSId
+      return this.$store.state.sessions.find(
+        (item) => item.sid === this.$store.state.currSId
       ).group;
     },
 
     title: function () {
-      let session = this.storeState.sessions.find(
-        (item) => item.sid === this.storeState.currSId
+      let session = this.$store.state.sessions.find(
+        (item) => item.sid === this.$store.state.currSId
       );
       return session ? session.title : "";
     },
     groupMembers: function () {
-      let allMembers = this.storeState.members.find(
-        (item) => item.sid === this.storeState.currSId
+      let allMembers = this.$store.state.members.find(
+        (item) => item.sid === this.$store.state.currSId
       );
       console.log(allMembers);
       if (allMembers.members) {
@@ -354,18 +356,18 @@ export default {
     },
 
     messages: function () {
-      let allMessages = this.storeState.messages.find(
-        (item) => item.sid === this.storeState.currSId
+      let allMessages = this.$store.state.messages.find(
+        (item) => item.sid === this.$store.state.currSId
       );
 
       //this.updateRead();
-      return allMessages === undefined ? null : allMessages.messages;
+      return allMessages === undefined ? [] : allMessages.messages;
     },
 
     // 设置每条消息的时间是否显示
     times: function () {
-      let allMessages = this.storeState.messages.find(
-        (item) => item.sid === this.storeState.currSId
+      let allMessages = this.$store.state.messages.find(
+        (item) => item.sid === this.$store.state.currSId
       );
       console.log(allMessages);
       if (allMessages === undefined || allMessages.messages.length === 0) {
@@ -395,13 +397,20 @@ export default {
     },
 
     unfinishedMessages: function () {
-      let unmessages = this.storeState.unfinishedMessages.find(
-        (item) => item.sid === this.storeState.currSId
+      let unmessages = this.$store.state.unfinishedMessages.find(
+        (item) => item.sid === this.$store.state.currSId
       );
       return unmessages === undefined ? null : unmessages.messages;
     },
   },
   methods: {
+    setFocus(e) {
+      e.preventDefault();
+      document.getElementById('textarea').focus();
+    },
+    handleOnfocus() {
+      console.log(1);
+    },
     showMembers() {
       this.showMembersFlag = !this.showMembersFlag;
     },
@@ -417,14 +426,23 @@ export default {
         //console.log("before:" + this.message);
         const data = {
           message: this.message,
-          sid: this.storeState.currSId,
+          sid: this.$store.state.currSId,
         };
         this.$refs.form.reset();
         this.message = "";
 
         //console.log("after:" + this.message);
         this.addUnfinishedMessageFlag = true;
-        let unmessage = store.addUnfinishedMessage(data.sid, data.message);
+
+        this.$store.commit("addUnfinishedMessage", {
+          sid: data.sid,
+          message: data.message,
+        });
+
+        let index = this.$store.state.unfinishedMessages.findIndex((item) => {
+          return data.sid === item.sid;
+        });
+        const currMid = this.$store.state.unfinishedMessages[index].mid;
 
         //console.log("unmessage is:\n");
         //console.log(unmessage);
@@ -434,12 +452,21 @@ export default {
             if (res.data.success) {
               setTimeout(() => {
                 // 发送成功就在未完成消息中清除掉
-                store.clearUnfinishedMessage(data.sid, unmessage.mid);
+                // store.clearUnfinishedMessage(data.sid, currMid);
+                this.$store.commit("clearUnfinishedMessage", {
+                  sid: data.sid,
+                  mid: currMid,
+                });
+
                 // 发送成功就获取所有消息
                 sharedMethods.getMessage
                   .call(this, data.sid)
                   .then((res) => {
-                    store.setMessages(data.sid, res.data.info);
+                    // store.setMessages(data.sid, res.data.info);
+                    this.$store.commit("setMessages", {
+                      sid: data.sid,
+                      messages: res.data.info,
+                    });
                   })
                   .catch((err) => {
                     console.log(err);
@@ -447,11 +474,18 @@ export default {
               }, 500);
             } else {
               // 将未完成消息设置为失败消息
-              store.resetUnfinishedMessage(data.sid, unmessage.mid);
+              // store.resetUnfinishedMessage(data.sid, currMid);
+              this.$store.commit("resetUnfinishedMessage", {
+                sid: data.sid,
+                mid: currMid,
+              });
             }
           })
           .catch((err) => {
-            store.resetUnfinishedMessage(data.sid, unmessage.mid);
+            this.$store.commit("resetUnfinishedMessage", {
+              sid: data.sid,
+              mid: currMid,
+            });
             console.log(err);
           });
       }
@@ -478,12 +512,14 @@ export default {
       }
     },
     // 滑动鼠标事件，做了节流处理
-    onWheel() {
+    onWheel(event) {
+      console.log("#event", event);
       let card = document.getElementById("card");
       if (
         card &&
         card.scrollTop === 0 &&
-        card.offsetHeight !== card.scrollHeight
+        // card.offsetHeight !== card.scrollHeight
+        event.wheelDeltaY > 0
       ) {
         if (!this.scrollTimeout) {
           // 当前没有定时器要执行
@@ -497,7 +533,8 @@ export default {
     //加载更多的消息
     onloadMore() {
       // let len = allMessages.messages.length;
-      store.updateMsg(this.storeState.currSId);
+      // store.updateMsg(this.$store.state.currSId);
+      this.$store.commit("updateMsg", this.$store.state.currSId);
       // let allMessages = this.storeState.messages.find(
       //   (item) => item.sid === sid
       // );
@@ -507,28 +544,43 @@ export default {
     resendMessage(message) {
       const data = {
         message: message.message,
-        sid: this.storeState.currSId,
+        sid: this.$store.state.currSId,
       };
 
-      store.resetUnfinishedMessage(data.sid, message.mid);
-
+      // store.resetUnfinishedMessage(data.sid, message.mid);
+      this.$store.commit("resetUnfinishedMessage", {
+        sid: data.sid,
+        mid: message.mid,
+      });
       axios
         .post("/api/message/sendMessage", data)
         .then((res) => {
           if (res.data.success) {
             setTimeout(() => {
               // 发送成功就在未完成消息中清除掉
-              store.clearUnfinishedMessage(data.sid, message.mid);
+              // store.clearUnfinishedMessage(data.sid, message.mid);
+              this.$store.commit("clearUnfinishedMessage", {
+                sid: data.sid,
+                mid: message.mid,
+              });
               // 发送成功就获取所有消息
               sharedMethods.getMessage.call(this, data.sid);
             }, 1000);
           } else {
             // 将未完成消息设置为失败消息
-            store.resetUnfinishedMessage(data.sid, message.mid);
+            // store.resetUnfinishedMessage(data.sid, message.mid);
+            this.$store.commit("resetUnfinishedMessage", {
+              sid: data.sid,
+              mid: message.mid,
+            });
           }
         })
         .catch((err) => {
-          store.resetUnfinishedMessage(data.sid, message.mid);
+          // store.resetUnfinishedMessage(data.sid, message.mid);
+          this.$store.commit("resetUnfinishedMessage", {
+            sid: data.sid,
+            mid: message.mid,
+          });
           console.log(err);
         });
     },

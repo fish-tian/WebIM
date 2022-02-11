@@ -1,41 +1,38 @@
 <template>
+  <v-container fluid>
+    <!-- 导航栏 -->
 
-<v-container fluid > 
-  <!-- 导航栏 -->
-
-  <v-row>
-    <v-spacer></v-spacer>
-    <v-col class="d-flex">
-      <TheNavigation />
-      <TheSessionBox />
-      <TheFriendsBox />
-      <TheRequestBox />
-      <TheGroupBox />
-      <TheChatBox />
-      <!-- <router-view/> -->
-      <!-- <router-view name="friend"/> -->
-      <!-- <router-view name="request"/> -->
-    </v-col>
-    <!-- <v-col> -->
+    <v-row>
+      <v-spacer></v-spacer>
+      <v-col class="d-flex">
+        <TheNavigation />
+        <TheSessionBox />
+        <TheFriendsBox />
+        <TheRequestBox />
+        <TheGroupBox />
+        <TheChatBox />
+        <!-- <router-view/> -->
+        <!-- <router-view name="friend"/> -->
+        <!-- <router-view name="request"/> -->
+      </v-col>
+      <!-- <v-col> -->
       <v-col></v-col>
       <!-- <router-view/> -->
       <!-- <router-view name="friend"/> -->
       <!-- <router-view name="request"/> -->
-    <!-- </v-col> -->
-  </v-row>
-
-</v-container>
+      <!-- </v-col> -->
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import TheFriendsBox from "@/components/TheFriendsBox"
-import TheChatBox from "@/components/TheChatBox"
-import TheNavigation from '@/components/TheNavigation'
-import TheRequestBox from "@/components/TheRequestBox"
-import TheGroupBox from "@/components/TheGroupBox"
-import TheSessionBox from "@/components/TheSessionBox"
+import TheFriendsBox from "@/components/TheFriendsBox";
+import TheChatBox from "@/components/TheChatBox";
+import TheNavigation from "@/components/TheNavigation";
+import TheRequestBox from "@/components/TheRequestBox";
+import TheGroupBox from "@/components/TheGroupBox";
+import TheSessionBox from "@/components/TheSessionBox";
 
-import store from "@/store.js";
 import axios from "axios";
 import sharedMethods from "@/sharedMethods";
 // 解决跨域
@@ -49,11 +46,11 @@ export default {
     TheFriendsBox,
     TheRequestBox,
     TheGroupBox,
-    TheSessionBox
+    TheSessionBox,
   },
   data() {
     return {
-      storeState: store.state,
+      // storeState: store.state,
     };
   },
   mounted() {
@@ -68,7 +65,8 @@ export default {
       promise1
         .then((res1) => {
           if (res1.data.success) {
-            store.setSessions(res1.data.info);
+            // store.setSessions(res1.data.info);
+            this.$store.commit("setSessions", res1.data.info);
             //console.log("res---");
             //console.log(res1.data.info);
             for (const session of res1.data.info) {
@@ -76,16 +74,28 @@ export default {
                 .call(this, session.sid)
                 .then((res2) => {
                   //console.log(session);
-                  if(session.group===1){
+                  if (session.group === 1) {
                     //console.log("Home.vue");
                     //console.log(session);
-                    store.setMembers(session.sid, session.gpMemberInfos);
+                    // store.setMembers(session.sid, session.gpMemberInfos);
+                    this.$store.commit("setMembers", {
+                      sid: session.sid,
+                      members: session.gpMemberInfos,
+                    });
                   } else {
-                    store.setMembers(session.sid, null);
+                    // store.setMembers(session.sid, null);
+                    this.$store.commit("setMembers", {
+                      sid: session.sid,
+                      members: null,
+                    });
                   }
-                  console.log(this.storeState.Members);
+                  // console.log(this.storeState.Members);
                   if (res2.data.success) {
-                    store.setMessages(session.sid, res2.data.info);
+                    // store.setMessages(session.sid, res2.data.info);
+                    this.$store.commit("setMessages", {
+                      sid: session.sid,
+                      messages: res2.data.info,
+                    });
                   } else {
                     // this.showAlert(res.data.info, "error");
                   }
@@ -96,7 +106,8 @@ export default {
                 });
             }
           } else {
-            store.setSessions(null);
+            // store.setSessions(null);
+            this.$store.commit("setSessions", null);
           }
         })
         .catch((err) => {
@@ -108,9 +119,11 @@ export default {
       promise2
         .then((res) => {
           if (res.data.success) {
-            store.setRequests(res.data.info);
+            // store.setRequests(res.data.info);
+            this.$store.commit("setRequests", res.data.info);
           } else {
-            store.setRequests(null);
+            // store.setRequests(null);
+            this.$store.commit("setRequests", null);
           }
         })
         .catch((err) => {
@@ -122,9 +135,11 @@ export default {
       promise3
         .then((res) => {
           if (res.data.success) {
-            store.setFriends(res.data.info);
+            // store.setFriends(res.data.info);
+            this.$store.commit("setFriends", res.data.info);
           } else {
-            store.setFriends(null);
+            // store.setFriends(null);
+            this.$store.commit("setFriends", null);
           }
         })
         .catch((err) => {

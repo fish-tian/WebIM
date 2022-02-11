@@ -2,7 +2,7 @@
   <v-card tile style="height: 580px">
     <v-card-title>
       <v-avatar color="green" size="32">
-        <span class="white--text headline">{{ storeState.user.username }}</span>
+        <span class="white--text headline">{{ username }}</span>
       </v-avatar>
     </v-card-title>
     <v-list>
@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import store from "@/store.js";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
@@ -36,26 +35,30 @@ export default {
   data() {
     return {
       //username: "",
-      storeState: store.state,
+      // storeState: store.state,
     };
   },
   mounted() {},
   computed: {
-    model: function() {
-      let show = this.storeState.show;
+    model: function () {
+      let show = this.$store.state.show;
       let res = 0;
-      for(let i = 0; i < show.length; i++) {
-        if(show[i]) {
+      for (let i = 0; i < show.length; i++) {
+        if (show[i]) {
           res = i;
         }
       }
       return res;
-    }
+    },
+    username() {
+      return this.$store.state.user.username;
+    },
   },
   methods: {
     // 切换显示联系人、请求、群聊等
     changeShow(data) {
-      store.setShow(data);
+      // store.setShow(data);
+      this.$store.commit("setShow", data);
     },
     // 注销
     logout() {
